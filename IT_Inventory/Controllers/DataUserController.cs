@@ -84,6 +84,7 @@ namespace IT_Inventory.Controllers
 
 
                         user.Password = userService.HashPassword(user.Password);
+                        user.Is_Admin = Request.Form["Is_Admin_Hidden"] == "True" || Request.Form["Is_Admin"] == "true" || Request.Form["Is_Admin"] == "true";
 
 
 
@@ -91,7 +92,7 @@ namespace IT_Inventory.Controllers
                         user.Create_Date = DateTime.Now;
                         user.Create_By = Session["Username"]?.ToString() ?? "Admin";
                         user.Is_Deleted = false;
-                        user.Is_Admin = false;
+
 
 
 
@@ -109,7 +110,7 @@ namespace IT_Inventory.Controllers
                             return RedirectToAction("Index");
                         }
 
-
+                        userEdit.Is_Admin = Request.Form["Is_Admin_Hidden"] == "True" || Request.Form["Is_Admin"] == "true" || Request.Form["Is_Admin"] == "true";
 
                         if (!string.IsNullOrEmpty(user.Password))
                         {
