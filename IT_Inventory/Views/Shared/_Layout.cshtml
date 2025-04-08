@@ -6,6 +6,11 @@
     <title>@ViewBag.Title - IT Inventory</title>
     @Styles.Render("~/Content/adminlte/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/adminlte")
+    <script src="~/Content/Theme/AdminLTE/plugins/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="~/Content/Theme/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+    @RenderSection("scripts", required: false)
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
@@ -15,9 +20,6 @@
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="@Url.Action("Index", "Home")" class="nav-link">Home</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
@@ -69,26 +71,11 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a href="@Url.Action("Index", "Home")" class="brand-link">
-                <span class="brand-text font-weight-light">IT Inventory</span>
+                <span class="brand-text font-weight-bold">IT Inventory</span>
             </a>
 
             <!-- Sidebar -->
             <div class="sidebar">
-                <!-- Sidebar user panel (optional) -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        @* Gunakan Url.Content untuk path gambar *@
-                        <img src="@Url.Content("~/dist/img/user2-160x160.jpg")" class="img-circle elevation-2" alt="Logo">
-                    </div>
-                    <div class="info">
-                        @* Gunakan informasi pengguna yang sedang login *@
-                        <a href="@Url.Action("Profile", "Account")" class="d-block">
-                            @* Ambil nama pengguna dari authentication *@
-                            @(User.Identity.Name ?? "User Profile")
-                        </a>
-                    </div>
-                </div>
-
                 <!-- SidebarSearch Form -->
                 @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "form-inline" }))
                 {
@@ -108,9 +95,7 @@
                     </div>
                 }
 
-
                 <!-- Sidebar Menu -->
-
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <li class="nav-item">
@@ -125,7 +110,7 @@
                         <li class="nav-item">
                         <li class="nav-item menu-is-opening menu-open">
                             <a href="@Url.Action("Index", "Home")" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <i class="nav-icon fas fa-archive"></i>
                                 <p>
                                    Master Data
                                 </p>
@@ -178,10 +163,7 @@
                         </li>
                     </ul>
                 </nav>
-
-
-
-                        <!-- Tambahkan menu lain sesuai kebutuhan -->
+                <!-- Tambahkan menu lain sesuai kebutuhan -->
                 <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
@@ -203,7 +185,10 @@
             <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
-                    @RenderBody()
+                    <div class="box-body with-border" style="min-height:100%;min-width:100%">
+                        @RenderBody()
+
+                    </div>
                 </div>
             </section>
             <!-- /.content -->
@@ -211,15 +196,9 @@
         <!-- /.content-wrapper -->
 
         <footer class="main-footer">
-            <div class="float-right d-none d-sm-inline">
-                IT Inventory System
-            </div>
             <strong>&copy; @DateTime.Now.Year - IT Inventory</strong>
         </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/adminlte")
-    @RenderSection("scripts", required: false)
 </body>
 </html>

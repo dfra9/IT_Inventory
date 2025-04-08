@@ -14,9 +14,5 @@ namespace IT_Inventory
                 userService.InitializeAdmin();
             }
         }
-
-
-
     }
-
 }

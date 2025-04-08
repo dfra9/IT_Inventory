@@ -10,18 +10,15 @@ namespace IT_Inventory.Controllers
     public class DataUserController : Controller
     {
         private readonly IT_Inventory db;
-
         private readonly IUserService userService;
 
         public DataUserController(IT_Inventory db, IUserService userService)
         {
             this.db = db;
-
         }
 
         public ActionResult Index()
         {
-
             if (!(Session["IsAdmin"] is bool IsAdmin) || !IsAdmin)
             {
                 TempData["Message"] = "You are not authorized to access this page";
@@ -40,20 +37,16 @@ namespace IT_Inventory.Controllers
             }).ToList();
 
             return View(users);
-            //return View("~/Views/MasterData/DataUser/Index.cshtml");
         }
 
         public ActionResult Editor(int? id, string mode = "Create")
         {
-
             if (mode == "Create")
             {
-
                 return View(new Users());
             }
 
             Users user = new Users();
-
             user = db.Users.Find(id);
             if (user == null || user.Is_Deleted == true)
             {
@@ -81,28 +74,17 @@ namespace IT_Inventory.Controllers
                             return View(user);
                         }
 
-
                         user.Password = userService.HashPassword(user.Password);
                         user.Is_Admin = Request.Form["Is_Admin_Hidden"] == "True" || Request.Form["Is_Admin"] == "true" || Request.Form["Is_Admin"] == "true";
-
-
-
-
                         user.Create_Date = DateTime.Now;
                         user.Create_By = Session["Username"]?.ToString() ?? "Admin";
                         user.Is_Deleted = false;
-
-
-
-
                         db.Users.Add(user);
                         db.SaveChanges();
                         TempData["Message"] = "User Created Succesfully";
                         break;
                     case "Edit":
                         var userEdit = db.Users.Find(user.User_Id);
-
-
                         if (userEdit == null || userEdit.Is_Deleted == true)
                         {
                             TempData["Message"] = "User not found";
@@ -110,7 +92,6 @@ namespace IT_Inventory.Controllers
                         }
 
                         userEdit.Is_Admin = Request.Form["Is_Admin_Hidden"] == "True" || Request.Form["Is_Admin"] == "true" || Request.Form["Is_Admin"] == "true";
-
                         if (!string.IsNullOrEmpty(user.Password))
                         {
                             userEdit.Password = userService.HashPassword(user.Password);
@@ -119,7 +100,6 @@ namespace IT_Inventory.Controllers
                         userEdit.Departement = user.Departement;
                         userEdit.City = user.City;
                         userEdit.Location = user.Location;
-
                         userEdit.Edit_By = "Admin";
                         userEdit.Edit_Date = DateTime.Now;
 
@@ -163,21 +143,6 @@ namespace IT_Inventory.Controllers
                 .ToList();
             ViewBag.City = new SelectList(city, "City_Id", "City_Name");
         }
-
-        //[HttpGet]
-        //public JsonResult GetLocationByCity(string city)
-        //{
-        //    var locations = db.Location
-
-        //        .Where(l => l.City_Name == city && l.Is_Deleted)
-        //    .Select(l => new
-        //    {
-        //        l.Location_Id,
-        //        l.Location_Name
-        //    })
-        //        .ToList();
-        //    return Json(locations, JsonRequestBehavior.AllowGet);
-        //}
 
         private void DropdownList()
         {
