@@ -1,18 +1,11 @@
-﻿@using IT_Inventory.Models
-@model global::IT_Inventory.Models.Users
+﻿ @model global::IT_Inventory.Models.Material_Group
 
 @{
-    ViewBag.Title = "User Management";
+    ViewBag.Title = "Material Group Management";
     Layout = null;
 
-    //Operation
     var mode = ViewBag.Mode ?? "Create";
-    var userId = Request.QueryString["id"] ?? "0";
 
-    var db = new IT_Inventory();
-    var cities = db.City.ToList();
-    var departements = db.Departement.ToList();
-    var locations = db.Location.ToList();
 }
 
 <!DOCTYPE html>
@@ -22,7 +15,7 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>
-        @(mode) User
+        @(mode) Material Group
     </title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
     <!-- Font Awesome -->
@@ -34,7 +27,7 @@
     <style>
         .card-primary {
             margin: 0 auto;
-            max-width: auto
+            max-width: auto;
         }
 
         .action-button {
@@ -186,13 +179,13 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>@(mode) User</h1>
+                            <h1>@(mode) Material Group</h1>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
-                                <li class="breadcrumb-item"><a href="@Url.Action("Index", "DataUser")">Users</a></li>
-                                <li class="breadcrumb-item active">@(mode) User</li>
+                                <li class="breadcrumb-item"><a href="@Url.Action("Index", "MaterialGroup")">Material Group</a></li>
+                                <li class="breadcrumb-item active">@(mode) Material Group</li>
                             </ol>
                         </div>
                     </div>
@@ -201,124 +194,115 @@
 
             <!-- Main content -->
             <section class="content">
-                @using (Html.BeginForm("Editor", "DataUser", FormMethod.Post))
+                @using (Html.BeginForm("Editor", "MaterialGroup",  FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="mode" value="@mode" />
-                    <input type="hidden" name="User_Id" value="@Model.User_Id" />
+                    <input type="hidden" name="id" value="@Model?.Material_Group1" />
 
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">General</h3>
+                                    <h3 class="card-title">Material Group Details</h3>
                                 </div>
                                 <div class="row justify-content-center">
                                     <div class="col-md-8">
                                         <div class="form-group row">
                                             <div class="card-body">
-                                                <div class="form-group row">
-                                                    <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
-                                                    <div class="col-sm-9">
 
-                                                        @if (mode == "Delete")
+
+                                                <div class="form-group row">
+                                                    <label for="Material_Group1" class="col-sm-3 col-form-label form-control-label">Material Group</label>
+                                                    <div class="col-sm-9">
+                                                        @if (mode == "Edit" || mode == "View" || mode == "Delete")
                                                         {
-                                                            <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
-                                                        }
-                                                        else if (mode == "Edit")
-                                                        {
-                                                            <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
+                                                            <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" readonly>
                                                         }
                                                         else
                                                         {
-                                                            <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" required>
+                                                            <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" required>
                                                         }
                                                     </div>
                                                 </div>
 
-                                                @if (Session["IsAdmin"] is bool IsAdmin && IsAdmin)
-                                                {
-                                                    <div class="form-group row">
-                                                        <label for="IsAdmin" class="col-sm-3 col-form-label form-control-label">User Is Admin?</label>
-                                                        <div class="col-sm-9">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox" id="Is_Admin" name="Is_Admin" value="True" @(Model.Is_Admin == true ? "checked" : "") />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-                                                }
 
                                                 <div class="form-group row">
-                                                    <label for="Password" class="col-sm-3 col-form-label form-control-label">Password</label>
+                                                    <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
                                                     <div class="col-sm-9">
-                                                        <div class="input-group">
-                                                            <input type="password" id="Password" name="Password" class="form-control" placeholder="@(mode == "Edit" ? "Change Password" : "Enter password")"
-                                                                   @(mode == "Edit" ? "" : "required")>
-                                                            @if (mode == "Edit")
-                                                            {
-                                                                <div class="input-group-append">
-                                                                    <div class="input-group-text">
-                                                                        <input type="checkbox" id="ChangePassword" name="ChangePassword" />
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                        @if (mode == "View")
+                                                        {
 
-
-
-
-
-                                                <div class="form-group row">
-                                                    <label for="Departement" class="col-sm-3 col-form-label form-control-label">Departement</label>
-
-                                                    <div class="col-sm-9">
-                                                        <select id="Departement" name="Departement" class="form-control custom-select" required>
-                                                            <option value="" disabled @(Model.Departement == null ? "Selected" : "")> Select Departement</option>
-                                                            @foreach (var dept in departements)
-                                                            {
-                                                                <option value="@dept.Departement_Name " @(Model.Departement == dept.Departement_Name ? "Selected" : "")> @dept.Departement_Name</option>
-                                                            }
-
-                                                        </select>
+                                                            <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" required>
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label for="City" class="col-sm-3 col-form-label form-control-label">City</label>
+                                                    <label for="Age_Accounting_Asset" class="col-sm-3 col-form-label form-control-label">Age Accounting Asset</label>
                                                     <div class="col-sm-9">
-                                                        <select id="City" name="City" class="form-control custom-select" required>
-                                                            <option value="" disabled @(Model.City == null ? "Selected" : "")> Select City</option>
-                                                            @foreach (var city in cities)
-                                                            {
-                                                                <option value="@city.City_Name" @(Model.City == city.City_Name ? "Selected" : "")> @city.City_Name</option>
-                                                            }
-                                                        </select>
+                                                        @if (mode == "View")
+                                                        {
+                                                            <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" readonly>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" required>
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label for="Location" class="col-sm-3 col-form-label form-control-label">Location</label>
+                                                    <label for="Quantity" class="col-sm-3 col-form-label form-control-label">Quantity</label>
                                                     <div class="col-sm-9">
-                                                        <select id="Location" name="Location" class="form-control custom-select" required>
-                                                            <option value="" disabled @(Model.Location == null ? "Selected" : "")> Select Location</option>
-                                                            @foreach (var loc in locations)
-                                                            {
-                                                                <option value="@loc.Location_Name" @(Model.Location == loc.Location_Name ? "Selected" : "")> @loc.Location_Name</option>
-                                                            }
-                                                        </select>
+                                                        @if (mode == "View")
+                                                        {
+
+                                                            <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)" readonly>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)" >
+                                                        }
                                                     </div>
                                                 </div>
-
+                                                <div class="form-group row">
+                                                    <label for="Last_Check_Date" class="col-sm-3 col-form-label form-control-label">Last Check Date</label>
+                                                    <div class="col-sm-9">
+                                                        @if (mode == "View")
+                                                        {
+                                                            <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")">
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="Max_Warranty_Date" class="col-sm-3 col-form-label form-control-label">Max Warranty Date</label>
+                                                    <div class="col-sm-9">
+                                                        @if (mode == "View")
+                                                        {
+                                                            <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")">
+                                                        }
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <!-- /.card-body -->
                                     </div>
                                 </div>
+                                <!-- /.card-body -->
                             </div>
                         </div>
                     </div>
+
                     <!-- /.card -->
                     <!-- /.card-body -->
                     <!-- /.card -->
@@ -327,21 +311,21 @@
                             <div class="button-container">
                                 <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
                                     <div>
-                                        <a href="@Url.Action("Index", "DataUser")" class="btn btn-secondary">Cancel</a>
+                                        <a href="@Url.Action("Index", "MaterialGroup")" class="btn btn-secondary">Cancel</a>
                                     </div>
 
 
                                     @if (mode == "Create")
                                     {
-                                        <input type="submit" value="Create new User" class="btn btn-success ">
+                                        <input type="submit" value="Create" class="btn btn-success" >
                                     }
                                     else if (mode == "Edit")
                                     {
-                                        <input type="submit" value="Update User" class="btn btn-success ">
+                                        <input type="submit" value="Save" class="btn btn-success" >
                                     }
                                     else if (mode == "Delete")
                                     {
-                                        <input type="submit" value="Delete User" class="btn btn-danger">
+                                        <input type="submit" value="Delete" class="btn btn-danger" >
 
                                     }
                                 </div>
@@ -376,100 +360,54 @@
     <!-- Bootstrap 4 -->
     <script src="@Url.Content("~/Content/Theme/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
     <!-- AdminLTE App -->
-    <script src="../../dist/js/adminlte.min.js?v=3.2.0"></script>
+    <script src="@Url.Content("~/Content/Theme/AdminLTE/dist/js/adminlte.min.js?v=3.2.0")"></script>
     <!-- AdminLTE for demo purposes -->
-    <script src="../../dist/js/demo.js"></script>
+    <script src="@Url.Content("~/Content/Theme/AdminLTE/dist/js/demo.js")"></script>
 
     <script>
+      
         $(document).ready(function () {
-            var mode = $('input[name="mode"]').val();
-
-
-            if (mode == "Edit") {
-                $("#Password").prop("readonly", true);
-                $("#Password").prop("disabled", false);
-                $("#ChangePassword").prop("checked", false);
-                $("#Username").prop("checked", false);
-
-            }
-            else if (mode == "Create") {
-                $("#Password").prop("readonly", false);
-                $("#Password").prop("disabled", false);
-                $("#ChangePassword").hide();
-                $(".input-group-append").hide();
-            }
-            else if (mode == "Delete" || mode == "View") {
-                $("input:not([type='submit']), select").prop("readonly", true);
-                $("select").attr("disabled", "disabled");
-                $("#Is_Admin").prop("disabled", true);
-            }
-
-            if (mode == "Delete") {
-                $("#Password").removeAttr("required");
-            }
-
-            $("#Is_Admin").change(function () {
-                if ($(this).is(":checked")) {
-                    $("#Is_Admin").val("true");
-                }
-                else {
-                    $("#Is_Admin").val("false");
-                }
-            });
-
-            if ($("#Is_Admin").val() == true) {
-                $("#Is_Admin").prop("checked", true);
-            } else {
-                $("#Is_Admin").prop("checked", false);
-            }
-
-            $("#ChangePassword").change(function () {
-                if ($(this).is(":checked")) {
-                    $("#Password").prop("readonly", false);
-                    $("#Password").prop("disabled", false);
-                    $("#Password").focus();
-                }
-                else {
-                    $("#Password").prop("readonly", true);
-                    $("#Password").prop("disabled", true);
-
-                    $("#Password").val("");
-                }
-            });
-
-            $("#ShowPassword").change(function () {
-                if ($(this).is(":checked")) {
-                    $("#Password").attr("type", "text");
-                }
-                else {
-                    $("#Password").attr("type", "password");
-                }
-            });
-
-
             $("form").submit(function (e) {
-                $("input[name='Is_Admin_Hidden']").remove();
-                var isAdmin = $("#Is_Admin").is(":checked");
-                $("form").append('<input type="hidden" name="Is_Admin_Hidden" value="' + isAdmin + '">');
-            });
+                var materialGroup = $("#Material_Group1").val();
+                var materialDesc = $("#Material_Description").val();
+                var ageAsset = $("#Age_Accounting_Asset").val();
+                var mode = $("input[name='mode']").val();
 
-            $("form").submit(function (e) {
+                console.log("Material Group: " + materialGroup);
+                console.log("Material Description: " + materialDesc);
+                console.log("Age Asset: " + ageAsset);
+                console.log("Mode: " + mode);
+
+
+                if (!materialGroup || !materialDesc || !ageAsset) {
+                    alert("Please fill all required field");
+                    e.preventDefault();
+                    return false;
+                }
+
                 if (mode == "Delete") {
-                    if (!confirm("Are you sure you want to delete this user?")) {
+                    if (!confirm("Are you sure want to delete this Material Group?")) {
                         e.preventDefault();
                         return false;
                     }
                 }
-                if (mode == "Edit" && $("#ChangePassword").is(":checked") && $("#Password").val() == "") {
-                    alert("Password must be filled");
-                    e.preventDefault();
-                    return false;
-                }
             });
 
+
+             @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                toastr.success('@TempData["SuccessMessage"]');
+                </text>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                toastr.error('@TempData["ErrorMessage"]');
+                </text>
+            }
         });
     </script>
 
 </body>
-
 </html>

@@ -16,7 +16,7 @@ namespace IT_Inventory.Controllers
         public DataUserController(IT_Inventory db, IUserService userService)
         {
             this.db = db;
-            this.userService = userService;
+
         }
 
         public ActionResult Index()
@@ -33,7 +33,6 @@ namespace IT_Inventory.Controllers
                 Username = u.Username,
                 Departement = u.Departement,
                 City = u.City,
-
                 Location = u.Location,
                 LastLogin = u.Last_Login,
                 IsAdmin = u.Is_Admin ?? false,

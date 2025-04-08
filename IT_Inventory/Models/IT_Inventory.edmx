@@ -72,11 +72,15 @@
         </EntityType>
         <EntityType Name="Material_Code">
           <Key>
-            <PropertyRef Name="Material_Code" />
+            <PropertyRef Name="Material_CodeId" />
           </Key>
-          <Property Name="Material_Code" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Material_CodeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Material_Code" Type="varchar" MaxLength="100" />
           <Property Name="Material_Description" Type="varchar" MaxLength="255" />
           <Property Name="Material_Group" Type="varchar" MaxLength="100" />
+          <Property Name="No_Asset_PGA" Type="varchar" MaxLength="255" />
+          <Property Name="No_Asset_Accounting" Type="varchar" MaxLength="100" />
+          <Property Name="No_PO" Type="varchar" MaxLength="100" />
           <Property Name="Create_By" Type="varchar" MaxLength="100" />
           <Property Name="Create_Date" Type="datetime" />
           <Property Name="Edit_By" Type="varchar" MaxLength="100" />
@@ -188,21 +192,6 @@
           <Property Name="Delete_Date" Type="DateTime" Precision="3" />
           <Property Name="Is_Deleted" Type="Boolean" />
         </EntityType>
-        <EntityType Name="Material_Code">
-          <Key>
-            <PropertyRef Name="Material_Code1" />
-          </Key>
-          <Property Name="Material_Code1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Material_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Material_Group" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
-          <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
-          <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
-          <Property Name="Is_Deleted" Type="Boolean" />
-        </EntityType>
         <EntityType Name="Material_Group">
           <Key>
             <PropertyRef Name="Material_Group1" />
@@ -247,10 +236,10 @@
           <EntitySet Name="Company" EntityType="Self.Company" />
           <EntitySet Name="Departement" EntityType="Self.Departement" />
           <EntitySet Name="Location" EntityType="Self.Location" />
-          <EntitySet Name="Material_Code" EntityType="Self.Material_Code" />
           <EntitySet Name="Material_Group" EntityType="Self.Material_Group" />
           <EntitySet Name="Users" EntityType="Self.Users" />
           <EntitySet Name="City" EntityType="IT_InventoryModel.City" />
+          <EntitySet Name="Material_Code" EntityType="IT_InventoryModel.Material_Code" />
         </EntityContainer>
         <EntityType Name="City">
           <Key>
@@ -266,6 +255,25 @@
           <Property Name="Delete_Date" Type="DateTime" Precision="3" />
           <Property Name="Is_Deleted" Type="Boolean" />
           <Property Name="City_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Material_Code">
+          <Key>
+            <PropertyRef Name="Material_CodeId" />
+          </Key>
+          <Property Name="Material_CodeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Material_Code1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Material_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Material_Group" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Is_Deleted" Type="Boolean" />
+          <Property Name="No_Asset_PGA" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="No_Asset_Accounting" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="No_PO" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -317,22 +325,6 @@
                 <ScalarProperty Name="Location_Code" ColumnName="Location_Code" />
                 <ScalarProperty Name="Location_Name" ColumnName="Location_Name" />
                 <ScalarProperty Name="Location_Description" ColumnName="Location_Description" />
-                <ScalarProperty Name="Create_By" ColumnName="Create_By" />
-                <ScalarProperty Name="Create_Date" ColumnName="Create_Date" />
-                <ScalarProperty Name="Edit_By" ColumnName="Edit_By" />
-                <ScalarProperty Name="Edit_Date" ColumnName="Edit_Date" />
-                <ScalarProperty Name="Delete_By" ColumnName="Delete_By" />
-                <ScalarProperty Name="Delete_Date" ColumnName="Delete_Date" />
-                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Material_Code">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Material_Code">
-              <MappingFragment StoreEntitySet="Material_Code">
-                <ScalarProperty Name="Material_Code1" ColumnName="Material_Code" />
-                <ScalarProperty Name="Material_Description" ColumnName="Material_Description" />
-                <ScalarProperty Name="Material_Group" ColumnName="Material_Group" />
                 <ScalarProperty Name="Create_By" ColumnName="Create_By" />
                 <ScalarProperty Name="Create_Date" ColumnName="Create_Date" />
                 <ScalarProperty Name="Edit_By" ColumnName="Edit_By" />
@@ -397,6 +389,26 @@
                 <ScalarProperty Name="Create_By" ColumnName="Create_By" />
                 <ScalarProperty Name="City_Description" ColumnName="City_Description" />
                 <ScalarProperty Name="City_Name" ColumnName="City_Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Material_Code">
+            <EntityTypeMapping TypeName="IT_InventoryModel.Material_Code">
+              <MappingFragment StoreEntitySet="Material_Code">
+                <ScalarProperty Name="No_PO" ColumnName="No_PO" />
+                <ScalarProperty Name="No_Asset_Accounting" ColumnName="No_Asset_Accounting" />
+                <ScalarProperty Name="No_Asset_PGA" ColumnName="No_Asset_PGA" />
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Delete_Date" ColumnName="Delete_Date" />
+                <ScalarProperty Name="Delete_By" ColumnName="Delete_By" />
+                <ScalarProperty Name="Edit_Date" ColumnName="Edit_Date" />
+                <ScalarProperty Name="Edit_By" ColumnName="Edit_By" />
+                <ScalarProperty Name="Create_Date" ColumnName="Create_Date" />
+                <ScalarProperty Name="Create_By" ColumnName="Create_By" />
+                <ScalarProperty Name="Material_Group" ColumnName="Material_Group" />
+                <ScalarProperty Name="Material_Description" ColumnName="Material_Description" />
+                <ScalarProperty Name="Material_Code1" ColumnName="Material_Code" />
+                <ScalarProperty Name="Material_CodeId" ColumnName="Material_CodeId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

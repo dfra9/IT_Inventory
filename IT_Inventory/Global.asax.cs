@@ -25,6 +25,8 @@ namespace IT_Inventory
 
 
             DependencyConfig.RegisterDependencies();
+
+
         }
     }
 }

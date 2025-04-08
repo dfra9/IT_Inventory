@@ -162,8 +162,14 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\CityController.cs" />
+    <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\DataUserController.cs" />
+    <Compile Include="Controllers\DepartementController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LocationController.cs" />
+    <Compile Include="Controllers\MaterialCodeController.cs" />
+    <Compile Include="Controllers\MaterialGroupController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -208,10 +214,13 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IUserService.cs" />
+    <Compile Include="Services\MaterialCodeService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModel\DataUserViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
+    <Compile Include="ViewModel\MaterialCodeViewModel.cs" />
+    <Compile Include="ViewModel\MaterialViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="admin-lte\css\AdminLTE.css" />
@@ -2809,6 +2818,18 @@
     <Content Include="Views\Auth\Login.cshtml" />
     <Content Include="Views\DataUser\Index.cshtml" />
     <Content Include="Views\DataUser\Editor.cshtml" />
+    <Content Include="Views\MaterialGroup\Index.cshtml" />
+    <Content Include="Views\MaterialCode\Index.cshtml" />
+    <Content Include="Views\MaterialGroup\Editor.cshtml" />
+    <Content Include="Views\MaterialCode\Editor.cshtml" />
+    <Content Include="Views\Departement\Index.cshtml" />
+    <Content Include="Views\Company\Index.cshtml" />
+    <Content Include="Views\Company\Editor.cshtml" />
+    <Content Include="Views\Departement\Editor.cshtml" />
+    <Content Include="Views\City\Index.cshtml" />
+    <Content Include="Views\City\Editor.cshtml" />
+    <Content Include="Views\Location\Index.cshtml" />
+    <Content Include="Views\Location\Editor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
