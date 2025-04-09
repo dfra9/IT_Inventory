@@ -1,371 +1,149 @@
-﻿ @model global::IT_Inventory.Models.Material_Group
+﻿@model global::IT_Inventory.Models.Material_Group
 
 @{
-    ViewBag.Title = "Material Group Management";
-    Layout = null;
 
     var mode = ViewBag.Mode ?? "Create";
-
+    ViewBag.Title = @mode + " - Material Group";
 }
+       
+        <!-- Main content -->
+        <section class="content">
+            @using (Html.BeginForm("Editor", "MaterialGroup", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="mode" value="@mode" />
+                <input type="hidden" name="id" value="@Model?.Material_Group1" />
 
-<!DOCTYPE html>
-
-
-<html lang="en" style="height: auto">
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>
-        @(mode) Material Group
-    </title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
-    <!-- Font Awesome -->
-    @Styles.Render("~/Content/Theme/AdminLTE/plugins/fontawesome-free/css/all.min.css")
-    <!-- icheck bootstrap -->
-    @Styles.Render("~/Content/Theme/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css")
-    <!-- Theme style -->
-    @Styles.Render("~/Content/Theme/AdminLTE/dist/css/adminlte.min.css")
-    <style>
-        .card-primary {
-            margin: 0 auto;
-            max-width: auto;
-        }
-
-        .action-button {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-            .action-button .btn-danger,
-            .action-button .btn-success {
-                margin-left: auto;
-            }
-
-        .content .row {
-            display: flex;
-            justify-content: center;
-        }
-
-        .col-md-6 {
-            width: 100%;
-        }
-
-        .action-button .btn-secondary {
-            margin-right: 10px;
-        }
-    </style>
-</head>
-<body class="sidebar-mini" style="height: auto;">
-    <!-- Site wrapper -->
-    <div class="wrapper">
-        <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-            <!-- Left navbar links -->
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="../../index3.html" class="nav-link">Home</a>
-                </li>
-            </ul>
-
-            <!-- Right navbar links -->
-
-
-        </nav>
-        <!-- /.navbar -->
-        <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
-            <a href="../../index3.html" class="brand-link">
-                <img src="../../dist/img/AdminLTELogo.png" alt="" class="brand-image img-circle elevation-3" style="opacity: .8">
-                <span class="brand-text font-weight-light">IT_Inventory</span>
-            </a>
-
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Sidebar user (optional) -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-                    </div>
-                    <div class="info">
-                        <a href="#" class="d-block">Alexander Pierce</a>
-                    </div>
-                </div>
-
-                <!-- SidebarSearch Form -->
-                <div class="form-inline">
-                    <div class="input-group" data-widget="sidebar-search">
-                        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-sidebar">
-                                <i class="fas fa-search fa-fw"></i>
-                            </button>
-                        </div>
-                    </div><div class="sidebar-search-results"><div class="list-group"><a href="#" class="list-group-item"><div class="search-title"><strong class="text-light"></strong>N<strong class="text-light"></strong>o<strong class="text-light"></strong> <strong class="text-light"></strong>e<strong class="text-light"></strong>l<strong class="text-light"></strong>e<strong class="text-light"></strong>m<strong class="text-light"></strong>e<strong class="text-light"></strong>n<strong class="text-light"></strong>t<strong class="text-light"></strong> <strong class="text-light"></strong>f<strong class="text-light"></strong>o<strong class="text-light"></strong>u<strong class="text-light"></strong>n<strong class="text-light"></strong>d<strong class="text-light"></strong>!<strong class="text-light"></strong></div><div class="search-path"></div></a></div></div>
-                </div>
-
-                <!-- Sidebar Menu -->
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>
-                                    Dashboard
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index", "DataUser")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>User</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index", "MaterialGroup")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Material Group</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index", "MaterialCode")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Material Code</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index", "Company")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Company</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index", "Departement")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Departement</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index", "Location")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Location</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("Index", "City")" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>City</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <!-- /.sidebar-menu -->
-            </div>
-            <!-- /.sidebar -->
-        </aside>
-
-        <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper" style="min-height: 1603.65px;">
-            <!-- Content Header (Page header) -->
-            <section class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1>@(mode) Material Group</h1>
-                        </div>
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
-                                <li class="breadcrumb-item"><a href="@Url.Action("Index", "MaterialGroup")">Material Group</a></li>
-                                <li class="breadcrumb-item active">@(mode) Material Group</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div><!-- /.container-fluid -->
-            </section>
-
-            <!-- Main content -->
-            <section class="content">
-                @using (Html.BeginForm("Editor", "MaterialGroup",  FormMethod.Post))
-                {
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="mode" value="@mode" />
-                    <input type="hidden" name="id" value="@Model?.Material_Group1" />
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card card-primary">
-                                <div class="card-header">
-                                    <h3 class="card-title">Material Group Details</h3>
-                                </div>
-                                <div class="row justify-content-center">
-                                    <div class="col-md-8">
-                                        <div class="form-group row">
-                                            <div class="card-body">
-
-
-                                                <div class="form-group row">
-                                                    <label for="Material_Group1" class="col-sm-3 col-form-label form-control-label">Material Group</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "Edit" || mode == "View" || mode == "Delete")
-                                                        {
-                                                            <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" readonly>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" required>
-                                                        }
-                                                    </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card card-primary">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="form-group row">
+                                        <div class="card-body">
+                                            <div class="form-group row">
+                                                <label for="Material_Group1" class="col-sm-3 col-form-label form-control-label">Material Group</label>
+                                                <div class="col-sm-9">
+                                                    @if (mode == "Edit" || mode == "View" || mode == "Delete")
+                                                    {
+                                                        <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" readonly>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" required>
+                                                    }
                                                 </div>
+                                            </div>
 
 
-                                                <div class="form-group row">
-                                                    <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "View")
-                                                        {
+                                            <div class="form-group row">
+                                                <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
+                                                <div class="col-sm-9">
+                                                    @if (mode == "View")
+                                                    {
 
-                                                            <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" required>
-                                                        }
-                                                    </div>
+                                                        <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" required>
+                                                    }
                                                 </div>
-                                                <div class="form-group row">
-                                                    <label for="Age_Accounting_Asset" class="col-sm-3 col-form-label form-control-label">Age Accounting Asset</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "View")
-                                                        {
-                                                            <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" readonly>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" required>
-                                                        }
-                                                    </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="Age_Accounting_Asset" class="col-sm-3 col-form-label form-control-label">Age Accounting Asset</label>
+                                                <div class="col-sm-9">
+                                                    @if (mode == "View")
+                                                    {
+                                                        <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" readonly>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" required>
+                                                    }
                                                 </div>
-                                                <div class="form-group row">
-                                                    <label for="Quantity" class="col-sm-3 col-form-label form-control-label">Quantity</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "View")
-                                                        {
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="Quantity" class="col-sm-3 col-form-label form-control-label">Quantity</label>
+                                                <div class="col-sm-9">
+                                                    @if (mode == "View")
+                                                    {
 
-                                                            <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)" readonly>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)" >
-                                                        }
-                                                    </div>
+                                                        <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)" readonly>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)">
+                                                    }
                                                 </div>
-                                                <div class="form-group row">
-                                                    <label for="Last_Check_Date" class="col-sm-3 col-form-label form-control-label">Last Check Date</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "View")
-                                                        {
-                                                            <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")">
-                                                        }
-                                                    </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="Last_Check_Date" class="col-sm-3 col-form-label form-control-label">Last Check Date</label>
+                                                <div class="col-sm-9">
+                                                    @if (mode == "View")
+                                                    {
+                                                        <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")">
+                                                    }
                                                 </div>
-                                                <div class="form-group row">
-                                                    <label for="Max_Warranty_Date" class="col-sm-3 col-form-label form-control-label">Max Warranty Date</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "View")
-                                                        {
-                                                            <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")">
-                                                        }
-                                                    </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="Max_Warranty_Date" class="col-sm-3 col-form-label form-control-label">Max Warranty Date</label>
+                                                <div class="col-sm-9">
+                                                    @if (mode == "View")
+                                                    {
+                                                        <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")">
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- /.card-body -->
                             </div>
+                            <!-- /.card-body -->
                         </div>
                     </div>
+                </div>
 
-                    <!-- /.card -->
-                    <!-- /.card-body -->
-                    <!-- /.card -->
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <div class="button-container">
-                                <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
-                                    <div>
-                                        <a href="@Url.Action("Index", "MaterialGroup")" class="btn btn-secondary">Cancel</a>
-                                    </div>
-
-
-                                    @if (mode == "Create")
-                                    {
-                                        <input type="submit" value="Create" class="btn btn-success" >
-                                    }
-                                    else if (mode == "Edit")
-                                    {
-                                        <input type="submit" value="Save" class="btn btn-success" >
-                                    }
-                                    else if (mode == "Delete")
-                                    {
-                                        <input type="submit" value="Delete" class="btn btn-danger" >
-
-                                    }
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="button-container">
+                            <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
+                                <div>
+                                    <a href="@Url.Action("Index", "MaterialGroup")" class="btn btn-secondary">Cancel</a>
                                 </div>
+
+
+                                @if (mode == "Create")
+                                {
+                                    <input type="submit" value="Create" class="btn btn-success">
+                                }
+                                else if (mode == "Edit")
+                                {
+                                    <input type="submit" value="Save" class="btn btn-success">
+                                }
+                                else if (mode == "Delete")
+                                {
+                                    <input type="submit" value="Delete" class="btn btn-danger">
+
+                                }
                             </div>
                         </div>
                     </div>
+                </div>
 
-                }
-            </section>
-            <!-- /.content -->
-        </div>
+            }
+        </section>
 
-        <!-- /.content-wrapper -->
+        <script>
 
-        <footer class="main-footer">
-            <div class="float-right d-none d-sm-block">
-
-            </div>
-            <strong>IT Inventory</strong>
-        </footer>
-
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark" style="display: none;">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
-        <div id="sidebar-overlay"></div>
-    </div>
-    <!-- ./wrapper -->
-    <!-- jQuery -->
-    <script src="@Url.Content("~/Content/Theme/AdminLTE/plugins/jquery/jquery.min.js")"></script>
-    <!-- Bootstrap 4 -->
-    <script src="@Url.Content("~/Content/Theme/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
-    <!-- AdminLTE App -->
-    <script src="@Url.Content("~/Content/Theme/AdminLTE/dist/js/adminlte.min.js?v=3.2.0")"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="@Url.Content("~/Content/Theme/AdminLTE/dist/js/demo.js")"></script>
-
-    <script>
-      
         $(document).ready(function () {
             $("form").submit(function (e) {
                 var materialGroup = $("#Material_Group1").val();
@@ -407,7 +185,5 @@
                 </text>
             }
         });
-    </script>
+        </script>
 
-</body>
-</html>

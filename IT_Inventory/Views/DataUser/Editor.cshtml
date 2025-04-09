@@ -2,276 +2,243 @@
 @model global::IT_Inventory.Models.Users
 
 @{
-    //Operation
+
     var mode = ViewBag.Mode ?? "Create";
     ViewBag.Title = @mode + " - User Data";
-
-
     var userId = Request.QueryString["id"] ?? "0";
-
     var db = new IT_Inventory();
     var cities = db.City.ToList();
     var departements = db.Departement.ToList();
     var locations = db.Location.ToList();
 }
 
-<style>
-    .card-primary {
-        margin: 0 auto;
-        max-width: auto
-    }
 
-    .action-button {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-        width: 100%;
-    }
+<section class="content">
+    @using (Html.BeginForm("Editor", "DataUser", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="mode" value="@mode" />
+        <input type="hidden" name="User_Id" value="@Model.User_Id" />
 
-        .action-button .btn-danger,
-        .action-button .btn-success {
-            margin-left: auto;
-        }
-
-    .content .row {
-        display: flex;
-        justify-content: center;
-    }
-
-    .col-md-6 {
-        width: 100%;
-    }
-
-    .action-button .btn-secondary {
-        margin-right: 10px;
-    }
-</style>
-
-@using (Html.BeginForm("Editor", "DataUser", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="mode" value="@mode" />
-    <input type="hidden" name="User_Id" value="@Model.User_Id" />
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-primary">
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <div class="form-group row">
-                            <div class="card-body">
-                                <div class="form-group row">
-                                    <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
-                                    <div class="col-sm-9">
-
-                                        @if (mode == "Delete")
-                                        {
-                                            <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
-                                        }
-                                        else if (mode == "Edit")
-                                        {
-                                            <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
-                                        }
-                                        else
-                                        {
-                                            <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" required>
-                                        }
-                                    </div>
-                                </div>
-
-                                @if (Session["IsAdmin"] is bool IsAdmin && IsAdmin)
-                                {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <div class="card-body">
                                     <div class="form-group row">
-                                        <label for="IsAdmin" class="col-sm-3 col-form-label form-control-label">User Is Admin?</label>
+                                        <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
                                         <div class="col-sm-9">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="Is_Admin" name="Is_Admin" value="True" @(Model.Is_Admin == true ? "checked" : "") />
+
+                                            @if (mode == "Delete")
+                                            {
+                                                <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
+                                            }
+                                            else if (mode == "Edit")
+                                            {
+                                                <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" required>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    @if (Session["IsAdmin"] is bool IsAdmin && IsAdmin)
+                                    {
+                                        <div class="form-group row">
+                                            <label for="IsAdmin" class="col-sm-3 col-form-label form-control-label">User Is Admin?</label>
+                                            <div class="col-sm-9">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="Is_Admin" name="Is_Admin" value="True" @(Model.Is_Admin == true ? "checked" : "") />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    }
+
+                                    <div class="form-group row">
+                                        <label for="Password" class="col-sm-3 col-form-label form-control-label">Password</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input type="password" id="Password" name="Password" class="form-control" placeholder="@(mode == "Edit" ? "Change Password" : "Enter password")"
+                                                       @(mode == "Edit" ? "" : "required")>
+                                                @if (mode == "Edit")
+                                                {
+                                                    <div class="input-group-append">
+                                                        <div class="input-group-text">
+                                                            <input type="checkbox" id="ChangePassword" name="ChangePassword" />
+                                                        </div>
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
                                     </div>
 
+                                    <div class="form-group row">
+                                        <label for="Departement" class="col-sm-3 col-form-label form-control-label">Departement</label>
 
-                                }
+                                        <div class="col-sm-9">
+                                            <select id="Departement" name="Departement" class="form-control custom-select" required>
+                                                <option value="" disabled @(Model.Departement == null ? "Selected" : "")> Select Departement</option>
+                                                @foreach (var dept in departements)
+                                                {
+                                                    <option value="@dept.Departement_Name " @(Model.Departement == dept.Departement_Name ? "Selected" : "")> @dept.Departement_Name</option>
+                                                }
 
-                                <div class="form-group row">
-                                    <label for="Password" class="col-sm-3 col-form-label form-control-label">Password</label>
-                                    <div class="col-sm-9">
-                                        <div class="input-group">
-                                            <input type="password" id="Password" name="Password" class="form-control" placeholder="@(mode == "Edit" ? "Change Password" : "Enter password")"
-                                                   @(mode == "Edit" ? "" : "required")>
-                                            @if (mode == "Edit")
-                                            {
-                                                <div class="input-group-append">
-                                                    <div class="input-group-text">
-                                                        <input type="checkbox" id="ChangePassword" name="ChangePassword" />
-                                                    </div>
-                                                </div>
-                                            }
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label for="Departement" class="col-sm-3 col-form-label form-control-label">Departement</label>
-
-                                    <div class="col-sm-9">
-                                        <select id="Departement" name="Departement" class="form-control custom-select" required>
-                                            <option value="" disabled @(Model.Departement == null ? "Selected" : "")> Select Departement</option>
-                                            @foreach (var dept in departements)
-                                            {
-                                                <option value="@dept.Departement_Name " @(Model.Departement == dept.Departement_Name ? "Selected" : "")> @dept.Departement_Name</option>
-                                            }
-
-                                        </select>
+                                    <div class="form-group row">
+                                        <label for="City" class="col-sm-3 col-form-label form-control-label">City</label>
+                                        <div class="col-sm-9">
+                                            <select id="City" name="City" class="form-control custom-select" required>
+                                                <option value="" disabled @(Model.City == null ? "Selected" : "")> Select City</option>
+                                                @foreach (var city in cities)
+                                                {
+                                                    <option value="@city.City_Name" @(Model.City == city.City_Name ? "Selected" : "")> @city.City_Name</option>
+                                                }
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="City" class="col-sm-3 col-form-label form-control-label">City</label>
-                                    <div class="col-sm-9">
-                                        <select id="City" name="City" class="form-control custom-select" required>
-                                            <option value="" disabled @(Model.City == null ? "Selected" : "")> Select City</option>
-                                            @foreach (var city in cities)
-                                            {
-                                                <option value="@city.City_Name" @(Model.City == city.City_Name ? "Selected" : "")> @city.City_Name</option>
-                                            }
-                                        </select>
+                                    <div class="form-group row">
+                                        <label for="Location" class="col-sm-3 col-form-label form-control-label">Location</label>
+                                        <div class="col-sm-9">
+                                            <select id="Location" name="Location" class="form-control custom-select" required>
+                                                <option value="" disabled @(Model.Location == null ? "Selected" : "")> Select Location</option>
+                                                @foreach (var loc in locations)
+                                                {
+                                                    <option value="@loc.Location_Name" @(Model.Location == loc.Location_Name ? "Selected" : "")> @loc.Location_Name</option>
+                                                }
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="Location" class="col-sm-3 col-form-label form-control-label">Location</label>
-                                    <div class="col-sm-9">
-                                        <select id="Location" name="Location" class="form-control custom-select" required>
-                                            <option value="" disabled @(Model.Location == null ? "Selected" : "")> Select Location</option>
-                                            @foreach (var loc in locations)
-                                            {
-                                                <option value="@loc.Location_Name" @(Model.Location == loc.Location_Name ? "Selected" : "")> @loc.Location_Name</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-12 mb-4">
-            <div class="button-container">
-                <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
-                    <div>
-                        <a href="@Url.Action("Index", "DataUser")" class="btn btn-secondary">Cancel</a>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="button-container">
+                    <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
+                        <div>
+                            <a href="@Url.Action("Index", "DataUser")" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+
+                        @if (mode == "Create")
+                        {
+                            <input type="submit" value="Create new User" class="btn btn-success ">
+                        }
+                        else if (mode == "Edit")
+                        {
+                            <input type="submit" value="Update User" class="btn btn-success ">
+                        }
+                        else if (mode == "Delete")
+                        {
+                            <input type="submit" value="Delete User" class="btn btn-danger">
+
+                        }
                     </div>
-
-
-                    @if (mode == "Create")
-                    {
-                        <input type="submit" value="Create new User" class="btn btn-success ">
-                    }
-                    else if (mode == "Edit")
-                    {
-                        <input type="submit" value="Update User" class="btn btn-success ">
-                    }
-                    else if (mode == "Delete")
-                    {
-                        <input type="submit" value="Delete User" class="btn btn-danger">
-
-                    }
                 </div>
             </div>
         </div>
-    </div>
 
-}
+    }
+    </section>
+    <script>
+        $(document).ready(function () {
+            var mode = $('input[name="mode"]').val();
 
-<script>
-    $(document).ready(function () {
-        var mode = $('input[name="mode"]').val();
 
+            if (mode == "Edit") {
+                $("#Password").prop("readonly", true);
+                $("#Password").prop("disabled", false);
+                $("#ChangePassword").prop("checked", false);
+                $("#Username").prop("checked", false);
 
-        if (mode == "Edit") {
-            $("#Password").prop("readonly", true);
-            $("#Password").prop("disabled", false);
-            $("#ChangePassword").prop("checked", false);
-            $("#Username").prop("checked", false);
-
-        }
-        else if (mode == "Create") {
-            $("#Password").prop("readonly", false);
-            $("#Password").prop("disabled", false);
-            $("#ChangePassword").hide();
-            $(".input-group-append").hide();
-        }
-        else if (mode == "Delete" || mode == "View") {
-            $("input:not([type='submit']), select").prop("readonly", true);
-            $("select").attr("disabled", "disabled");
-            $("#Is_Admin").prop("disabled", true);
-        }
-
-        if (mode == "Delete") {
-            $("#Password").removeAttr("required");
-        }
-
-        $("#Is_Admin").change(function () {
-            if ($(this).is(":checked")) {
-                $("#Is_Admin").val("true");
             }
-            else {
-                $("#Is_Admin").val("false");
-            }
-        });
-
-        if ($("#Is_Admin").val() == true) {
-            $("#Is_Admin").prop("checked", true);
-        } else {
-            $("#Is_Admin").prop("checked", false);
-        }
-
-        $("#ChangePassword").change(function () {
-            if ($(this).is(":checked")) {
+            else if (mode == "Create") {
                 $("#Password").prop("readonly", false);
                 $("#Password").prop("disabled", false);
-                $("#Password").focus();
+                $("#ChangePassword").hide();
+                $(".input-group-append").hide();
             }
-            else {
-                $("#Password").prop("readonly", true);
-                $("#Password").prop("disabled", true);
-
-                $("#Password").val("");
+            else if (mode == "Delete" || mode == "View") {
+                $("input:not([type='submit']), select").prop("readonly", true);
+                $("select").attr("disabled", "disabled");
+                $("#Is_Admin").prop("disabled", true);
             }
-        });
 
-        $("#ShowPassword").change(function () {
-            if ($(this).is(":checked")) {
-                $("#Password").attr("type", "text");
-            }
-            else {
-                $("#Password").attr("type", "password");
-            }
-        });
-
-
-        $("form").submit(function (e) {
-            $("input[name='Is_Admin_Hidden']").remove();
-            var isAdmin = $("#Is_Admin").is(":checked");
-            $("form").append('<input type="hidden" name="Is_Admin_Hidden" value="' + isAdmin + '">');
-        });
-
-        $("form").submit(function (e) {
             if (mode == "Delete") {
-                if (!confirm("Are you sure you want to delete this user?")) {
+                $("#Password").removeAttr("required");
+            }
+
+            $("#Is_Admin").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#Is_Admin").val("true");
+                }
+                else {
+                    $("#Is_Admin").val("false");
+                }
+            });
+
+            if ($("#Is_Admin").val() == true) {
+                $("#Is_Admin").prop("checked", true);
+            } else {
+                $("#Is_Admin").prop("checked", false);
+            }
+
+            $("#ChangePassword").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#Password").prop("readonly", false);
+                    $("#Password").prop("disabled", false);
+                    $("#Password").focus();
+                }
+                else {
+                    $("#Password").prop("readonly", true);
+                    $("#Password").prop("disabled", true);
+
+                    $("#Password").val("");
+                }
+            });
+
+            $("#ShowPassword").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#Password").attr("type", "text");
+                }
+                else {
+                    $("#Password").attr("type", "password");
+                }
+            });
+
+
+            $("form").submit(function (e) {
+                $("input[name='Is_Admin_Hidden']").remove();
+                var isAdmin = $("#Is_Admin").is(":checked");
+                $("form").append('<input type="hidden" name="Is_Admin_Hidden" value="' + isAdmin + '">');
+            });
+
+            $("form").submit(function (e) {
+                if (mode == "Delete") {
+                    if (!confirm("Are you sure you want to delete this user?")) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+                if (mode == "Edit" && $("#ChangePassword").is(":checked") && $("#Password").val() == "") {
+                    alert("Password must be filled");
                     e.preventDefault();
                     return false;
                 }
-            }
-            if (mode == "Edit" && $("#ChangePassword").is(":checked") && $("#Password").val() == "") {
-                alert("Password must be filled");
-                e.preventDefault();
-                return false;
-            }
-        });
+            });
 
-    });
-</script>
+        });
+    </script>

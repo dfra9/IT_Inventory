@@ -14,14 +14,14 @@ namespace IT_Inventory.Controllers
             return View(cities);
         }
 
-        public ActionResult Editor(string mode, string id)
+        public ActionResult Editor(string mode, int? id)
         {
             ViewBag.Mode = mode;
             if (mode == "Create")
             {
                 return View(new City { Is_Deleted = false });
             }
-            var city = db.City.Find(id);
+            var city = id.HasValue ? db.City.FirstOrDefault(c => c.City_Id == id.Value) : null;
             if (city == null)
             {
                 TempData["Error"] = "City not found.";
