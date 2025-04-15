@@ -159,6 +159,7 @@
     <Compile Include="App_Start\DependencyConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AssetManagementController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\CityController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
@@ -170,6 +171,9 @@
     <Compile Include="Controllers\MaterialGroupController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Asset.cs">
+      <DependentUpon>IT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\City.cs">
       <DependentUpon>IT_Inventory.tt</DependentUpon>
@@ -215,6 +219,7 @@
     <Compile Include="Services\MaterialCodeService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModel\AssetManagementViewModel.cs" />
     <Compile Include="ViewModel\DataUserViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MaterialCodeViewModel.cs" />
@@ -2828,6 +2833,7 @@
     <Content Include="Views\City\Editor.cshtml" />
     <Content Include="Views\Location\Index.cshtml" />
     <Content Include="Views\Location\Editor.cshtml" />
+    <Content Include="Views\AssetManagement\Transaction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,465 @@
+﻿
+@model global::IT_Inventory.ViewModel.AssetManagementViewModel
+@{
+    ViewBag.Title = "Transaction";
+}
+
+<section class="content">
+    @using (Html.BeginForm("Transaction", "AssetManagement", FormMethod.Post, new { id = "assetForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="card card-default">
+            <div class="card-header">
+                <h3 class="card-title">Asset Management</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>No Asset</label>
+                            @Html.TextBoxFor(m => m.No_asset, new { @class = "form-control", placeholder = "Input No Asset" })
+                            @Html.ValidationMessageFor(m => m.No_asset, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label>Company Code</label>
+                            @Html.DropDownListFor(m => m.Company_Code, Model.GetCompanyListItem(), "Select Company Code", new { @class = "form-control select2", id = "companyCodeDropdown" })
+                            @Html.ValidationMessageFor(m => m.Company_Code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            @Html.TextBoxFor(m => m.Company_Name, new { @class = "form-control", @readonly = "readonly", id = "Company_Name" })
+                        </div>
+                        <div class="form-group">
+                            <label>Material Group Code</label>
+                            @Html.TextBoxFor(m => m.Material_Group_Code, new { @class = "form-control", placeholder = "Input Material Group Code" })
+                            @Html.ValidationMessageFor(m => m.Material_Group_Code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Material Group</label>
+                            @Html.TextBoxFor(m => m.Material_Group, new { @class = "form-control", placeholder = "Input Material Group" })
+                            @Html.ValidationMessageFor(m => m.Material_Group, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Material Description</label>
+                            @Html.TextBoxFor(m => m.Material_Description, new { @class = "form-control", placeholder = "Input Material Description" })
+                            @Html.ValidationMessageFor(m => m.Material_Description, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", type = "number", placeholder = "Input Material Group Code" })
+                            @Html.ValidationMessageFor(m => m.Quantity, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Unit</label>
+                            @Html.TextBoxFor(m => m.Unit, new { @class = "form-control", placeholder = "Input Unit" })
+                            @Html.ValidationMessageFor(m => m.Unit, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Aqcuisition Date</label>
+                            @Html.TextBoxFor(m => m.Acquisition_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                            @Html.ValidationMessageFor(m => m.Acquisition_Date, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Acquisition Value</label>
+                            @Html.TextBoxFor(m => m.Acquisition_value, new { @class = "form-control", type = "number" })
+                            @Html.ValidationMessageFor(m => m.Acquisition_value, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+
+                    <!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>No Asset PGA</label>
+                            @Html.TextBoxFor(m => m.No_Asset_PGA, new { @class = "form-control", placeholder = "Input No Asset PGA" })
+                            @Html.ValidationMessageFor(m => m.No_Asset_PGA, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label>No Asset Accounting</label>
+                            @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input No Asset Accounting" })
+                            @Html.ValidationMessageFor(m => m.No_Asset_Accounting, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label>No PO</label>
+                            @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No Asset Accounting" })
+                            @Html.ValidationMessageFor(m => m.No_PO, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label>Latest User</label>
+                            @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input No Asset Accounting" })
+                            @Html.ValidationMessageFor(m => m.Latest_User, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Departement </label>
+                            @Html.DropDownListFor(m => m.Departement_Code, Model.GetDepartementListItem(), "Select Departement", new { @class = "form-control select2", id = "departementDropdown" })
+
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            @Html.DropDownListFor(m => m.Locations, Model.GetLocationListItem(), "Select Location", new { @class = "form-control select2", id = "locationDropdown" })
+
+                        </div>
+                        <div class="form-group">
+                            <label>City</label>
+                            @Html.DropDownListFor(m => m.City_Id, Model.GetCityListItem(), "Select Location", new { @class = "form-control select2", id = "cityDropdown" })
+
+                        </div>
+                        <div class="form-group">
+                            <label>Latest User</label>
+                            @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date" })
+
+                        </div>
+                        <div class="form-group">
+                            <label>Condition</label>
+                            @Html.TextBoxFor(m => m.Condition, new { @class = "form-control", placeholder = "" })
+                            @Html.ValidationMessageFor(m => m.Condition, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.col -->
+            <!-- /.row -->
+            <!-- /.card-body -->
+
+        </div>
+        <div class="card card-primary ">
+            <div class="card-header">
+                <h3 class="card-title">General</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Status</label>
+                    @Html.DropDownListFor(m => m.Status, new SelectList(new[]
+{
+                   new {Value = "Return", Text = "Return"},
+                   new {Value = "Borrowing", Text = "Borrowing"},
+                   new {Value = "Service", Text = "Service"},
+                   new {Value = "Ready", Text = "Ready"},
+                   new {Value = "Assign", Text = "Assign"},
+                   new {Value = "Write Off", Text = "Write Off"},
+               }, "Value", "Text"), "Select Status", new { @class = "form-control select2", id = "statusDropdown" })
+                    @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+                </div>
+                <div id="returnForm" class="status-form" style="display: none">
+                    <div class="form-group">
+                        <label>PIC / Vendor</label>
+                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
+                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Return Date</label>
+                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div id="borrowForm" class="status-form" style="display: none">
+                    <div class="form-group">
+                        <label>PIC / Vendor</label>
+                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
+                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Borrow Date</label>
+                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div id="serviceForm" class="status-form" style="display: none">
+                    <div class="form-group">
+                        <label>PIC / Vendor</label>
+                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
+                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Service Date</label>
+                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div id="readyForm" class="status-form" style="display: none">
+                    <div class="form-group">
+                        <label>PIC / Vendor</label>
+                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
+                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Available Date</label>
+                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div id="assignForm" class="status-form" style="display: none">
+                    <div class="form-group">
+                        <label>PIC</label>
+                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
+                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Assign Date</label>
+                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div id="writeOffForm" class="status-form" style="display: none">
+                    <div class="form-group">
+                        <label>Approved By</label>
+                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "Approved By" })
+                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Write Off Date</label>
+                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group action-buttons">
+                    <button type="button" class=" btn btn-secondary" id="btnCancel">Cancel</button>
+                    <button type="button" class=" btn btn-primary float-right" id="btnSave">Save</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                Asset History>
+            </h3>
+            <div class="card-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-default" id="btnSearch"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body table-responsive p-0">
+        <table class="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>No Assets</th>
+                    <th>PIC</th>
+                    <th>Transaction Date</th>
+                    <th>Status</th>
+                    <th>Submit Date</th>
+                </tr>
+            </thead>
+            <tbody id="assetHistoryTable">
+                @if (Model.AssetHistory != null && Model.AssetHistory.Any())
+                {
+                    foreach (var item in Model.AssetHistory)
+                    {
+                        <tr>
+                            <td>@item.No_asset</td>
+                            <td>@item.PIC</td>
+                            <td>@item.Vendor</td>
+                            <td>@(item.Transaction_Date.HasValue ? item.Transaction_Date.Value.ToString("yyyy-MM-dd"): "")</td>
+                            <td>@item.Status</td>
+                            <td>@(item.Create_Date.HasValue ? item.Create_Date.Value.ToString("yyyy-MM-dd"): "")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">No Asset found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<script>
+    (function () {
+        function fetchCompanyName(companyCode) {
+            if (companyCode) {
+                $.ajax({
+                    url: '@Url.Action("GetCompanyNameByCode", "AssetManagement")',
+                    type: 'GET',
+                    data: { companyCode: companyCode },
+                    success: function (data) {
+                        $('#Company_Name').val(data);
+                    }, error: function (error) {
+                        console.error("Error Loading company name:", error)
+                        $('#Company_Name').val("");
+                        toastr.error("Error loading company name.");
+                    }
+                });
+            } else {
+                $('#Company_Name').val("");
+            }
+        }
+
+        $(function () {
+
+            if ($.fn.select2) {
+                $('.select2').select2();
+            }
+
+            $("#companyCodeDropdown").on('change', function () {
+                var companyCode = $(this).val();
+                fetchCompanyName(companyCode);
+            });
+
+            var initialCompanyCode = $("#companyCodeDropdown").val();
+            if (initialCompanyCode) {
+                fetchCompanyName(initialCompanyCode);
+            }
+
+            function handleStatusFormDisplay() {
+
+                $(".status-form").hide();
+
+                var status = $("#statusDropdown").val();
+                if (!status || status === "") {
+                    return;
+                }
+
+                switch (status) {
+                    case 'Return':
+                        $('#returnForm').show();
+                        break;
+                    case 'Borrowing':
+                        $('#borrowForm').show();
+                        break;
+                    case 'Service':
+                        $('#serviceForm').show();
+                        break;
+                    case 'Ready':
+                        $('#readyForm').show();
+                        break;
+                    case 'Assign':
+                        $('#assignForm').show();
+                        break;
+                    case 'Write Off':
+                        $('#writeOffForm').show();
+                        break;
+                }
+            }
+
+            $("#statusDropdown").on('change', function () {
+
+                handleStatusFormDisplay();
+            });
+            handleStatusFormDisplay();
+
+
+            function loadAssetHistory() {
+                $.ajax({
+                    url: '@Url.Action("GetAssetData", "AssetManagement")',
+                    type: 'GET',
+                    data: { search: "" },
+                    success: function (data) {
+                        renderAssetHistory(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        toastr.error("Error Asset Loading History");
+                    }
+                });
+            }
+
+
+            $("#btnSearch").click(function () {
+                var searchValue = $("input[name='table_search']").val();
+                $.ajax({
+                    url: '@Url.Action("SearchAssetHistory", "AssetManagement")',
+                    type: 'GET',
+                    data: { searchValue: searchValue },
+                    success: function (data) {
+                        renderAssetHistory(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        toastr.error("Error searching asset history");
+                    }
+                });
+            });
+
+
+            function renderAssetHistory(data) {
+                var tbody = $("#assetHistoryTable");
+                tbody.empty();
+
+                if (data.length > 0) {
+                    $.each(data, function (i, item) {
+                        var row = "<tr>" +
+                            "<td>" + (item.No_asset || "") + "</td>" +
+                            "<td>" + (item.PIC || "") + "</td>" +
+                            "<td>" + formatDate(item.Transaction_Date) + "</td>" +
+                            "<td>" + (item.Status || "") + "</td>" +
+                            "<td>" + formatDate(item.Create_Date) + "</td>" +
+                            "</tr>";
+                        tbody.append(row);
+                    });
+                } else {
+                    tbody.append("<tr><td colspan='5'>No data found</td></tr>");
+                }
+            }
+
+
+            function formatDate(dateString) {
+                if (!dateString) return "";
+
+                try {
+
+                    var date = new Date(parseInt(dateString.substr(6)));
+                    if (isNaN(date.getTime())) return "";
+
+                    return date.toISOString().split('T')[0];
+                } catch (e) {
+                    console.error("Error parsing date:", e);
+                    return "";
+                }
+            }
+
+
+            $("#btnCancel").click(function () {
+                window.location.href = '@Url.Action("Index", "Home")';
+            });
+
+            $("#btnCancelStatus").click(function () {
+                $("#statusDropdown").val("").trigger("change");
+                $(".status-form").hide();
+            });
+
+            $("#btnSave").click(function () {
+                var form = $("#assetForm");
+                if (form.valid()) {
+                    form.submit();
+                } else {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error("Please fill in all required fields.");
+                    }
+                }
+            });
+
+
+            loadAssetHistory();
+        });
+    })();
+</script>

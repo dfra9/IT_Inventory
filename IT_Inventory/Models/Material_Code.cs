@@ -30,4 +30,3 @@ namespace IT_Inventory.Models
         public string No_PO { get; set; }
     }
 }
- 

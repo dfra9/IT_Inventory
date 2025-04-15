@@ -12,6 +12,43 @@
           <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
         </EntityType>
+        <EntityType Name="Asset">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NO" Type="nvarchar" MaxLength="4000" StoreGeneratedPattern="Computed" />
+          <Property Name="No_asset" Type="varchar" MaxLength="255" />
+          <Property Name="Company_Code" Type="varchar" MaxLength="100" />
+          <Property Name="Company_Name" Type="varchar" MaxLength="255" />
+          <Property Name="Material_Group_Code" Type="varchar" MaxLength="100" />
+          <Property Name="Material_Group" Type="varchar" MaxLength="100" />
+          <Property Name="Material_Description" Type="varchar" MaxLength="255" />
+          <Property Name="Quantity" Type="int" />
+          <Property Name="Unit" Type="varchar" MaxLength="50" />
+          <Property Name="Acquisition_Date" Type="datetime" />
+          <Property Name="Acquisition_value" Type="varchar" MaxLength="100" />
+          <Property Name="No_Asset_PGA" Type="varchar" MaxLength="100" />
+          <Property Name="No_Asset_Accounting" Type="varchar" MaxLength="100" />
+          <Property Name="No_PO" Type="varchar" MaxLength="100" />
+          <Property Name="Latest_User" Type="varchar" MaxLength="255" />
+          <Property Name="Departement" Type="varchar" MaxLength="255" />
+          <Property Name="Location" Type="varchar" MaxLength="255" />
+          <Property Name="City" Type="varchar" MaxLength="255" />
+          <Property Name="Last_Check_Date" Type="datetime" />
+          <Property Name="Condition" Type="varchar" MaxLength="100" />
+          <Property Name="Status" Type="varchar" MaxLength="100" />
+          <Property Name="PIC" Type="varchar" MaxLength="255" />
+          <Property Name="Vendor" Type="varchar" MaxLength="255" />
+          <Property Name="Transaction_Date" Type="datetime" />
+          <Property Name="Create_By" Type="varchar" MaxLength="100" />
+          <Property Name="Create_Date" Type="datetime" />
+          <Property Name="Edit_By" Type="varchar" MaxLength="100" />
+          <Property Name="Edit_Date" Type="datetime" />
+          <Property Name="Delete_By" Type="varchar" MaxLength="100" />
+          <Property Name="Delete_Date" Type="datetime" />
+          <Property Name="Is_Deleted" Type="bit" />
+        </EntityType>
         <EntityType Name="City">
           <Key>
             <PropertyRef Name="City_Id" />
@@ -130,6 +167,7 @@
         </EntityType>
         <EntityContainer Name="IT_InventoryModelStoreContainer">
           <EntitySet Name="__EFMigrationsHistory" EntityType="Self.__EFMigrationsHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Asset" EntityType="Self.Asset" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="City" EntityType="Self.City" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Company" EntityType="Self.Company" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Departement" EntityType="Self.Departement" Schema="dbo" store:Type="Tables" />
@@ -240,6 +278,7 @@
           <EntitySet Name="Users" EntityType="Self.Users" />
           <EntitySet Name="City" EntityType="IT_InventoryModel.City" />
           <EntitySet Name="Material_Code" EntityType="IT_InventoryModel.Material_Code" />
+          <EntitySet Name="Asset" EntityType="IT_InventoryModel.Asset" />
         </EntityContainer>
         <EntityType Name="City">
           <Key>
@@ -274,6 +313,43 @@
           <Property Name="No_Asset_PGA" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="No_Asset_Accounting" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="No_PO" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Asset">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NO" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="No_asset" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Company_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Company_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Material_Group_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Material_Group" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Material_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="Unit" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Acquisition_Date" Type="DateTime" Precision="3" />
+          <Property Name="Acquisition_value" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="No_Asset_PGA" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="No_Asset_Accounting" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="No_PO" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Latest_User" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Departement" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Location" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Last_Check_Date" Type="DateTime" Precision="3" />
+          <Property Name="Condition" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PIC" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Vendor" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Transaction_Date" Type="DateTime" Precision="3" />
+          <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Is_Deleted" Type="Boolean" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -409,6 +485,44 @@
                 <ScalarProperty Name="Material_Description" ColumnName="Material_Description" />
                 <ScalarProperty Name="Material_Code1" ColumnName="Material_Code" />
                 <ScalarProperty Name="Material_CodeId" ColumnName="Material_CodeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Asset">
+            <EntityTypeMapping TypeName="IT_InventoryModel.Asset">
+              <MappingFragment StoreEntitySet="Asset">
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Delete_Date" ColumnName="Delete_Date" />
+                <ScalarProperty Name="Delete_By" ColumnName="Delete_By" />
+                <ScalarProperty Name="Edit_Date" ColumnName="Edit_Date" />
+                <ScalarProperty Name="Edit_By" ColumnName="Edit_By" />
+                <ScalarProperty Name="Create_Date" ColumnName="Create_Date" />
+                <ScalarProperty Name="Create_By" ColumnName="Create_By" />
+                <ScalarProperty Name="Transaction_Date" ColumnName="Transaction_Date" />
+                <ScalarProperty Name="Vendor" ColumnName="Vendor" />
+                <ScalarProperty Name="PIC" ColumnName="PIC" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Condition" ColumnName="Condition" />
+                <ScalarProperty Name="Last_Check_Date" ColumnName="Last_Check_Date" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Departement" ColumnName="Departement" />
+                <ScalarProperty Name="Latest_User" ColumnName="Latest_User" />
+                <ScalarProperty Name="No_PO" ColumnName="No_PO" />
+                <ScalarProperty Name="No_Asset_Accounting" ColumnName="No_Asset_Accounting" />
+                <ScalarProperty Name="No_Asset_PGA" ColumnName="No_Asset_PGA" />
+                <ScalarProperty Name="Acquisition_value" ColumnName="Acquisition_value" />
+                <ScalarProperty Name="Acquisition_Date" ColumnName="Acquisition_Date" />
+                <ScalarProperty Name="Unit" ColumnName="Unit" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Material_Description" ColumnName="Material_Description" />
+                <ScalarProperty Name="Material_Group" ColumnName="Material_Group" />
+                <ScalarProperty Name="Material_Group_Code" ColumnName="Material_Group_Code" />
+                <ScalarProperty Name="Company_Name" ColumnName="Company_Name" />
+                <ScalarProperty Name="Company_Code" ColumnName="Company_Code" />
+                <ScalarProperty Name="No_asset" ColumnName="No_asset" />
+                <ScalarProperty Name="NO" ColumnName="NO" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
