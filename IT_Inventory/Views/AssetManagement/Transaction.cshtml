@@ -121,9 +121,9 @@
 
                         </div>
                         <div class="form-group">
-                            <label>Latest User</label>
-                            @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date" })
-
+                            <label>Last Check Date</label>
+                            @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date", type = "date" })
+                            @Html.ValidationMessageFor(m => m.Last_Check_Date, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group">
                             <label>Condition</label>
