@@ -29,7 +29,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>No Asset</label>
-                            @Html.TextBoxFor(m => m.No_asset, new { @class = "form-control", placeholder = "Input No Asset" })
+                            @Html.TextBoxFor(m => m.No_asset, new { @class = "form-control", placeholder = "Input No Asset", id = "No_asset" })
                             @Html.ValidationMessageFor(m => m.No_asset, "", new { @class = "text-danger" })
                         </div>
                         <!-- /.form-group -->
@@ -151,7 +151,7 @@
                 <div class="form-group">
                     <label>Status</label>
                     @Html.DropDownListFor(m => m.Status, new SelectList(new[]
-{
+                    {
                    new {Value = "Return", Text = "Return"},
                    new {Value = "Borrowing", Text = "Borrowing"},
                    new {Value = "Service", Text = "Service"},
@@ -161,76 +161,69 @@
                }, "Value", "Text"), "Select Status", new { @class = "form-control select2", id = "statusDropdown" })
                     @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
                 </div>
+                @Html.HiddenFor(m => m.PIC, new { id = "hiddenPIC" })
+                @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+
+                @Html.HiddenFor(m => m.Transaction_Date, new { id = "hiddenTransactionDate" })
+                @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
                 <div id="returnForm" class="status-form" style="display: none">
                     <div class="form-group">
                         <label>PIC / Vendor</label>
-                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
-                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                        <input type="text" class="form-control" placeholder="PIC / Vendor" id="returnPIC" />
                     </div>
                     <div class="form-group">
                         <label>Return Date</label>
-                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                        <input type="date" class="form-control" id="returnDate" />
                     </div>
                 </div>
                 <div id="borrowForm" class="status-form" style="display: none">
                     <div class="form-group">
                         <label>PIC / Vendor</label>
-                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
-                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                        <input type="text" class="form-control" placeholder="PIC / Vendor" id="borrowPIC" />
                     </div>
                     <div class="form-group">
                         <label>Borrow Date</label>
-                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                        <input type="date" class="form-control" id="borrowDate" />
                     </div>
                 </div>
                 <div id="serviceForm" class="status-form" style="display: none">
                     <div class="form-group">
                         <label>PIC / Vendor</label>
-                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
-                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                        <input type="text" class="form-control" placeholder="PIC / Vendor" id="servicePIC" />
                     </div>
                     <div class="form-group">
                         <label>Service Date</label>
-                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                        <input type="date" class="form-control" id="serviceDate" />
                     </div>
                 </div>
                 <div id="readyForm" class="status-form" style="display: none">
                     <div class="form-group">
                         <label>PIC / Vendor</label>
-                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
-                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                        <input type="text" class="form-control" placeholder="PIC / Vendor" id="readyPIC" />
                     </div>
                     <div class="form-group">
                         <label>Available Date</label>
-                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                        <input type="date" class="form-control" id="readyDate" />
                     </div>
                 </div>
                 <div id="assignForm" class="status-form" style="display: none">
                     <div class="form-group">
                         <label>PIC</label>
-                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "PIC / Vendor" })
-                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                        <input type="text" class="form-control" placeholder="PIC / Vendor" id="assignPIC" />
                     </div>
                     <div class="form-group">
                         <label>Assign Date</label>
-                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                        <input type="date" class="form-control" id="assignDate" />
                     </div>
                 </div>
                 <div id="writeOffForm" class="status-form" style="display: none">
                     <div class="form-group">
                         <label>Approved By</label>
-                        @Html.TextBoxFor(m => m.PIC, new { @class = "form-control", placeholder = "Approved By" })
-                        @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+                        <input type="text" class="form-control" placeholder="PIC / Vendor" id="writeOffPIC" />
                     </div>
                     <div class="form-group">
                         <label>Write Off Date</label>
-                        @Html.TextBoxFor(m => m.Transaction_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                        @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                        <input type="date" class="form-control" id="writeOffDate" />
                     </div>
                 </div>
 
@@ -240,12 +233,13 @@
                 </div>
             </div>
         </div>
+          
     }
-
+            
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
-                Asset History>
+                Asset History
             </h3>
             <div class="card-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
@@ -262,7 +256,7 @@
             <thead>
                 <tr>
                     <th>No Assets</th>
-                    <th>PIC</th>
+                    <th>PIC / Vendor</th>
                     <th>Transaction Date</th>
                     <th>Status</th>
                     <th>Submit Date</th>
@@ -276,7 +270,6 @@
                         <tr>
                             <td>@item.No_asset</td>
                             <td>@item.PIC</td>
-                            <td>@item.Vendor</td>
                             <td>@(item.Transaction_Date.HasValue ? item.Transaction_Date.Value.ToString("yyyy-MM-dd"): "")</td>
                             <td>@item.Status</td>
                             <td>@(item.Create_Date.HasValue ? item.Create_Date.Value.ToString("yyyy-MM-dd"): "")</td>
@@ -368,28 +361,15 @@
             handleStatusFormDisplay();
 
 
-            function loadAssetHistory() {
-                $.ajax({
-                    url: '@Url.Action("GetAssetData", "AssetManagement")',
-                    type: 'GET',
-                    data: { search: "" },
-                    success: function (data) {
-                        renderAssetHistory(data);
-                    },
-                    error: function (error) {
-                        console.log(error);
-                        toastr.error("Error Asset Loading History");
-                    }
-                });
-            }
+
 
 
             $("#btnSearch").click(function () {
-                var searchValue = $("input[name='table_search']").val();
+                var search = $("input[name='table_search']").val();
                 $.ajax({
                     url: '@Url.Action("SearchAssetHistory", "AssetManagement")',
                     type: 'GET',
-                    data: { searchValue: searchValue },
+                    data: { search: search },
                     success: function (data) {
                         renderAssetHistory(data);
                     },
@@ -405,14 +385,14 @@
                 var tbody = $("#assetHistoryTable");
                 tbody.empty();
 
-                if (data.length > 0) {
+                if (data && data.length > 0) {
                     $.each(data, function (i, item) {
                         var row = "<tr>" +
                             "<td>" + (item.No_asset || "") + "</td>" +
                             "<td>" + (item.PIC || "") + "</td>" +
                             "<td>" + formatDate(item.Transaction_Date) + "</td>" +
                             "<td>" + (item.Status || "") + "</td>" +
-                            "<td>" + formatDate(item.Create_Date) + "</td>" +
+                            "<td>" + formatDate(item.Submit_Date) + "</td>" +
                             "</tr>";
                         tbody.append(row);
                     });
@@ -420,17 +400,30 @@
                     tbody.append("<tr><td colspan='5'>No data found</td></tr>");
                 }
             }
-
-
             function formatDate(dateString) {
                 if (!dateString) return "";
 
                 try {
 
-                    var date = new Date(parseInt(dateString.substr(6)));
-                    if (isNaN(date.getTime())) return "";
+                    if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                        var timeStamp = parseInt(dateString.substr(6));
+                        var date = new Date(timeStamp);
+                        if (isNaN(date.getTime())) return "";
 
-                    return date.toISOString().split('T')[0];
+                        var year = date.getFullYear();
+                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        var day = date.getDate().toString().padStart(2, '0');
+                        return year + '-' + month + '-' + day;
+                    } else {
+
+                        var date = new Date(dateString);
+                        if (isNaN(date.getTime())) return "";
+
+                        var year = date.getFullYear();
+                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        var day = date.getDate().toString().padStart(2, '0');
+                        return year + '-' + month + '-' + day;
+                    }
                 } catch (e) {
                     console.error("Error parsing date:", e);
                     return "";
@@ -447,19 +440,118 @@
                 $(".status-form").hide();
             });
 
-            $("#btnSave").click(function () {
-                var form = $("#assetForm");
-                if (form.valid()) {
-                    form.submit();
-                } else {
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error("Please fill in all required fields.");
-                    }
+            $("#btnSave").click(function (e) {
+                e.preventDefault();
+                if (!$("#No_asset").val()) {
+                    toastr.error("No Asset is required.");
+                    return;
                 }
+                if (!$("#companyCodeDropdown").val()) {
+                    toastr.error("Company Code is required");
+                    return;
+                }
+                var status = $("#statusDropdown").val();
+                if (!status) {
+                    toastr.error("Status Is Required");
+                    return;
+                }
+
+                var picValue = "";
+                var dateValue = "";
+
+                switch (status) {
+                    case 'Return':
+                        picValue = $("#returnPIC").val();
+                        dateValue = $("#returnDate").val();
+                        break;
+                    case 'Borrowing':
+                        picValue = $("#borrowPIC").val();
+                        dateValue = $("#borrowDate").val();
+                        break;
+                    case 'Service':
+                        picValue = $("#servicePIC").val();
+                        dateValue = $("#serviceDate").val();
+                        break;
+                    case 'Ready':
+                        picValue = $("#readyPIC").val();
+                        dateValue = $("#readyDate").val();
+                        break;
+                    case 'Assign':
+                        picValue = $("#assignPIC").val();
+                        dateValue = $("#assignDate").val();
+                        break;
+                    case 'Write Off':
+                        picValue = $("#writeOffPIC").val();
+                        dateValue = $("#writeOffDate").val();
+                        break;
+                }
+
+                if (!picValue) {
+                    toastr.error("PIC is required.");
+                    return;
+                }
+                if (!dateValue) {
+                    toastr.error("Transaction Date is required.");
+                    return;
+                }
+
+                $("#hiddenPIC").val(picValue);
+                $("#hiddenTransactionDate").val(dateValue);
+
+                console.log("form data before submit",{
+                    NoAsset: $("#No_asset").val(),
+                        Status: status,
+                            PIC: picValue,
+                    TransactionDate: dateValue,
+                                FormData: $("#assetForm").serialize()
+                });
+
+
+                $.ajax({
+                    url: $("#assetForm").attr("action"),
+                    type: 'POST',
+                    data: $("#assetForm").serialize(),
+                    success: function (data) {
+                        if (data.success) {
+                            toastr.success(data.message);
+
+                            var tbody = $("#assetHistoryTable");
+                            var assetData = data.assetData;
+                            var row = "<tr>" +
+                                "<td>" + (assetData.No_asset || "") + "</td>" +
+                                "<td>" + (assetData.PIC || "") + "</td>" +
+                                "<td>" + (assetData.Transaction_Date || "") + "</td>" +
+                                "<td>" + (assetData.Status || "") + "</td>" +
+                                "<td>" + (assetData.Create_Date || "") + "</td>" +
+                                "</tr>";
+                           
+                            if (tbody.find("tr td[colspan='5']").length > 0) {
+                                tbody.empty();
+                            }
+                            tbody.prepend(row);
+                            resetFormFields();
+                        } else {
+                            toastr.error(data.message);
+                            console.error("Error from server ", data.message)
+                        }
+                    },
+                        error: function (xhr,status ,error) {
+                            console.error("Error saving asset:", xhr.responseText);
+                            toastr.error("Error saving asset, please try again");
+                    }
+                });
             });
-
-
-            loadAssetHistory();
+            function resetFormFields() {
+                
+                $("#statusDropdown").val("").trigger("change");
+                $(".status-form input").val("");
+                $("#hiddenPIC").val("");
+                $("#hiddenTransactionDate").val("");
+            }
+       
         });
     })();
+
+
+
 </script>

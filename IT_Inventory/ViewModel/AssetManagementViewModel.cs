@@ -8,6 +8,7 @@ namespace IT_Inventory.ViewModel
 {
     public class AssetManagementViewModel
     {
+
         public string No_asset { get; set; }
         public string Company_Code { get; set; }
         public string Company_Name { get; set; }

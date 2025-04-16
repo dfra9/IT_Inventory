@@ -35,7 +35,6 @@ namespace IT_Inventory.Controllers
 
                 LoadDropdownData();
                 return View(viewModel);
-
             }
         }
 
@@ -45,38 +44,53 @@ namespace IT_Inventory.Controllers
         {
             try
             {
+
                 if (string.IsNullOrEmpty(viewModel.No_asset))
                 {
-                    ModelState.AddModelError("No_Asset", "No Asset is required.");
+                    ModelState.AddModelError("No_asset", "No Asset is required.");
                 }
                 if (string.IsNullOrEmpty(viewModel.Status))
                 {
                     ModelState.AddModelError("Status", "Status is required.");
                 }
+                if (string.IsNullOrEmpty(viewModel.PIC))
+                {
+                    ModelState.AddModelError("PIC", "PIC is required.");
+                }
+                if (!viewModel.Transaction_Date.HasValue)
+                {
+                    ModelState.AddModelError("Transaction_Date", "Transaction Date is required.");
+                }
+
                 if (!ModelState.IsValid)
                 {
+                    if (Request.IsAjaxRequest())
+                    {
+                        return Json(new { success = false, message = "Validation failed. Please check all required fields." });
+                    }
                     LoadDropdownData();
-                    ViewBag.Company = db.Company.Where(c => c.Is_Deleted != true).DefaultIfEmpty(new Company()).ToList();
-                    ViewBag.Departement = db.Departement.Where(c => c.Is_Deleted != true).DefaultIfEmpty(new Departement()).ToList();
-                    ViewBag.Location = db.Location.Where(c => c.Is_Deleted != true).DefaultIfEmpty(new Location()).ToList();
-                    ViewBag.City = db.City.Where(c => c.Is_Deleted != true).DefaultIfEmpty(new City()).ToList();
+
                     viewModel.AssetHistory = db.Asset.Where(a => a.Is_Deleted != true)
                         .OrderByDescending(a => a.Transaction_Date)
                         .Take(100)
                         .ToList();
+
+                    viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).ToList();
+                    viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList();
+                    viewModel.Locations = db.Location.Where(c => c.Is_Deleted != true).ToList();
+                    viewModel.Cities = db.City.Where(c => c.Is_Deleted != true).ToList();
                     return View(viewModel);
                 }
+
+                // Find existing asset or create new one
                 var assets = db.Asset.FirstOrDefault(a => a.No_asset == viewModel.No_asset);
                 if (assets != null)
                 {
                     assets.Status = viewModel.Status;
                     assets.PIC = viewModel.PIC;
-                    assets.Vendor = viewModel.Vendor;
                     assets.Transaction_Date = viewModel.Transaction_Date;
                     assets.Edit_By = User.Identity.Name ?? "System";
                     assets.Edit_Date = DateTime.Now;
-
-
                 }
                 else
                 {
@@ -102,62 +116,70 @@ namespace IT_Inventory.Controllers
                         Condition = viewModel.Condition,
                         Status = viewModel.Status,
                         PIC = viewModel.PIC,
-                        Vendor = viewModel.Vendor,
                         Transaction_Date = viewModel.Transaction_Date,
                         Create_By = User.Identity.Name ?? "System",
                         Create_Date = DateTime.Now,
                         Is_Deleted = false
-
                     };
                     db.Asset.Add(assets);
                 }
                 db.SaveChanges();
-                TempData["Success"] = "Transaction successful.";
-                return RedirectToAction("Transaction");
+
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Transaction successful",
+                        assetData = new
+                        {
+                            assets.No_asset,
+                            assets.PIC,
+                            Transaction_Date = assets.Transaction_Date.HasValue ? assets.Transaction_Date.Value.ToString("yyyy-MM-dd") : "",
+                            assets.Status,
+                            Submit_Date = assets.Create_Date.HasValue ? assets.Create_Date.Value.ToString("yyyy-MM-dd") : ""
+                        }
+                    });
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Transaction successful";
+                    return RedirectToAction("Transaction");
+                }
             }
             catch (Exception ex)
             {
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(new { success = false, message = "An error occurred while processing your request: " + ex.Message });
+                }
                 ModelState.AddModelError("", "An error occurred while processing your request: " + ex.Message);
-                viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).DefaultIfEmpty(new Company()).ToList();
-                viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).DefaultIfEmpty(new Departement()).ToList();
-                viewModel.Locations = db.Location.Where(c => c.Is_Deleted != true).DefaultIfEmpty(new Location()).ToList();
-                viewModel.Cities = db.City.Where(c => c.Is_Deleted != true).DefaultIfEmpty(new City()).ToList();
+                viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).ToList();
+                viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList();
+                viewModel.Locations = db.Location.Where(c => c.Is_Deleted != true).ToList();
+                viewModel.Cities = db.City.Where(c => c.Is_Deleted != true).ToList();
+
+                viewModel.Companies = viewModel.Companies ?? new List<Company>();
+                viewModel.Dept = viewModel.Dept ?? new List<Departement>();
+                viewModel.Locations = viewModel.Locations ?? new List<Location>();
+                viewModel.Cities = viewModel.Cities ?? new List<City>();
+                viewModel.AssetHistory = viewModel.AssetHistory ?? new List<Asset>();
+
+                LoadDropdownData();
                 return View(viewModel);
             }
         }
-
-        private string GetTransactionDateNameByStatus(string status)
-        {
-            switch (status)
-            {
-                case "Return":
-                    return "Return Date";
-                case "Borrowing":
-                    return "Borrowing Date";
-                case "Service":
-                    return "Service Date";
-                case "Ready":
-                    return "Ready Date";
-                case "Assign":
-                    return "Assign Date";
-                case "Write Off":
-                    return "Write Off Date";
-                default:
-                    return "Transaction Date";
-            }
-        }
-
 
         public string GetCompanyName(string companyCode)
         {
             var company = db.Company.FirstOrDefault(c => c.Company_Code == companyCode);
             return company?.Company_Name ?? string.Empty;
         }
+
         public JsonResult GetCompanyNameByCode(string companyCode)
         {
             try
             {
-
                 if (string.IsNullOrEmpty(companyCode))
                 {
                     return Json(string.Empty, JsonRequestBehavior.AllowGet);
@@ -166,7 +188,6 @@ namespace IT_Inventory.Controllers
                 var company = db.Company.FirstOrDefault(c => c.Company_Code == companyCode && c.Is_Deleted != true);
                 string companyName = company?.Company_Name ?? string.Empty;
 
-
                 return Json(companyName, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -174,20 +195,19 @@ namespace IT_Inventory.Controllers
                 System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
                 return Json(string.Empty, JsonRequestBehavior.AllowGet);
             }
-
         }
+
         public ActionResult GetAssetData(string search)
         {
             var assetData = db.Asset.Where(a => a.Is_Deleted != true);
             if (!string.IsNullOrEmpty(search))
             {
-                assetData = assetData.Where(a => a.No_asset.Contains(search) || a.PIC.Contains(search) || a.Vendor.Contains(search) || a.Status.Contains(search));
+                assetData = assetData.Where(a => a.No_asset.Contains(search) || a.PIC.Contains(search) || a.Status.Contains(search));
             }
             var assets = assetData.OrderByDescending(a => a.Transaction_Date).Select(a => new
             {
                 a.No_asset,
                 a.PIC,
-                a.Vendor,
                 a.Transaction_Date,
                 a.Status,
                 Submit_Date = a.Create_Date
@@ -196,7 +216,24 @@ namespace IT_Inventory.Controllers
             return Json(assets, JsonRequestBehavior.AllowGet);
         }
 
-
+        public ActionResult SearchAssetHistory(string search)
+        {
+            var assetData = db.Asset.Where(a => a.Is_Deleted != true);
+            if (!string.IsNullOrEmpty(search))
+            {
+                assetData = assetData.Where(a => a.No_asset.Contains(search) || a.PIC.Contains(search) || a.Status.Contains(search) || (a.Transaction_Date.HasValue && a.Transaction_Date.Value.ToString().Contains(search)));
+            }
+            var assets = assetData.OrderByDescending(a => a.Transaction_Date).Select(a => new
+            {
+                a.No_asset,
+                a.PIC,
+                a.Transaction_Date,
+                a.Status,
+                Submit_Date = a.Create_Date
+            }).Take(100)
+              .ToList();
+            return Json(assets, JsonRequestBehavior.AllowGet);
+        }
 
         [HttpGet]
         private void LoadDropdownData()
@@ -216,8 +253,6 @@ namespace IT_Inventory.Controllers
                 new SelectListItem { Text = "Assign", Value = "Assign" },
                 new SelectListItem { Text = "Write Off", Value = "Write Off" }
             };
-
-
         }
     }
 }
