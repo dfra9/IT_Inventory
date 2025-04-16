@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 using IT_Inventory.Models;
@@ -8,8 +9,9 @@ namespace IT_Inventory.ViewModel
 {
     public class AssetManagementViewModel
     {
-
+        [Required(ErrorMessage = "No Asset is required")]
         public string No_asset { get; set; }
+        [Required(ErrorMessage = "Company Code is required")]
         public string Company_Code { get; set; }
         public string Company_Name { get; set; }
         public string Material_Group_Code { get; set; }
@@ -31,9 +33,12 @@ namespace IT_Inventory.ViewModel
 
         public DateTime? Last_Check_Date { get; set; }
         public string Condition { get; set; }
+        [Required(ErrorMessage = "Status is required")]
         public string Status { get; set; }
+        [Required(ErrorMessage = "PIC is required")]
         public string PIC { get; set; }
         public string Vendor { get; set; }
+        [Required(ErrorMessage = "Transaction Date is required")]
         public DateTime? Transaction_Date { get; set; }
 
         public string Create_By { get; set; }

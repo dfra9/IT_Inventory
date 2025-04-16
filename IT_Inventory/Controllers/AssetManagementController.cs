@@ -62,7 +62,7 @@ namespace IT_Inventory.Controllers
                     ModelState.AddModelError("Transaction_Date", "Transaction Date is required.");
                 }
 
-                if (!ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     if (Request.IsAjaxRequest())
                     {
@@ -98,6 +98,7 @@ namespace IT_Inventory.Controllers
                     {
                         No_asset = viewModel.No_asset,
                         Company_Code = viewModel.Company_Code,
+                        Company_Name = viewModel.Company_Name,
                         Material_Group_Code = viewModel.Material_Group_Code,
                         Material_Group = viewModel.Material_Group,
                         Material_Description = viewModel.Material_Description,

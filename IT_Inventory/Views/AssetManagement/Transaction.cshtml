@@ -442,6 +442,15 @@
 
             $("#btnSave").click(function (e) {
                 e.preventDefault();
+
+                console.log("Form Data:", {
+                    NoAsset: $("#No_asset").val(),
+                    CompanyCode: $("#companyCodeDropdown").val(),
+                    Status: $("#statusDropdown").val(),
+                    PIC: $("#hiddenPIC").val(),
+                    TransactionDate: $("#hiddenTransactionDate").val()
+                });
+
                 if (!$("#No_asset").val()) {
                     toastr.error("No Asset is required.");
                     return;
@@ -522,7 +531,7 @@
                                 "<td>" + (assetData.PIC || "") + "</td>" +
                                 "<td>" + (assetData.Transaction_Date || "") + "</td>" +
                                 "<td>" + (assetData.Status || "") + "</td>" +
-                                "<td>" + (assetData.Create_Date || "") + "</td>" +
+                                "<td>" + (assetData.Submit_Date || "") + "</td>" +
                                 "</tr>";
                            
                             if (tbody.find("tr td[colspan='5']").length > 0) {
