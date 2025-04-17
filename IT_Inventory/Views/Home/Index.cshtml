@@ -1,33 +1,340 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model global::IT_Inventory.ViewModel.AssetManagementViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+<section>
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Dashboard</h1>
+                </div>
+            </div>
+        </div>
     </div>
-</main>
+</section>
+ <!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@Model.TotalAssets</h3>
+                        <p>Total Assets</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-bag"></i>
+                    </div>
+
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@Model.AvailableAssets</h3>
+
+                        <p>Available Assets</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>@Model.AssetInUse</h3>
+
+                        <p>Assets In Use</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@Model.AssetInService</h3>
+
+                        <p>Assets in Maintenance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+
+                </div>
+            </div>
+            <!-- ./col -->
+        </div>
+    </div>
+</section>
+
+<h4 class="mt-4 mb-2">History</h4>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Purchase Invoice</h3>
+
+                <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                        <div class="input-group-append">
+                            <button type="submit" id="btnDashboardSearch" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-header -->
+
+            <div class="card-body table-responsive p-0" style="height: 300px;">
+                <table id="dasboardTable" class="table table-head-fixed text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>Label Asset</th>
+                            <th>Product Type</th>
+                            <th>Description Product</th>
+                            <th>Purchase Date</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                            <th>Departement </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model.DashHistory != null && Model.DashHistory.Any())
+                        {
+                            foreach (var item in Model.DashHistory)
+                            {
+                                <tr class="@(item.Is_Deleted.HasValue && item.Is_Deleted.Value ? "bgOff" : "")">
+                                    <td>@item.No_asset</td>
+                                    <td>@item.Material_Group</td>
+                                    <td>@item.Material_Description</td>
+                                    <td>@(item.Acquisition_Date.HasValue ? item.Acquisition_Date.Value.ToString("yyyy-MM-dd"): "")</td>
+                                    <td>@item.Status</td>
+                                    <td>@item.Location</td>
+                                    <td>@item.Departement</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>No Asset Found</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                           
+                            <th>Label Asset</th>
+                            <th>Product Type</th>
+                            <th>Description Product</th>
+                            <th>Purchase Date</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                            <th>Departement </th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+<style>
+    .bgOff {
+        background-color: rgba(130, 205, 55, 0.39) !important;
+    }
+        
+</style>
+<script>
+
+    $(document).ready(function () {
+        $('#dashboardTable tfoot th').each(function () {
+            var i = $(this).index();
+            if (i != 7) {
+                var title = $(this).text().trim();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            }
+        });
+
+        var table = $("#dashboardTable").DataTable({
+            "processing": true,
+            "serverSide": true,
+            "scrollX": true,
+            "stateSave": true,
+            "paging": true,
+            "pagingType": "full_numbers",
+            "ajax": {
+                "url": '@Url.Action("GetDashboardData", "Home")',
+                "type": "POST",
+                "dataType": "json",
+                "data": function (param) {
+                    param.globalSearch = $('input[name="table_search"]').val();
+                    $(param.columns).each(function (i) {
+                        var name = "filter[" + i + "]";
+                        var value = "";
+                        if ($('input[name="' + name + '"]').last().length) {
+                            value = $('input[name="' + name + '"]').last().val();
+                        }
+                        params[name] = value;
+                    });
+                    return param;
+                }
+            },
+
+            "columns": [
+                { "data": "No_asset", "name": "No_asset", "autowidth": true },
+                { "data": "Material_Group", "name": "Material_Group", "autowidth": true },
+                { "data": "Material_Description", "name": "Material_Description", "autowidth": true },
+                { "data": "Acquisition_Date", "name": "Acquisition_Date", "autowidth": true, render: function (data) { return formatDate(data); } },
+                { "data": "Status", "name": "Status", "autowidth": true },
+                { "data": "Location", "name": "Location", "autowidth": true },
+                { "data": "Departement", "name": "Departement", "autowidth": true }
+            ],
+            "order": [[0, "desc"]],
+            "createdRow": function (row, data, index) {
+                if (data.Is_Deleted) {
+                    $(row).addClass('bgOff');
+                }
+            },
+            "initComplete": function () {
+                this.api.columns().every(function (index) { 
+                    var footer = this;
+                var column = $(column.footer)
+                    var that = this;
+                    if (footer.index() !== 7) {
+                        $('<input type="text" placeholder="Search ' + footer.text() + '" />')
+                            .appendTo(footer.empty())
+                            .on('keyup change clear', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+                            });
+                    }
+                });
+            }
+
+        });
+
+        $("#btnDashboardSearch").on('click', function () {
+            var searchValue = $("input[name='table_search']").val();
+            table.search(searchValue).draw();
+        });
+
+        $("input[name='table_search']").on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                table.search(this.value).draw();
+            }
+        });
+
+    $(function () {
+        $("#btnDashboardSearch").click(function () {
+            var searchValue = $("input[name='table_search']").val();
+            $.ajax({
+                url: '@Url.Action("Search", "Home")',
+                type: 'GET',
+                data: { search: searchValue },
+                success: function (data) {
+                    $("#dasboardTable").html(data);
+                },
+                error: function () {
+                    alert('Error occurred while searching.');
+                }
+            });
+        });
+        $("#dashboardSearch").keypress(function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                var searchValue = $(this).val();
+                searchDashboardAssets(searchValue);
+            }
+        });
+
+
+        function searchDashboardAssets(search) {
+            $.ajax({
+                url: '@Url.Action("Search", "Home")',
+                type: 'GET',
+                data: { search: search },
+                success: function (data) {
+
+                },
+                error: function (data) {
+                    alert('Error occurred while searching.');
+                }
+            });
+        }
+
+        function renderDashboardTable(data) {
+            var tbody = $("#dasboardTable");
+            tbody.empty();
+            if (data && data.length > 0) {
+                $.each(data, function (index, item) {
+                    var row = "<tr>" +
+                        "<td>" + item.No_asset + "</td>" +
+                        "<td>" + item.Material_Group + "</td>" +
+                        "<td>" + item.Material_Description + "</td>" +
+                        "<td>" + (item.Acquisition_Date ? new Date(item.Acquisition_Date).toLocaleDateString() : "") + "</td>" +
+                        "<td>" + item.Status + "</td>" +
+                        "<td>" + item.Location + "</td>" +
+                        "<td>" + item.Departement + "</td>" +
+                        "</tr>";
+                    tbody.append(row);
+                });
+            } else {
+                tbody.append($("<tr><td colspan='7'>No Asset Found</td></tr>"));
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return "";
+
+            try {
+
+                if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                    var timeStamp = parseInt(dateString.substr(6));
+                    var date = new Date(timeStamp);
+                    if (isNaN(date.getTime())) return "";
+
+                    var year = date.getFullYear();
+                    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    var day = date.getDate().toString().padStart(2, '0');
+                    return year + '-' + month + '-' + day;
+                } else {
+
+                    var date = new Date(dateString);
+                    if (isNaN(date.getTime())) return "";
+                    var year = date.getFullYear();
+                    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    var day = date.getDate().toString().padStart(2, '0');
+                    return year + '-' + month + '-' + day;
+                }
+            } catch (e) {
+                console.error("Error parsing date:", e);
+                return "";
+            }
+        }
+        })
+</script>

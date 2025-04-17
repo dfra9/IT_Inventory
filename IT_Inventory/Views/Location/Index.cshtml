@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-striped projects">
+            <table id="locationTable" class="table table-striped projects">
                 <thead>
                     <tr>
                         <th style="width: 15%">
@@ -72,7 +72,14 @@
                         </tr>
                     }
                 </tbody>
-
+                <tfoot>
+                    <tr>
+                        <th> Location Code </th>
+                        <th> Location Name </th>
+                        <th> Location Description </th>
+                        
+                    </tr>
+                </tfoot>
             </table>
         </div>
         <!-- /.card-body -->
@@ -80,11 +87,17 @@
     <!-- /.card -->
 </section>
 
-
-
 <script>
-        $(function () {
-            var table = $('.table-striped').DataTable({
+    $(function () {
+        $('#locationTable tfoot th').each(function () {
+            var i = $(this).index();
+            if (i != 3) {
+                var title = $(this).text().trim();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            }
+        });
+
+        var table = $('#locationTable').DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -92,12 +105,24 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                
             });
 
+        table.columns().every(function (index) {
+            var that = this;
+            if (index != 3) {
+                $('input', this.footer()).on('keyup change', function () {
+                    that
+                        .search(this.value)
+                        .draw();
+                });
+            }
+        });
                     $("#tableSearch").on("keyup", function () {
                         table.search(this.value).draw();
                     });
+
                     @if (TempData["SuccessMassage"]!= null)
 {
                         <text>

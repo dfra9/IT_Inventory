@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="card-body p-0">
-                        <table class="table table-striped projects">
+                        <table id="materialCodeTable" class="table table-striped projects">
                             <thead>
                                 <tr>
                                     <th style="width: 15%">
@@ -59,7 +59,7 @@
                                     <th style="width: 10%">
                                         No PO
                                     </th>
-                                    <th style="width: 15%; text-align: center">
+                                    <th style="width: 20%; text-align: center">
                                         Action
                                     </th>
                                 </tr>
@@ -91,6 +91,16 @@
                                     </tr>
                                 }
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th> Material Code </th>
+                                    <th> Material Description </th>
+                                    <th> Material Group </th>
+                                    <th> No Asset PGA </th>
+                                    <th> No Asset Accounting </th>
+                                    <th> No PO </th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <!-- /.card-body -->
@@ -100,7 +110,14 @@
 
     <script>
         $(function () {
-            var table = $('.table-striped').DataTable({
+            $('#materialCodeTable tfoot th').each(function () {
+                var i = $(this).index();
+                if (i != 6) {
+                    var title = $(this).text().trim();
+                    $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+                }
+            });
+            var table = $('#materialCodeTable').DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -108,7 +125,19 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "stateSave": true
+            });
+
+            table.columns().every(function (index) {
+                var that = this;
+                if (index != 6) {
+                    $('input', this.footer()).on('keyup change', function () {
+                        that
+                            .search(this.value)
+                            .draw();
+                    });
+                }
             });
 
                     $("#tableSearch").on("keyup", function () {

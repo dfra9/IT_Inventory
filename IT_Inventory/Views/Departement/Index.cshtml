@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <table class="table table-striped projects">
+            <table id="departementTable" class="table table-striped projects">
                 <thead>
                     <tr>
                         <th style="width: 15%">
@@ -56,8 +56,6 @@
                         <tr>
                             <td>@item.Departement_Code</td>
                             <td>@item.Departement_Name</td>
-
-
                             <td>
                                 <div class="project-actions text-center">
                                     <a href="@Url.Action("Editor", "Departement", new { id = item.Departement_Code, mode = "View" })" class="btn btn-info btn-sm">
@@ -75,6 +73,12 @@
                         </tr>
                     }
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th> Departement Code </th>
+                        <th> Departement Description </th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
         <!-- /.card-body -->
@@ -82,8 +86,16 @@
     <!-- .card -->
 </section>
 <script>
-        $(function () {
-            var table = $('.table-striped').DataTable({
+    $(function () {
+        $('#departementTable tfoot th').each(function () {
+            var i = $(this).index();
+            
+                var title = $(this).text().trim();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            
+        });
+
+            var table = $('#departementTable').DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -91,12 +103,23 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "stateSave": true
             });
 
-                    $("#tableSearch").on("keyup", function () {
-                        table.search(this.value).draw();
-                    });
+        table.columns().every(function (index) {
+            var that = this;
+            if (index != 2) {
+                $('input', this.footer()).on('keyup change', function () {
+                    that
+                        .search(this.value)
+                        .draw();
+                });
+            }
+        });
+        $("#tableSearch").on("keyup", function () {
+            table.search(this.value).draw();
+        });
 
 
                     @if (TempData["SuccessMassage"]!= null)

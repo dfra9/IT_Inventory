@@ -14,5 +14,6 @@ namespace IT_Inventory.ViewModel
         public string Role { get; set; }
         public DateTime? LastPasswordChange { get; set; }
         public bool IsAdmin { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

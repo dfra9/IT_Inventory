@@ -28,7 +28,10 @@ namespace IT_Inventory.ViewModel
 
 
         public string Departement_Code { get; set; }
+
+        public string Departement_Name { get; set; }
         public string Location_Code { get; set; }
+        public string Location_Name { get; set; }
         public string City_Id { get; set; }
 
         public DateTime? Last_Check_Date { get; set; }
@@ -56,6 +59,13 @@ namespace IT_Inventory.ViewModel
         public List<SelectListItem> StatusList { get; set; }
 
         public List<Asset> AssetHistory { get; set; }
+
+        public List<Asset> DashHistory { get; set; }
+
+        public int TotalAssets { get; set; }
+        public int AvailableAssets { get; set; }
+        public int AssetInUse { get; set; }
+        public int AssetInService { get; set; }
         public AssetManagementViewModel()
         {
             Companies = new List<Company>();

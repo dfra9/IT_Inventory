@@ -110,8 +110,8 @@ namespace IT_Inventory.Controllers
                         No_Asset_Accounting = viewModel.No_Asset_Accounting,
                         No_PO = viewModel.No_PO,
                         Latest_User = viewModel.Latest_User,
-                        Departement = viewModel.Departement_Code,
-                        Location = viewModel.Location_Code,
+                        Departement = viewModel.Departement_Name,
+                        Location = viewModel.Location_Name,
                         City = viewModel.City_Id.ToString(),
                         Last_Check_Date = viewModel.Last_Check_Date,
                         Condition = viewModel.Condition,
@@ -126,6 +126,7 @@ namespace IT_Inventory.Controllers
                 }
                 db.SaveChanges();
 
+                var dashboardCounts = GetDashboardCounts();
                 if (Request.IsAjaxRequest())
                 {
                     return Json(new
@@ -169,6 +170,17 @@ namespace IT_Inventory.Controllers
                 LoadDropdownData();
                 return View(viewModel);
             }
+        }
+
+        private object GetDashboardCounts()
+        {
+            return new
+            {
+                TotalAssets = db.Asset.Count(a => a.Is_Deleted != true),
+                AvailableAssets = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Ready"),
+                AssetInUse = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Borrowing"),
+                AssetInService = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Service")
+            };
         }
 
         public string GetCompanyName(string companyCode)

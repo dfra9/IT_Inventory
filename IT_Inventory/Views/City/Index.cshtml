@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="card-body p-0">
-                        <table class="table table-striped projects">
+                        <table id="cityTable" class="table table-striped projects">
                             <thead>
                                 <tr>
                                     <th style="width: 15%">
@@ -70,6 +70,12 @@
                                     </tr>
                                 }
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th> City Name </th>
+                                    <th> City Description </th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <!-- /.card-body -->
@@ -79,7 +85,14 @@
 
     <script>
         $(function () {
-            var table = $('.table-striped').DataTable({
+            $('#cityTable tfoot th').each(function () {
+                var i = $(this).index();
+                if (i != 2) {
+                    var title = $(this).text().trim();
+                    $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+                }
+            });
+            var table = $('#cityTable').DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -87,7 +100,19 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "stateSave": true,
+            });
+
+            table.columns().every(function (index) {
+                var that = this;
+                if (index != 2) {
+                    $('input', this.footer()).on('keyup change', function () {
+                        that
+                            .search(this.value)
+                            .draw();
+                    });
+                }
             });
 
                     $("#tableSearch").on("keyup", function () {
