@@ -29,4 +29,3 @@ namespace IT_Inventory.Models
         public Nullable<bool> Is_Deleted { get; set; }
     }
 }
- 

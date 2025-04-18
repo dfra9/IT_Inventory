@@ -82,7 +82,6 @@ namespace IT_Inventory.Controllers
                     return View(viewModel);
                 }
 
-                // Find existing asset or create new one
                 var assets = db.Asset.FirstOrDefault(a => a.No_asset == viewModel.No_asset);
                 if (assets != null)
                 {

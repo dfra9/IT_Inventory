@@ -26,7 +26,7 @@
           <Property Name="Material_Description" Type="varchar" MaxLength="255" />
           <Property Name="Quantity" Type="int" />
           <Property Name="Unit" Type="varchar" MaxLength="50" />
-          <Property Name="Acquisition_Date" Type="datetime" />
+          <Property Name="Acquisition_Date" Type="date" />
           <Property Name="Acquisition_value" Type="varchar" MaxLength="100" />
           <Property Name="No_Asset_PGA" Type="varchar" MaxLength="100" />
           <Property Name="No_Asset_Accounting" Type="varchar" MaxLength="100" />
@@ -35,18 +35,18 @@
           <Property Name="Departement" Type="varchar" MaxLength="255" />
           <Property Name="Location" Type="varchar" MaxLength="255" />
           <Property Name="City" Type="varchar" MaxLength="255" />
-          <Property Name="Last_Check_Date" Type="datetime" />
+          <Property Name="Last_Check_Date" Type="date" />
           <Property Name="Condition" Type="varchar" MaxLength="100" />
           <Property Name="Status" Type="varchar" MaxLength="100" />
           <Property Name="PIC" Type="varchar" MaxLength="255" />
           <Property Name="Vendor" Type="varchar" MaxLength="255" />
-          <Property Name="Transaction_Date" Type="datetime" />
+          <Property Name="Transaction_Date" Type="date" />
           <Property Name="Create_By" Type="varchar" MaxLength="100" />
-          <Property Name="Create_Date" Type="datetime" />
+          <Property Name="Create_Date" Type="date" />
           <Property Name="Edit_By" Type="varchar" MaxLength="100" />
-          <Property Name="Edit_Date" Type="datetime" />
+          <Property Name="Edit_Date" Type="date" />
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
-          <Property Name="Delete_Date" Type="datetime" />
+          <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
         </EntityType>
         <EntityType Name="City">
@@ -56,11 +56,11 @@
           <Property Name="City_Name" Type="varchar" MaxLength="100" />
           <Property Name="City_Description" Type="varchar" MaxLength="255" />
           <Property Name="Create_By" Type="varchar" MaxLength="100" />
-          <Property Name="Create_Date" Type="datetime" />
+          <Property Name="Create_Date" Type="date" />
           <Property Name="Edit_By" Type="varchar" MaxLength="100" />
-          <Property Name="Edit_Date" Type="datetime" />
+          <Property Name="Edit_Date" Type="date" />
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
-          <Property Name="Delete_Date" Type="datetime" />
+          <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
           <Property Name="City_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
@@ -71,11 +71,11 @@
           <Property Name="Company_Code" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Company_Name" Type="varchar" MaxLength="255" />
           <Property Name="Create_By" Type="varchar" MaxLength="100" />
-          <Property Name="Create_Date" Type="datetime" />
+          <Property Name="Create_Date" Type="date" />
           <Property Name="Edit_By" Type="varchar" MaxLength="100" />
-          <Property Name="Edit_Date" Type="datetime" />
+          <Property Name="Edit_Date" Type="date" />
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
-          <Property Name="Delete_Date" Type="datetime" />
+          <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
         </EntityType>
         <EntityType Name="Departement">
@@ -85,11 +85,11 @@
           <Property Name="Departement_Code" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Departement_Name" Type="varchar" MaxLength="255" />
           <Property Name="Create_By" Type="varchar" MaxLength="100" />
-          <Property Name="Create_Date" Type="datetime" />
+          <Property Name="Create_Date" Type="date" />
           <Property Name="Edit_By" Type="varchar" MaxLength="100" />
-          <Property Name="Edit_Date" Type="datetime" />
+          <Property Name="Edit_Date" Type="date" />
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
-          <Property Name="Delete_Date" Type="datetime" />
+          <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
         </EntityType>
         <EntityType Name="Location">
@@ -100,11 +100,11 @@
           <Property Name="Location_Name" Type="varchar" MaxLength="255" />
           <Property Name="Location_Description" Type="varchar" MaxLength="255" />
           <Property Name="Create_By" Type="varchar" MaxLength="100" />
-          <Property Name="Create_Date" Type="datetime" />
+          <Property Name="Create_Date" Type="date" />
           <Property Name="Edit_By" Type="varchar" MaxLength="100" />
-          <Property Name="Edit_Date" Type="datetime" />
+          <Property Name="Edit_Date" Type="date" />
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
-          <Property Name="Delete_Date" Type="datetime" />
+          <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
         </EntityType>
         <EntityType Name="Material_Code">
@@ -119,11 +119,11 @@
           <Property Name="No_Asset_Accounting" Type="varchar" MaxLength="100" />
           <Property Name="No_PO" Type="varchar" MaxLength="100" />
           <Property Name="Create_By" Type="varchar" MaxLength="100" />
-          <Property Name="Create_Date" Type="datetime" />
+          <Property Name="Create_Date" Type="date" />
           <Property Name="Edit_By" Type="varchar" MaxLength="100" />
-          <Property Name="Edit_Date" Type="datetime" />
+          <Property Name="Edit_Date" Type="date" />
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
-          <Property Name="Delete_Date" Type="datetime" />
+          <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
         </EntityType>
         <EntityType Name="Material_Group">
@@ -134,14 +134,14 @@
           <Property Name="Material_Description" Type="varchar" MaxLength="255" />
           <Property Name="Age_Accounting_Asset" Type="varchar" MaxLength="100" />
           <Property Name="Quantity" Type="int" />
-          <Property Name="Last_Check_Date" Type="datetime" />
-          <Property Name="Max_Warranty_Date" Type="datetime" />
+          <Property Name="Last_Check_Date" Type="date" />
+          <Property Name="Max_Warranty_Date" Type="date" />
           <Property Name="Create_By" Type="varchar" MaxLength="100" />
-          <Property Name="Create_Date" Type="datetime" />
+          <Property Name="Create_Date" Type="date" />
           <Property Name="Edit_By" Type="varchar" MaxLength="100" />
-          <Property Name="Edit_Date" Type="datetime" />
+          <Property Name="Edit_Date" Type="date" />
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
-          <Property Name="Delete_Date" Type="datetime" />
+          <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
         </EntityType>
         <EntityType Name="Users">
@@ -194,11 +194,11 @@
           <Property Name="Company_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Company_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Create_Date" Type="DateTime" Precision="0" />
           <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="0" />
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
         </EntityType>
         <EntityType Name="Departement">
@@ -208,11 +208,11 @@
           <Property Name="Departement_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Departement_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Create_Date" Type="DateTime" Precision="0" />
           <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="0" />
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
         </EntityType>
         <EntityType Name="Location">
@@ -223,11 +223,11 @@
           <Property Name="Location_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Location_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Create_Date" Type="DateTime" Precision="0" />
           <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="0" />
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
         </EntityType>
         <EntityType Name="Material_Group">
@@ -238,14 +238,14 @@
           <Property Name="Material_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Age_Accounting_Asset" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Quantity" Type="Int32" />
-          <Property Name="Last_Check_Date" Type="DateTime" Precision="3" />
-          <Property Name="Max_Warranty_Date" Type="DateTime" Precision="3" />
+          <Property Name="Last_Check_Date" Type="DateTime" Precision="0" />
+          <Property Name="Max_Warranty_Date" Type="DateTime" Precision="0" />
           <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Create_Date" Type="DateTime" Precision="0" />
           <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="0" />
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
         </EntityType>
         <EntityType Name="Users">
@@ -287,11 +287,11 @@
           <Property Name="City_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="City_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Create_Date" Type="DateTime" Precision="0" />
           <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="0" />
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
           <Property Name="City_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
@@ -304,11 +304,11 @@
           <Property Name="Material_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Material_Group" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Create_Date" Type="DateTime" Precision="0" />
           <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="0" />
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
           <Property Name="No_Asset_PGA" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="No_Asset_Accounting" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
@@ -328,7 +328,7 @@
           <Property Name="Material_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Quantity" Type="Int32" />
           <Property Name="Unit" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Acquisition_Date" Type="DateTime" Precision="3" />
+          <Property Name="Acquisition_Date" Type="DateTime" Precision="0" />
           <Property Name="Acquisition_value" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="No_Asset_PGA" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="No_Asset_Accounting" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
@@ -337,18 +337,18 @@
           <Property Name="Departement" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Location" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="City" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Last_Check_Date" Type="DateTime" Precision="3" />
+          <Property Name="Last_Check_Date" Type="DateTime" Precision="0" />
           <Property Name="Condition" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="PIC" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Vendor" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Transaction_Date" Type="DateTime" Precision="3" />
+          <Property Name="Transaction_Date" Type="DateTime" Precision="0" />
           <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Create_Date" Type="DateTime" Precision="0" />
           <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Edit_Date" Type="DateTime" Precision="3" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="0" />
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Delete_Date" Type="DateTime" Precision="3" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
         </EntityType>
       </Schema>

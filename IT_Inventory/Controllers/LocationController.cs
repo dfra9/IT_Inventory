@@ -7,7 +7,7 @@ namespace IT_Inventory.Controllers
 {
     public class LocationController : Controller
     {
-        private IT_Inventory db = new IT_Inventory();
+        private readonly IT_Inventory db = new IT_Inventory();
 
         // GET: Location
         public ActionResult Index()

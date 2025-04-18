@@ -7,7 +7,7 @@ namespace IT_Inventory.Services
     public class UserService : IUserService
     {
         private readonly IT_Inventory _dbContext;
-        private Users db;
+        private readonly Users db;
 
         public UserService(IT_Inventory dbContext)
         {
