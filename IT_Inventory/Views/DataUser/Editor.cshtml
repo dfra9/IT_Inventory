@@ -10,151 +10,178 @@
     var cities = db.City.ToList();
     var departements = db.Departement.ToList();
     var locations = db.Location.ToList();
+
 }
 
 
-<section class="content">
-    @using (Html.BeginForm("Editor", "DataUser", FormMethod.Post))
-    {
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="mode" value="@mode" />
-        <input type="hidden" name="User_Id" value="@Model.User_Id" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+   
+        .select2-dropdown {
+            z-index: 9999;
+        }
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-primary">
-                    <div class="row justify-content-center">
-                        <div class="col-md-8">
-                            <div class="form-group row">
-                                <div class="card-body">
-                                    <div class="form-group row">
-                                        <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
-                                        <div class="col-sm-9">
 
-                                            @if (mode == "Delete")
-                                            {
-                                                <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
-                                            }
-                                            else if (mode == "Edit")
-                                            {
-                                                <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
-                                            }
-                                            else
-                                            {
-                                                <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" required>
-                                            }
-                                        </div>
-                                    </div>
+        .select2-search__field {
+            width: 100% !important;
+            padding: 6px !important;
+        }
 
-                                    @if (Session["IsAdmin"] is bool IsAdmin && IsAdmin)
-                                    {
+
+        .select2-container--default .select2-selection--single {
+            height: calc(2.25rem + 2px);
+            padding: .375rem .75rem;
+        }
+    </style>
+    
+    <section class="content">
+        @using (Html.BeginForm("Editor", "DataUser", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="mode" value="@mode" />
+            <input type="hidden" name="User_Id" value="@Model.User_Id" />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <div class="form-group row">
+                                    <div class="card-body">
                                         <div class="form-group row">
-                                            <label for="IsAdmin" class="col-sm-3 col-form-label form-control-label">User Is Admin?</label>
-                                            <div class="col-sm-9">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="Is_Admin" name="Is_Admin" value="True" @(Model.Is_Admin == true ? "checked" : "") />
+                                            <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
+                                            <div class="col-sm-4">
+
+                                                @if (mode == "Delete")
+                                                {
+                                                    <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
+                                                }
+                                                else if (mode == "Edit")
+                                                {
+                                                    <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
+                                                }
+                                                else
+                                                {
+                                                    <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username">
+                                                }
+                                            </div>
+                                        </div>
+
+                                        @if (Session["IsAdmin"] is bool IsAdmin && IsAdmin)
+                                        {
+                                            <div class="form-group row">
+                                                <label for="IsAdmin" class="col-sm-3 col-form-label form-control-label">User Is Admin?</label>
+                                                <div class="col-sm-9">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="Is_Admin" name="Is_Admin" value="True" @(Model.Is_Admin == true ? "checked" : "") />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <div class="form-group row">
+                                            <label for="Password" class="col-sm-3 col-form-label form-control-label">Password</label>
+                                            <div class="col-sm-4">
+                                                <div class="input-group">
+                                                    <input type="password" id="Password" name="Password" class="form-control" placeholder="@(mode == "Edit" ? "Change Password" : "Enter password")"
+                                                           @(mode == "Edit" ? "" : "required")>
+                                                    @if (mode == "Edit")
+                                                    {
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">
+                                                                <input type="checkbox" id="ChangePassword" name="ChangePassword" />
+                                                            </div>
+                                                        </div>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
 
+                                        <div class="form-group row">
+                                            <label for="Departement" class="col-sm-3 col-form-label form-control-label">Departement</label>
 
-                                    }
-
-                                    <div class="form-group row">
-                                        <label for="Password" class="col-sm-3 col-form-label form-control-label">Password</label>
-                                        <div class="col-sm-9">
-                                            <div class="input-group">
-                                                <input type="password" id="Password" name="Password" class="form-control" placeholder="@(mode == "Edit" ? "Change Password" : "Enter password")"
-                                                       @(mode == "Edit" ? "" : "required")>
-                                                @if (mode == "Edit")
-                                                {
-                                                    <div class="input-group-append">
-                                                        <div class="input-group-text">
-                                                            <input type="checkbox" id="ChangePassword" name="ChangePassword" />
-                                                        </div>
-                                                    </div>
-                                                }
+                                            <div class="col-sm-4">
+                                                <select id="Departement" name="Departement" class="form-control select2" required>
+                                                    <option value="" disabled @(Model.Departement == null ? "Selected" : "")> Select Departement</option>
+                                                    @foreach (var dept in departements)
+                                                    {
+                                                        <option value="@dept.Departement_Name " @(Model.Departement == dept.Departement_Name ? "Selected" : "")> @dept.Departement_Name</option>
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="Departement" class="col-sm-3 col-form-label form-control-label">Departement</label>
-
-                                        <div class="col-sm-9">
-                                            <select id="Departement" name="Departement" class="form-control custom-select" required>
-                                                <option value="" disabled @(Model.Departement == null ? "Selected" : "")> Select Departement</option>
-                                                @foreach (var dept in departements)
-                                                {
-                                                    <option value="@dept.Departement_Name " @(Model.Departement == dept.Departement_Name ? "Selected" : "")> @dept.Departement_Name</option>
-                                                }
-
-                                            </select>
+                                        <div class="form-group row">
+                                            <label for="City" class="col-sm-3 col-form-label form-control-label">City</label>
+                                            <div class="col-sm-4">
+                                                <select id="City" name="City" class="form-control select2" required>
+                                                    <option value="" disabled @(Model.City == null ? "Selected" : "")> Select City</option>
+                                                    @foreach (var city in cities)
+                                                    {
+                                                        <option value="@city.City_Name" @(Model.City == city.City_Name ? "Selected" : "")> @city.City_Name</option>
+                                                    }
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="City" class="col-sm-3 col-form-label form-control-label">City</label>
-                                        <div class="col-sm-9">
-                                            <select id="City" name="City" class="form-control custom-select" required>
-                                                <option value="" disabled @(Model.City == null ? "Selected" : "")> Select City</option>
-                                                @foreach (var city in cities)
-                                                {
-                                                    <option value="@city.City_Name" @(Model.City == city.City_Name ? "Selected" : "")> @city.City_Name</option>
-                                                }
-                                            </select>
+                                        <div class="form-group row">
+                                            <label for="Location" class="col-sm-3 col-form-label form-control-label ">Location</label>
+                                            <div class="col-sm-4">
+                                                <select id="Location" name="Location" class="form-control select2" required>
+                                                    <option value="" disabled @(Model.Location == null ? "Selected" : "")> Select Location</option>
+                                                    @foreach (var loc in locations)
+                                                    {
+                                                        <option value="@loc.Location_Name" @(Model.Location == loc.Location_Name ? "Selected" : "")> @loc.Location_Name</option>
+                                                    }
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="Location" class="col-sm-3 col-form-label form-control-label">Location</label>
-                                        <div class="col-sm-9">
-                                            <select id="Location" name="Location" class="form-control custom-select" required>
-                                                <option value="" disabled @(Model.Location == null ? "Selected" : "")> Select Location</option>
-                                                @foreach (var loc in locations)
-                                                {
-                                                    <option value="@loc.Location_Name" @(Model.Location == loc.Location_Name ? "Selected" : "")> @loc.Location_Name</option>
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-12 mb-4">
-                <div class="button-container">
-                    <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
-                        <div>
-                            <a href="@Url.Action("Index", "DataUser")" class="btn btn-secondary">Cancel</a>
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="button-container">
+                        <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
+                            <div>
+                                <a href="@Url.Action("Index", "DataUser")" class="btn btn-secondary">Cancel</a>
+                            </div>
+
+
+                            @if (mode == "Create")
+                            {
+                                <input type="submit" value="Create new User" class="btn btn-success ">
+                            }
+                            else if (mode == "Edit")
+                            {
+                                <input type="submit" value="Update User" class="btn btn-success ">
+                            }
+                            else if (mode == "Delete")
+                            {
+                                <input type="submit" value="Delete User" class="btn btn-danger">
+
+                            }
                         </div>
-
-
-                        @if (mode == "Create")
-                        {
-                            <input type="submit" value="Create new User" class="btn btn-success ">
-                        }
-                        else if (mode == "Edit")
-                        {
-                            <input type="submit" value="Update User" class="btn btn-success ">
-                        }
-                        else if (mode == "Delete")
-                        {
-                            <input type="submit" value="Delete User" class="btn btn-danger">
-
-                        }
                     </div>
                 </div>
             </div>
-        </div>
 
-    }
+        }
     </section>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Select an option",
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('body')
+            });
             var mode = $('input[name="mode"]').val();
 
 
@@ -242,3 +269,4 @@
 
         });
     </script>
+

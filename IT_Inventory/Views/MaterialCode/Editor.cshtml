@@ -8,150 +8,130 @@
 
 }
 
-            <!-- Main content -->
-            <section class="content">
-                @using (Html.BeginForm("Editor", "MaterialCode", FormMethod.Post, new {id = "materialCodeForm"}))
-                {
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="mode" value="@ViewBag.Mode" />
-                    if (mode == "Edit" || mode == "View" || mode == "Delete")
-                    {
-                        <input type="hidden" name="Material_CodeId" value="@Model.Material_CodeId" />
-                        <input type="hidden" name="EncodedId" value="@Model?.EncodedId" />
-                    }
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card card-primary">
-                                <div class="row justify-content-center">
-                                    <div class="col-md-8">
-                                        <div class="form-group row">
-                                            <div class="card-body">
-                                                <div class="form-group row">
-                                                    <label for="Material_Group1" class="col-sm-3 col-form-label form-control-label">Material Code</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "Edit" || mode == "View" || mode == "Delete")
-                                                        {
-                                                            <input type="text" id="Material_Code1" name="Material_Code1" class="form-control" value="@(Model?.Material_Code1 ?? "")" readonly>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" id="Material_Code1" name="Material_Code1" class="form-control" value="@(Model?.Material_Code1 ?? "")" required>
-                                                        }
-                                                        @Html.ValidationMessageFor(m => m.Material_Code1, "", new { @class = "text-danger" })
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "View" || mode == "Delete")
-                                                        {
-                                                            <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
-                                                        }
-                                                        else
-                                                        {
-                                                            <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" required>
-                                                        }
-                                                        @Html.ValidationMessageFor(m => m.Material_Description, "", new { @class = "text-danger" })
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="Age_Accounting_Asset" class="col-sm-3 col-form-label form-control-label">Material Group</label>
-                                                    <div class="col-sm-9">
-                                                        @if (mode == "View" || mode == "Delete")
-                                                        {
-                                                            @Html.TextBoxFor(m => m.Material_Group, new { @class = "form-controll", @readonly = "readonly" })
-                                                        }
-                                                        else
-                                                        {
-                                                            @Html.DropDownListFor(m => m.Material_Group, (SelectList)ViewBag.MaterialGroup, "Select Material Group", new { @class = "form-control", required = "required" })
-                                                        } @Html.ValidationMessageFor(m => m.Material_Group, "", new { @class = "text-danger" })
-                                                    </div>
-                                                </div>
-                                               
-                                                    <div class="form-group row">
-                                                        <label for="No_Asset_PGA" class="col-sm-3 col-form-label form-control-label">No Asset PGA</label>
-                                                        <div class="col-sm-9">
-                                                            @if (mode == "View" || mode == "Delete")
-                                                            {
-                                                                <input type="text" id="No_Asset_PGA" name="No_Asset_PGA" class="form-control" value="@(Model?.No_Asset_PGA ?? "")" readonly />
-                                                            }
-                                                            else
-                                                            {
-                                                                <input type="text" id="No_Asset_PGA" name="No_Asset_PGA" class="form-control" value="@(Model?.No_Asset_PGA ?? "")" />
-                                                            }
-                                                        </div>
-                                                    </div>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
 
-                                                    <div class="form-group row">
-                                                        <label for="No_Asset_Accounting" class="col-sm-3 col-form-label form-control-label">No Asset Accounting</label>
-                                                        <div class="col-sm-9">
-                                                            @if (mode == "View" || mode == "Delete")
-                                                            {
-                                                                <input type="text" id="No_Asset_Accounting" name="No_Asset_Accounting" class="form-control" value="@(Model?.No_Asset_Accounting ?? "")" readonly />
-                                                            }
-                                                            else
-                                                            {
-                                                                <input type="text" id="No_Asset_Accounting" name="No_Asset_Accounting" class="form-control" value="@(Model?.No_Asset_Accounting ?? "")" />
-                                                            }
-                                                        </div>
-                                                    </div>
+    .select2-dropdown {
+        z-index: 9999;
+    }
 
-                                                    <div class="form-group row">
-                                                        <label for="No_PO" class="col-sm-3 col-form-label form-control-label">No PO</label>
-                                                        <div class="col-sm-9">
-                                                            @if (mode == "View" || mode == "Delete")
-                                                            {
-                                                                <input type="text" id="No_PO" name="No_PO" class="form-control" value="@(Model?.No_PO ?? "")" readonly />
-                                                            }
-                                                            else
-                                                            {
-                                                                <input type="text" id="No_PO" name="No_PO" class="form-control" value="@(Model?.No_PO ?? "")" />
-                                                            }
-                                                        </div>
-                                                    </div>
 
-                                                </div>
+    .select2-search__field {
+        width: 100% !important;
+        padding: 6px !important;
+    }
+
+
+    .select2-container--default .select2-selection--single {
+        height: calc(2.25rem + 2px);
+        padding: .375rem .75rem;
+    }
+</style>
+
+<!-- Main content -->
+<section class="content">
+    @using (Html.BeginForm("Editor", "MaterialCode", FormMethod.Post, new { id = "materialCodeForm" }))
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="mode" value="@ViewBag.Mode" />
+        if (mode == "Edit" || mode == "View" || mode == "Delete")
+        {
+            <input type="hidden" name="Material_CodeId" value="@Model.Material_CodeId" />
+            <input type="hidden" name="EncodedId" value="@Model?.EncodedId" />
+        }
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label for="Material_Group1" class="col-sm-3 col-form-label form-control-label">Material Code</label>
+                                        <div class="col-sm-3">
+                                            @if (mode == "Edit" || mode == "View" || mode == "Delete")
+                                            {
+                                                <input type="text" id="Material_Code1" name="Material_Code1" class="form-control" value="@(Model?.Material_Code1 ?? "")" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="text" id="Material_Code1" name="Material_Code1" class="form-control" value="@(Model?.Material_Code1 ?? "")" required>
+                                            }
+                                            @Html.ValidationMessageFor(m => m.Material_Code1, "", new { @class = "text-danger" })
                                         </div>
-                                        <!-- /.card-body -->
-                                    </div> 
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                    <!-- /.card -->
-                    <!-- /.card-body -->
-                    <!-- /.card -->
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <div class="button-container">
-                                <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
-                                    <div>
-                                        <a href="@Url.Action("Index", "MaterialCode")" class="btn btn-secondary">Cancel</a>
                                     </div>
-                                    @if (mode == "Create")
-                                    {
-                                        <input type="submit" value="Create" class="btn btn-success">
-                                    }
-                                    else if (mode == "Edit")
-                                    {
-                                        <input type="submit" value="Save" class="btn btn-success">
-                                    }
-                                    else if (mode == "Delete")
-                                    {
-                                        <input type="submit" value="Delete" class="btn btn-danger">
-
-                                    }
+                                    <div class="form-group row">
+                                        <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
+                                        <div class="col-sm-6">
+                                            @if (mode == "View" || mode == "Delete")
+                                            {
+                                                <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" required>
+                                            }
+                                            @Html.ValidationMessageFor(m => m.Material_Description, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="AMaterial_Group" class="col-sm-3 col-form-label form-control-label">Material Group</label>
+                                        <div class="col-sm-3">
+                                            @if (mode == "View" || mode == "Delete")
+                                            {
+                                                @Html.TextBoxFor(m => m.Material_Group, new { @class = "form-controll", @readonly = "readonly" })
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownListFor(m => m.Material_Group, (SelectList)ViewBag.MaterialGroup, "Select Material Group", new { @class = "form-control select2", required = "required" })
+                                            } @Html.ValidationMessageFor(m => m.Material_Group, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <!-- /.card-body -->
                         </div>
                     </div>
-                }
-            </section>
-     
-    <script>
-        $(document).ready(function () { 
+
+                </div>
+
+            </div>
+        </div>
+        <!-- /.card -->
+        <!-- /.card-body -->
+        <!-- /.card -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="button-container">
+                    <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
+                        <div>
+                            <a href="@Url.Action("Index", "MaterialCode")" class="btn btn-secondary">Cancel</a>
+                        </div>
+                        @if (mode == "Create")
+                        {
+                            <input type="submit" value="Create" class="btn btn-success">
+                        }
+                        else if (mode == "Edit")
+                        {
+                            <input type="submit" value="Save" class="btn btn-success">
+                        }
+                        else if (mode == "Delete")
+                        {
+                            <input type="submit" value="Delete" class="btn btn-danger">
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        
             $("form").submit(function (e) {
                 var materialCode = $("#Material_Code1").val();
                 var materialDesc = $("#Material_Description").val();
@@ -176,6 +156,12 @@
                 }
                 return true;
             });
-        });
-    </script>
+    });
+    $('.select2').select2({
+        placeholder: "Select an option",
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('body')
+    });
+</script>
 

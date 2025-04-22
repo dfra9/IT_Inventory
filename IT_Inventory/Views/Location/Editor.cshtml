@@ -1,7 +1,7 @@
-﻿@model global::IT_Inventory.Models.Location
+﻿@model global::IT_Inventory.ViewModel.LocationViewModel
 @{
     var mode = ViewBag.Mode ?? "Create";
-    ViewBag.Title = @mode + " - Material Group";
+    ViewBag.Title = @mode + " - Location";
 }
 
     <!-- Main content -->
@@ -22,7 +22,7 @@
                                     <div class="card-body">
                                         <div class="form-group row">
                                             <label for="Location_Code" class="col-sm-2 col-form-label form-control-label">Location Code</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-3">
 
                                                 @if (mode == "Create")
                                                 {
@@ -35,9 +35,27 @@
                                                 }@Html.ValidationMessageFor(model => model.Location_Code, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
+
+                                        <div class="form-group row">
+                                            @Html.LabelFor(model => model.City_Name, new { @class = "control-label col-md-2" })
+                                            <div class="col-md-3">
+                                                @if (mode == "View" || mode == "Delete")
+                                                {
+                                                    @Html.TextBoxFor(model => model.City_Name, new { @class = "form-control", @readonly = "readonly" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DropDownListFor(model => model.City_Name, Model.Cities, "-- Select City --", new { @class = "form-control", required = "required" })
+                                                }
+                                                
+                                                @Html.ValidationMessageFor(model => model.City_Name, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+
                                         <div class="form-group row">
                                             <label for="Location_Name" class="col-sm-2 col-form-label form-control-label">Location Name</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-3">
                                                 @if (mode == "View" || mode == "Delete")
                                                 {
 
@@ -54,7 +72,7 @@
                                         </div>
                                         <div class="form-group row">
                                             <label for="Location_Description" class="col-sm-2 col-form-label form-control-label">Location Description</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-7">
                                                 @if (mode == "View" || mode == "Delete")
                                                 {
 
@@ -63,7 +81,7 @@
                                                 }
                                                 else
                                                 {
-                                                    @Html.TextBoxFor(model => model.Location_Description, new { @class = "form-control", @placeholder = "Location Description", required = "required" })
+                                                    @Html.TextBoxFor(model => model.Location_Description, new { @class = "form-control", @placeholder = "Location Description" })
 
                                                 }
                                                 @Html.ValidationMessageFor(model => model.Location_Description, "", new { @class = "text-danger" })
@@ -107,19 +125,37 @@
         }
     </section>
 
-<script>
-        $(document).ready(function () {
+    <script>
+    $(document).ready(function () {
+
+        $("#City_Name").change(function () {
+            var selectedCity = $(this).val();
+
+            $.ajax({
+                url: '@Url.Action("GetLocationByCity", "Location")',
+                type: 'GET',
+                data: { cityName: selectedCity },
+                success: function (locations) {
+                    console.log("Location for", selectedCity, ":",locations);
+                },
+                error: function (error) {
+                    console.error("Error fetching city details:", error);
+                }
+            });
+
+
             $("form").submit(function (e) {
                 var locationCode = $("#Location_Code").val();
                 var locationName = $("#Location_Name").val();
-                var locationDesc = $("#Location_Description").val();
+                
+                var cityName = $("#City_Name").val();
                 var mode = $("input[name='mode']").val();
 
                 console.log("Location Code: " + locationCode);
                 console.log("Location Name: " + locationName);
                 console.log("Location Description: " + locationDesc);
 
-                if (!locationCode || !locationName || !locationDesc) {
+                if (!locationCode || !locationName || !cityName  ) {
                     alert("Please fill all required field");
                     e.preventDefault();
                     return false;
@@ -140,4 +176,4 @@
     toastr.error('@TempData["ErrorMessage"]');
     }
     });
-</script>
+    </script>

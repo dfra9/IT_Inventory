@@ -20,8 +20,8 @@
                                         <div class="form-group row">
                                             <div class="card-body">
                                                 <div class="form-group row">
-                                                    <label for="Company_Code" class="col-sm-2 col-form-label form-control-label">@Html.DisplayNameFor(model => model.City_Name) </label>
-                                                    <div class="col-sm-8">
+                                                    <label for="City_Name" class="col-sm-2 col-form-label form-control-label">City Name </label>
+                                                    <div class="col-sm-3">
 
                                                         @if (mode == "Create")
                                                         {
@@ -36,8 +36,8 @@
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label for="Company_Name" class="col-sm-2 col-form-label form-control-label">@Html.DisplayNameFor(model => model.City_Description) </label>
-                                                    <div class="col-sm-8">
+                                                    <label for="City_Description" class="col-sm-2 col-form-label form-control-label">City Description </label>
+                                                    <div class="col-sm-3">
                                                         @if (mode == "View" || mode == "Delete")
                                                         {
 
@@ -50,7 +50,6 @@
                                                         @Html.ValidationMessageFor(model => model.City_Description, "", new { @class = "text-danger" })
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>

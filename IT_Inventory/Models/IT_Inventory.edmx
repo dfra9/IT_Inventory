@@ -21,11 +21,11 @@
           <Property Name="No_asset" Type="varchar" MaxLength="255" />
           <Property Name="Company_Code" Type="varchar" MaxLength="100" />
           <Property Name="Company_Name" Type="varchar" MaxLength="255" />
-          <Property Name="Material_Group_Code" Type="varchar" MaxLength="100" />
+          <Property Name="Material_Code" Type="varchar" MaxLength="100" />
           <Property Name="Material_Group" Type="varchar" MaxLength="100" />
           <Property Name="Material_Description" Type="varchar" MaxLength="255" />
           <Property Name="Quantity" Type="int" />
-          <Property Name="Unit" Type="varchar" MaxLength="50" />
+          <Property Name="UoM" Type="varchar" MaxLength="50" />
           <Property Name="Acquisition_Date" Type="date" />
           <Property Name="Acquisition_value" Type="varchar" MaxLength="100" />
           <Property Name="No_Asset_PGA" Type="varchar" MaxLength="100" />
@@ -48,6 +48,9 @@
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
           <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
+          <Property Name="Serial_Number" Type="varchar" MaxLength="255" />
+          <Property Name="Device_Id" Type="varchar" MaxLength="255" />
+          <Property Name="City_Name" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="City">
           <Key>
@@ -106,6 +109,7 @@
           <Property Name="Delete_By" Type="varchar" MaxLength="100" />
           <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
+          <Property Name="City_Name" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Material_Code">
           <Key>
@@ -144,6 +148,21 @@
           <Property Name="Delete_Date" Type="date" />
           <Property Name="Is_Deleted" Type="bit" />
         </EntityType>
+        <EntityType Name="UoM">
+          <Key>
+            <PropertyRef Name="UoM_Id" />
+          </Key>
+          <Property Name="UoM_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UoM_Code" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="UoM_Description" Type="varchar" MaxLength="255" />
+          <Property Name="Create_By" Type="varchar" MaxLength="100" />
+          <Property Name="Create_Date" Type="date" />
+          <Property Name="Edit_By" Type="varchar" MaxLength="100" />
+          <Property Name="Edit_Date" Type="date" />
+          <Property Name="Delete_By" Type="varchar" MaxLength="100" />
+          <Property Name="Delete_Date" Type="date" />
+          <Property Name="Is_Deleted" Type="bit" />
+        </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="User_Id" />
@@ -174,6 +193,7 @@
           <EntitySet Name="Location" EntityType="Self.Location" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Material_Code" EntityType="Self.Material_Code" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Material_Group" EntityType="Self.Material_Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UoM" EntityType="Self.UoM" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -229,6 +249,7 @@
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
+          <Property Name="City_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Material_Group">
           <Key>
@@ -279,6 +300,7 @@
           <EntitySet Name="City" EntityType="IT_InventoryModel.City" />
           <EntitySet Name="Material_Code" EntityType="IT_InventoryModel.Material_Code" />
           <EntitySet Name="Asset" EntityType="IT_InventoryModel.Asset" />
+          <EntitySet Name="UoM" EntityType="IT_InventoryModel.UoM" />
         </EntityContainer>
         <EntityType Name="City">
           <Key>
@@ -323,11 +345,9 @@
           <Property Name="No_asset" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Company_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Company_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Material_Group_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Material_Group" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Material_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Quantity" Type="Int32" />
-          <Property Name="Unit" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Acquisition_Date" Type="DateTime" Precision="0" />
           <Property Name="Acquisition_value" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="No_Asset_PGA" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
@@ -350,6 +370,26 @@
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Delete_Date" Type="DateTime" Precision="0" />
           <Property Name="Is_Deleted" Type="Boolean" />
+          <Property Name="Material_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Serial_Number" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Device_Id" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="UoM" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="City_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="UoM">
+          <Key>
+            <PropertyRef Name="UoM_Id" />
+          </Key>
+          <Property Name="UoM_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UoM_Description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Create_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Create_Date" Type="DateTime" Precision="0" />
+          <Property Name="Edit_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Edit_Date" Type="DateTime" Precision="0" />
+          <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Delete_Date" Type="DateTime" Precision="0" />
+          <Property Name="Is_Deleted" Type="Boolean" />
+          <Property Name="UoM_Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -398,6 +438,7 @@
           <EntitySetMapping Name="Location">
             <EntityTypeMapping TypeName="IT_InventoryModel.Location">
               <MappingFragment StoreEntitySet="Location">
+                <ScalarProperty Name="City_Name" ColumnName="City_Name" />
                 <ScalarProperty Name="Location_Code" ColumnName="Location_Code" />
                 <ScalarProperty Name="Location_Name" ColumnName="Location_Name" />
                 <ScalarProperty Name="Location_Description" ColumnName="Location_Description" />
@@ -491,6 +532,11 @@
           <EntitySetMapping Name="Asset">
             <EntityTypeMapping TypeName="IT_InventoryModel.Asset">
               <MappingFragment StoreEntitySet="Asset">
+                <ScalarProperty Name="City_Name" ColumnName="City_Name" />
+                <ScalarProperty Name="UoM" ColumnName="UoM" />
+                <ScalarProperty Name="Device_Id" ColumnName="Device_Id" />
+                <ScalarProperty Name="Serial_Number" ColumnName="Serial_Number" />
+                <ScalarProperty Name="Material_Code" ColumnName="Material_Code" />
                 <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
                 <ScalarProperty Name="Delete_Date" ColumnName="Delete_Date" />
                 <ScalarProperty Name="Delete_By" ColumnName="Delete_By" />
@@ -513,16 +559,30 @@
                 <ScalarProperty Name="No_Asset_PGA" ColumnName="No_Asset_PGA" />
                 <ScalarProperty Name="Acquisition_value" ColumnName="Acquisition_value" />
                 <ScalarProperty Name="Acquisition_Date" ColumnName="Acquisition_Date" />
-                <ScalarProperty Name="Unit" ColumnName="Unit" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Material_Description" ColumnName="Material_Description" />
                 <ScalarProperty Name="Material_Group" ColumnName="Material_Group" />
-                <ScalarProperty Name="Material_Group_Code" ColumnName="Material_Group_Code" />
                 <ScalarProperty Name="Company_Name" ColumnName="Company_Name" />
                 <ScalarProperty Name="Company_Code" ColumnName="Company_Code" />
                 <ScalarProperty Name="No_asset" ColumnName="No_asset" />
                 <ScalarProperty Name="NO" ColumnName="NO" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UoM">
+            <EntityTypeMapping TypeName="IT_InventoryModel.UoM">
+              <MappingFragment StoreEntitySet="UoM">
+                <ScalarProperty Name="UoM_Code" ColumnName="UoM_Code" />
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Delete_Date" ColumnName="Delete_Date" />
+                <ScalarProperty Name="Delete_By" ColumnName="Delete_By" />
+                <ScalarProperty Name="Edit_Date" ColumnName="Edit_Date" />
+                <ScalarProperty Name="Edit_By" ColumnName="Edit_By" />
+                <ScalarProperty Name="Create_Date" ColumnName="Create_Date" />
+                <ScalarProperty Name="Create_By" ColumnName="Create_By" />
+                <ScalarProperty Name="UoM_Description" ColumnName="UoM_Description" />
+                <ScalarProperty Name="UoM_Id" ColumnName="UoM_Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

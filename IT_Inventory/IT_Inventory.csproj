@@ -169,6 +169,7 @@
     <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\MaterialCodeController.cs" />
     <Compile Include="Controllers\MaterialGroupController.cs" />
+    <Compile Include="Controllers\UoMController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -211,6 +212,9 @@
     <Compile Include="Models\Material_Group.cs">
       <DependentUpon>IT_Inventory.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\UoM.cs">
+      <DependentUpon>IT_Inventory.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Users.cs">
       <DependentUpon>IT_Inventory.tt</DependentUpon>
     </Compile>
@@ -221,9 +225,11 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModel\AssetManagementViewModel.cs" />
     <Compile Include="ViewModel\DataUserViewModel.cs" />
+    <Compile Include="ViewModel\LocationViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MaterialCodeViewModel.cs" />
     <Compile Include="ViewModel\MaterialViewModel.cs" />
+    <Compile Include="ViewModel\UoMViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="admin-lte\css\AdminLTE.css" />
@@ -2834,6 +2840,8 @@
     <Content Include="Views\Location\Index.cshtml" />
     <Content Include="Views\Location\Editor.cshtml" />
     <Content Include="Views\AssetManagement\Transaction.cshtml" />
+    <Content Include="Views\UoM\Index.cshtml" />
+    <Content Include="Views\UoM\Editor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

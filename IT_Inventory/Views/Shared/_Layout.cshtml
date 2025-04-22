@@ -13,6 +13,9 @@
     @Styles.Render("~/Content/Theme/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css")
     @Styles.Render("~/Content/Theme/AdminLTE/plugins/toastr/toastr.min.css")
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+  
+
+
 
     <script src="@Url.Content("~/Content/Theme/AdminLTE/plugins/jquery/jquery.min.js")"></script>
     <script src="@Url.Content("~/Content/Theme/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
@@ -55,16 +58,16 @@
                                     </div>
                                 </li>
                                 <li class="user-footer">
-                                    <div class="pull-left">
+                                    <div class="d-flex justify-content-between" >
                                         <button type="button" class="btn btn-primary btn-flat" id="btnChangePassword">Change Password</button>
-                                    </div>
-                                    <div class="pull-right">
+                                    
                                         @using (Html.BeginForm("LogOff", "Auth", FormMethod.Post, new { id = "logoutForm" }))
                                         {
                                             @Html.AntiForgeryToken()
                                             <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-default btn-flat bg-red">Log off</a>
                                         }
                                     </div>
+                            
                                 </li>
                             </ul>
                         </li>
@@ -159,15 +162,21 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="@Url.Action("Index", "City")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>City</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="@Url.Action("Index", "Location")" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Location</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="@Url.Action("Index", "City")" class="nav-link">
+                                    <a href="@Url.Action("Index", "UoM")" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>City</p>
+                                        <p>UoM</p>
                                     </a>
                                 </li>
                             </ul>
@@ -228,5 +237,97 @@
         </footer>
     </div>
 
+    <div id="ModalChangePassword" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Change Password</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group row">
+                            <label class="control-label col-md-3" for="changePassOld">Old Password</label>
+                            <div class="col-md-7">
+                                <input type="password" id="changePassOld" name="changePassOld" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3" for="changePassNew">New Password</label>
+                            <div class="col-md-7">
+                                <input type="password" id="changePassNew" name="changePassNew" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-md-3" for="changePassConfirm">Confirm New Password</label>
+                            <div class="col-md-7">
+                                <input type="password" id="changePassConfirm" name="changePassConfirm" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-flat" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-flat" id="btnConfirmChangePassword">Change Password</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+         $("#btnChangePassword").click(function () {
+     $("#changePassOld").val("");
+     $("#changePassNew").val("");
+     $("#changePassConfirm").val("");
+
+     $("#ModalChangePassword").modal("show");
+
+ });
+
+ $("#btnConfirmChangePassword").click(function () {
+     var oldPassword = $("#changePassOld").val();
+     var newPassword = $("#changePassNew").val();
+     var confirmPassword = $("#changePassConfirm").val();
+
+     if (!oldPassword) {
+         alert("Old Password is required");
+         return;
+     }
+
+     if (!newPassword) {
+         alert("New Password is required");
+         return;
+     }
+
+     if (!confirmPassword) {
+         alert("Confirm Password is required");
+         return;
+     }
+
+     if (newPassword != confirmPassword) {
+         alert("Confirm Password is different from New Password");
+         return;
+     }
+
+     var data = {
+         old_password: oldPassword,
+         new_password: newPassword,
+         confirm_password: confirmPassword
+     };
+
+     $.post("@Url.Action("ChangePassword", "Auth")", data, function (response) {
+         alert(response.message);
+
+         if (response.success) {
+             $("#ModalChangePassword").modal("hide");
+         }
+     });
+
+ });
+    </script>
 </body>
 </html>

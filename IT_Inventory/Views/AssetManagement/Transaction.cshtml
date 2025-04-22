@@ -1,8 +1,102 @@
 ﻿
 @model global::IT_Inventory.ViewModel.AssetManagementViewModel
 @{
-    ViewBag.Title = "Transaction";
+    ViewBag.Title = "Asset Management";
 }
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+
+    .select2-dropdown {
+        z-index: 9999;
+    }
+
+
+    .select2-search__field {
+        width: 100% !important;
+        padding: 6px !important;
+    }
+
+
+    .select2-container--default .select2-selection--single {
+        height: calc(2.25rem + 2px);
+        padding: .375rem .75rem;
+    }
+
+    .btn-view, .btn-edit {
+        margin-right: 5px;
+    }
+
+    #assetDetailsTable th {
+        width: 20%;
+        background-color: #f8f9fa;
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .modal-header .close {
+            color: white;
+        }
+
+    #assetHistoryTable tr:hover {
+        background-color: #f1f7ff;
+        cursor: pointer;
+    }
+
+    #assetHistoryTable th:last-child,
+    #assetHistoryTable td:last-child {
+        width: 120px;
+        text-align: center;
+    }
+
+
+    .status-borrowing {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+
+    .status-return {
+        color: #007bff;
+    }
+
+    .status-service {
+        color: #ffc107;
+        font-weight: bold;
+    }
+
+    .status-ready {
+        color: #17a2b8;
+    }
+
+    .status-assign {
+        color: #6610f2;
+    }
+
+    .status-write-off {
+        color: #dc3545;
+    }
+
+    #editAssetModal .modal-dialog {
+        max-width: 500px;
+    }
+
+    #viewAssetModal .modal-dialog {
+        max-width: 800px;
+    }
+
+    #editAssetForm .form-group {
+        margin-bottom: 1rem;
+    }
+
+    #editAssetForm label {
+        font-weight: 600;
+    }
+</style>
 
 <section class="content">
     @using (Html.BeginForm("Transaction", "AssetManagement", FormMethod.Post, new { id = "assetForm" }))
@@ -11,8 +105,6 @@
 
         <div class="card card-default">
             <div class="card-header">
-                <h3 class="card-title">Asset Management</h3>
-
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -27,52 +119,52 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="form-group col-4">
                             <label>No Asset</label>
                             @Html.TextBoxFor(m => m.No_asset, new { @class = "form-control", placeholder = "Input No Asset", id = "No_asset" })
                             @Html.ValidationMessageFor(m => m.No_asset, "", new { @class = "text-danger" })
                         </div>
                         <!-- /.form-group -->
-                        <div class="form-group">
+                        <div class="form-group col-4">
                             <label>Company Code</label>
                             @Html.DropDownListFor(m => m.Company_Code, Model.GetCompanyListItem(), "Select Company Code", new { @class = "form-control select2", id = "companyCodeDropdown" })
                             @Html.ValidationMessageFor(m => m.Company_Code, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-4">
                             <label>Company Name</label>
                             @Html.TextBoxFor(m => m.Company_Name, new { @class = "form-control", @readonly = "readonly", id = "Company_Name" })
                         </div>
-                        <div class="form-group">
-                            <label>Material Group Code</label>
-                            @Html.TextBoxFor(m => m.Material_Group_Code, new { @class = "form-control", placeholder = "Input Material Group Code" })
-                            @Html.ValidationMessageFor(m => m.Material_Group_Code, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group">
-                            <label>Material Group</label>
-                            @Html.TextBoxFor(m => m.Material_Group, new { @class = "form-control", placeholder = "Input Material Group" })
+                        <div class="form-group col-5">
+                            <label>Material Group </label>
+                            @Html.DropDownListFor(m => m.Material_Group, Model.GetMaterialGroupListItem(), "Select Material Group", new { @class = "form-control select2", id = "materialGroupDropdown" })
                             @Html.ValidationMessageFor(m => m.Material_Group, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
-                            <label>Material Description</label>
-                            @Html.TextBoxFor(m => m.Material_Description, new { @class = "form-control", placeholder = "Input Material Description" })
+                        <div class="form-group col-5">
+                            <label>Material Code</label>
+                            @Html.DropDownListFor(m => m.Material_Code, Model.GetMaterialCodeListItem(), "Select Material Code", new { @class = "form-control select2", id = "materialCodeDropdown" })
+                            @Html.ValidationMessageFor(m => m.Material_Code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-11">
+                            <label>Asset Description</label>
+                            @Html.TextBoxFor(m => m.Material_Description, new { @class = "form-control", placeholder = "Input Asset Description" })
                             @Html.ValidationMessageFor(m => m.Material_Description, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-1">
                             <label>Quantity</label>
-                            @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", type = "number", placeholder = "Input Material Group Code" })
+                            @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", type = "number", placeholder = "Input Quantity" })
                             @Html.ValidationMessageFor(m => m.Quantity, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
-                            <label>Unit</label>
-                            @Html.TextBoxFor(m => m.Unit, new { @class = "form-control", placeholder = "Input Unit" })
-                            @Html.ValidationMessageFor(m => m.Unit, "", new { @class = "text-danger" })
+                        <div class="form-group col-3">
+                            <label>UoM</label>
+                            @Html.DropDownListFor(m => m.UoM, Model.GetUoMListItem(), "Select Material Code", new { @class = "form-control select2", id = "materialCodeDropdown" })
+                            @Html.ValidationMessageFor(m => m.UoM, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
-                            <label>Aqcuisition Date</label>
+                        <div class="form-group col-4">
+                            <label>Usefull Life</label>
                             @Html.TextBoxFor(m => m.Acquisition_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
                             @Html.ValidationMessageFor(m => m.Acquisition_Date, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-1">
                             <label>Acquisition Value</label>
                             @Html.TextBoxFor(m => m.Acquisition_value, new { @class = "form-control", type = "number" })
                             @Html.ValidationMessageFor(m => m.Acquisition_value, "", new { @class = "text-danger" })
@@ -82,50 +174,60 @@
 
                     <!-- /.col -->
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="form-group col-4">
                             <label>No Asset PGA</label>
                             @Html.TextBoxFor(m => m.No_Asset_PGA, new { @class = "form-control", placeholder = "Input No Asset PGA" })
                             @Html.ValidationMessageFor(m => m.No_Asset_PGA, "", new { @class = "text-danger" })
                         </div>
                         <!-- /.form-group -->
-                        <div class="form-group">
-                            <label>No Asset Accounting</label>
-                            @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input No Asset Accounting" })
+                        <div class="form-group col-4">
+                            <label>No Asset Accopunting</label>
+                            @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input Userfull-Life" })
                             @Html.ValidationMessageFor(m => m.No_Asset_Accounting, "", new { @class = "text-danger" })
                         </div>
                         <!-- /.form-group -->
-                        <div class="form-group">
+                        <div class="form-group col-2">
                             <label>No PO</label>
-                            @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No Asset Accounting" })
+                            @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No PO" })
                             @Html.ValidationMessageFor(m => m.No_PO, "", new { @class = "text-danger" })
                         </div>
+                        <div class="form-group col-4">
+                            <label>Serial Number</label>
+                            @Html.TextBoxFor(m => m.Serial_Number, new { @class = "form-control", placeholder = "Input Serial Number" })
+                            @Html.ValidationMessageFor(m => m.Serial_Number, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Device Id</label>
+                            @Html.TextBoxFor(m => m.Device_Id, new { @class = "form-control", placeholder = "Input Device Id" })
+                            @Html.ValidationMessageFor(m => m.Device_Id, "", new { @class = "text-danger" })
+                        </div>
                         <!-- /.form-group -->
-                        <div class="form-group">
+                        <div class="form-group col-8">
                             <label>Latest User</label>
-                            @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input No Asset Accounting" })
+                            @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input Latest User" })
                             @Html.ValidationMessageFor(m => m.Latest_User, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-4">
                             <label>Departement </label>
                             @Html.DropDownListFor(m => m.Departement_Code, Model.GetDepartementListItem(), "Select Departement", new { @class = "form-control select2", id = "departementDropdown" })
 
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-4">
+                            <label>City</label>
+                            @Html.DropDownListFor(m => m.City_Id, Model.GetCityListItem(), "Select City", new { @class = "form-control select2", id = "cityDropdown" })
+
+                        </div>
+                        <div class="form-group col-4">
                             <label>Location</label>
                             @Html.DropDownListFor(m => m.Locations, Model.GetLocationListItem(), "Select Location", new { @class = "form-control select2", id = "locationDropdown" })
 
                         </div>
-                        <div class="form-group">
-                            <label>City</label>
-                            @Html.DropDownListFor(m => m.City_Id, Model.GetCityListItem(), "Select Location", new { @class = "form-control select2", id = "cityDropdown" })
-
-                        </div>
-                        <div class="form-group">
+                        <div class="form-group col-3">
                             <label>Last Check Date</label>
                             @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date", type = "date" })
                             @Html.ValidationMessageFor(m => m.Last_Check_Date, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
+                        <div class="form-group col-4">
                             <label>Condition</label>
                             @Html.TextBoxFor(m => m.Condition, new { @class = "form-control", placeholder = "" })
                             @Html.ValidationMessageFor(m => m.Condition, "", new { @class = "text-danger" })
@@ -233,9 +335,9 @@
                 </div>
             </div>
         </div>
-          
+
     }
-            
+
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">
@@ -285,7 +387,79 @@
             </tbody>
         </table>
     </div>
+
+    <div class="modal fade" id="editAssetModal" tabindex="-1" role="dialog" aria-labelledby="editAssetModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAssetModalLabel">Edit Asset</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAssetForm">
+                        <input hidden id="editAssetId" name="No_asset" />
+
+                        <div class="form-group">
+                            <label for="editStatus">Status</label>
+                            <select class="form-control" id="editStatus" name="Status">
+                                <option value="Return">Return</option>
+                                <option value="Borrowing">Borrowing</option>
+                                <option value="Service">Service</option>
+                                <option value="Ready">Ready</option>
+                                <option value="Assign">Assign</option>
+                                <option value="Write Off">Write Off</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPIC">PIC / Vendor</label>
+                            <input type="text" class="form-control" id="editPIC" name="PIC" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editTransactionDate">Transaction Date</label>
+                            <input type="date" class="form-control" id="editTransactionDate" name="Transaction_Date" required />
+                        </div>
+                    </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveAssetChanges">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="viewAssetModal" tabindex="-1" role="dialog" aria-labelledby="viewAssetModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewAssetModalLabel">Edit Asset</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody id="assetDetailsTable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     (function () {
         function fetchCompanyName(companyCode) {
@@ -307,11 +481,250 @@
             }
         }
 
-        $(function () {
 
-            if ($.fn.select2) {
-                $('.select2').select2();
+        $(document).on('click', '.btn-edit', function () {
+            var assetNo = $(this).data('asset-no');
+            var pic = $(this).data('pic');
+            var transactionDate = $(this).data('transaction-date');
+            var status = $(this).data('status');
+
+            $("#editAssetId").val(assetNo);
+            $("#editPIC").val(pic);
+            $("#editTransactionDate").val(transactionDate);
+            $("#editStatus").val(status).trigger('change');
+            $("#editAssetModal").modal('show');
+
+            $('#editAssetModal').data('originalData', {
+                status: status,
+                pic: pic,
+                transaction: transactionDate
+            });
+
+            $("#editAssetModal").modal('show');
+
+        });
+
+        $(document).on('click', '.btn-view', function () {
+            var assetNo = $(this).data('asset-no');
+            $.ajax({
+                url: '@Url.Action("GetAssetDetails", "AssetManagement")',
+                type: 'GET',
+                data: { assetNo: assetNo },
+                success: function (data) {
+                    renderAssetHistory(data);
+                    $("#viewAssetModal").modal('show');
+                },
+                error: function (error) {
+                    console.error("Error loading asset details:", error);
+                    toastr.error("Error loading asset details.");
+                }
+            });
+        });
+
+        function confirmChanges(formData, originalData) {
+            if (formData.Status === originalData.status &&
+                formData.PIC === originalData.pic &&
+                formData.Transaction_Date === originalData.transaction) {
+                toastr.info("No changes were made");
+                return false;
             }
+            return true;
+        }
+
+        $('#saveAssetChanges').click(function () {
+            var formData = {
+                No_asset: $("#editAssetId").val(),
+                Status: $("#editStatus").val(),
+                PIC: $("#editPIC").val(),
+                Transaction_Date: $("#editTransactionDate").val()
+            };
+
+            if (!formData.PIC) {
+                toastr.error("PIC is required.");
+                return;
+            }
+            if (!formData.Transaction_Date) {
+                toastr.error("Transaction Date is required.");
+                return;
+            }
+
+            var originalData = $('#editAssetModal').data('originalData');
+
+            if (formData.Status === originalData.status &&
+                formData.PIC === originalData.pic &&
+                formData.Transaction_Date === originalData.transaction) {
+                toastr.info("No changes were made");
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("UpdateAsset", "AssetManagement")',
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                        $("#editAssetModal").modal('hide');
+
+                        var $row = $(`#assetHistoryTable tr td:contains('${formData.No_asset}')`).closest('tr');
+                        $row.find('td:eq(1)').text(formData.PIC);
+                        $row.find('td:eq(2)').text(formData.Transaction_Date);
+                        $row.find('td:eq(3)').text(formData.Status);
+
+                        $row.find('.btn-view, .btn-edit').each(function () {
+                            $(this).data('pic', formData.PIC)
+                                .data('transaction-date', formData.Transaction_Date)
+                                .data('status', formData.Status);
+                        });
+                        } else {
+                        toastr.error(data.message);
+                        console.error("Error from server ", data.message)
+                    }
+                },
+                error: function (error) {
+                    toastr.error("Error updating asset.");
+                    console.error("Error updating asset:", error);
+                }
+            });
+        });
+
+
+            function renderAssetDetail(asset) {
+                var detailsHtml = '';
+                detailsHtml += '<tr>' +
+                    '<th>Company Code</th><td>' + (asset.Company_Code || '') + '</td>' +
+                    '<th>Company Name</th><td>' + (asset.Company_Name || '') + '</td>' +
+                    '</tr>';
+
+                detailsHtml += '<tr>' +
+                    '<th>Material Group</th><td>' + (asset.Material_Group || '') + '</td>' +
+                    '<th>Material Code</th><td>' + (asset.Material_Code || '') + '</td>' +
+                    '</tr>';
+
+                detailsHtml += '<tr>' +
+                    '<th>Material Description</th><td>' + (asset.Material_Description || '') + '</td>' +
+                    '<th>Quantity</th><td>' + (asset.Quantity || '') + '</td>' +
+                    '</tr>';
+
+                detailsHtml += '<tr>' +
+                    '<th>UoM</th><td>' + (asset.UoM || '') + '</td>' +
+                    '<th>PIC</th><td>' + (asset.PIC || '') + '</td>' +
+                    '</tr>';
+
+                detailsHtml += '<tr>' +
+                    '<th>Transaction Date</th><td>' + formatDate(asset.Transaction_Date) + '</td>' +
+                    '<th>Acquisition Date</th><td>' + formatDate(asset.Acquisition_Date) + '</td>' +
+                    '</tr>';
+
+                detailsHtml += '<tr>' +
+                    '<th>Serial Number</th><td>' + (asset.Serial_Number || '') + '</td>' +
+                    '<th>Device ID</th><td>' + (asset.Device_Id || '') + '</td>' +
+                    '</tr>';
+
+                detailsHtml += '<tr>' +
+                    '<th>Latest User</th><td>' + (asset.Latest_User || '') + '</td>' +
+                    '<th>Location</th><td>' + (asset.Locations || '') + '</td>' +
+                    '</tr>';
+
+                detailsHtml += '<tr>' +
+                    '<th>Condition</th><td>' + (asset.Condition || '') + '</td>' +
+                    '<th>Last Check Date</th><td>' + formatDate(asset.Last_Check_Date) + '</td>' +
+                    '</tr>';
+
+                $('#assetDetailsTable').html(detailsHtml);
+            }
+
+        function renderAssetHistory(data) {
+            var tbody = $("#assetHistoryTable");
+            tbody.empty();
+
+            if (data && data.length > 0) {
+                $.each(data, function (i, item) {
+                    var row = "<tr>" +
+                        "<td>" + (item.No_asset || "") + "</td>" +
+                        "<td>" + (item.PIC || "") + "</td>" +
+                        "<td>" + formatDate(item.Transaction_Date) + "</td>" +
+                        "<td>" + (item.Status || "") + "</td>" +
+                        "<td>" + formatDate(item.Submit_Date) + "</td>" +
+                        "<td>" +
+                        "<button type='button' class='btn btn-info btn-sm btn-view' data-asset-no='" + item.No_asset + "'><i class='fas fa-eye'></i></button> " +
+                        "<button type='button' class='btn btn-primary btn-sm btn-edit' " +
+                        "data-asset-no='" + item.No_asset + "' " +
+                        "data-pic='" + (item.PIC || "") + "' " +
+                        "data-transaction-date='" + formatDate(item.Transaction_Date) + "' " +
+                        "data-status='" + (item.Status || "") + "'>" +
+                        "<i class='fas fa-edit'></i></button>" +
+                        "</td>" +
+                        "</tr>";
+                    tbody.append(row);
+                });
+            } else {
+                tbody.append("<tr><td colspan='6'>No data found</td></tr>");
+            }
+        }
+
+            $(function () {
+            $(document).on('click', '.btn-view', function () {
+                var assetNo = $(this).data('asset-no');
+                $.ajax({
+                    url: '@Url.Action("GetAssetDetails", "AssetManagement")',
+                    type: 'GET',
+                    data: { assetNo: assetNo },
+                    success: function (data) {
+                        renderAssetDetails(data);
+                        $("#viewAssetModal").modal('show');
+                    },
+                    error: function (error) {
+                        console.error("Error loading asset details:", error);
+                        toastr.error("Error loading asset details.");
+                    }
+                });
+            });
+
+
+
+                $(function () {
+            $('.select2').select2({
+                placeholder: "Select an option",
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('body')
+            });
+
+            $("#cityDropdown").on('change', function () {
+                var selectCity = $(this).val();
+                var selectedCityName = $(this).find('option:selected').text();
+
+                        $("#locationDropdown").empty().trigger('change');
+
+                        if (selectCityName) {
+                            $.ajax({
+                                url: '@Url.Action("GetLocationByCity", "AssetManagement")',
+                                type: 'GET',
+                                data: { cityId: selectedCityName },
+                                success: function (location) {
+                                    $("#locationDropdown").empty();
+                                    $("#locationDropdown").append('<option value=""> Select Option </option>');
+
+                                    $.each(location, function (i, location) {
+                                        $("#locationDropdown").append(`<option value="${location.locationCode}">
+                                ${location.locationName}
+                            </option>`);
+                                    });
+
+                                    $("#locationDropdown").select2().trigger('change');
+                                },
+                                error: function (error) {
+                                    console.error("Error loading locations:", error);
+                                    toastr.error("Error loading locations.");
+                                }
+                            });
+                        }
+                    });
+
 
             $("#companyCodeDropdown").on('change', function () {
                 var companyCode = $(this).val();
@@ -387,19 +800,45 @@
 
                 if (data && data.length > 0) {
                     $.each(data, function (i, item) {
-                        var row = "<tr>" +
-                            "<td>" + (item.No_asset || "") + "</td>" +
-                            "<td>" + (item.PIC || "") + "</td>" +
-                            "<td>" + formatDate(item.Transaction_Date) + "</td>" +
-                            "<td>" + (item.Status || "") + "</td>" +
-                            "<td>" + formatDate(item.Submit_Date) + "</td>" +
-                            "</tr>";
+                        var row = $("<tr>").append(
+                            $("<td>").text(item.No_asset || ""),
+                            $("<td>").text(item.PIC || ""),
+                            $("<td>").text(formatDate(item.Transaction_Date)),
+                            $("<td>").text(item.Status || ""),
+                            $("<td>").text(formatDate(item.Submit_Date)),
+                            $("<td>").html(
+                                `<div class="btn-group" role="group">
+                        <button type="button" class="btn btn-info btn-sm btn-view"
+                            data-asset-no="${item.No_asset}"
+                            data-pic="${item.PIC || ''}"
+                            data-transaction-date="${formatDate(item.Transaction_Date)}"
+                            data-status="${item.Status || ''}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm btn-edit"
+                            data-asset-no="${item.No_asset}"
+                            data-pic="${item.PIC || ''}"
+                            data-transaction-date="${formatDate(item.Transaction_Date)}"
+                            data-status="${item.Status || ''}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>`
+                            )
+                        );
                         tbody.append(row);
                     });
                 } else {
-                    tbody.append("<tr><td colspan='5'>No data found</td></tr>");
+                    tbody.append(
+                        $("<tr>").append(
+                            $("<td>").attr("colspan", "5").text("No data found")
+                        )
+                    );
                 }
             }
+
+
+
+
             function formatDate(dateString) {
                 if (!dateString) return "";
 
@@ -507,12 +946,12 @@
                 $("#hiddenPIC").val(picValue);
                 $("#hiddenTransactionDate").val(dateValue);
 
-                console.log("form data before submit",{
+                console.log("form data before submit", {
                     NoAsset: $("#No_asset").val(),
-                        Status: status,
-                            PIC: picValue,
+                    Status: status,
+                    PIC: picValue,
                     TransactionDate: dateValue,
-                                FormData: $("#assetForm").serialize()
+                    FormData: $("#assetForm").serialize()
                 });
 
 
@@ -533,8 +972,8 @@
                                 "<td>" + (assetData.Status || "") + "</td>" +
                                 "<td>" + (assetData.Submit_Date || "") + "</td>" +
                                 "</tr>";
-                           
-                            if (tbody.find("tr td[colspan='5']").length > 0) {
+
+                            if (tbody.find("tr td[colspan='6']").length > 0) {
                                 tbody.empty();
                             }
                             tbody.prepend(row);
@@ -544,20 +983,20 @@
                             console.error("Error from server ", data.message)
                         }
                     },
-                        error: function (xhr,status ,error) {
-                            console.error("Error saving asset:", xhr.responseText);
-                            toastr.error("Error saving asset, please try again");
+                    error: function (xhr, status, error) {
+                        console.error("Error saving asset:", xhr.responseText);
+                        toastr.error("Error saving asset, please try again");
                     }
                 });
             });
             function resetFormFields() {
-                
+
                 $("#statusDropdown").val("").trigger("change");
                 $(".status-form input").val("");
                 $("#hiddenPIC").val("");
                 $("#hiddenTransactionDate").val("");
             }
-       
+
         });
     })();
 

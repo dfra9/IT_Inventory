@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="3760a716df2b41ea81ec4304b4b7c630" Name="Diagram1" ZoomLevel="74">
+      <Diagram DiagramId="3760a716df2b41ea81ec4304b4b7c630" Name="Diagram1" ZoomLevel="73">
         <EntityTypeShape EntityType="IT_InventoryModel.C__EFMigrationsHistory" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="IT_InventoryModel.Company" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="IT_InventoryModel.Departement" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
@@ -14,6 +14,7 @@
         <EntityTypeShape EntityType="IT_InventoryModel.City" Width="1.5" PointX="7.375" PointY="5.75" />
         <EntityTypeShape EntityType="IT_InventoryModel.Material_Code" Width="1.5" PointX="2.625" PointY="5.125" />
         <EntityTypeShape EntityType="IT_InventoryModel.Asset" Width="1.5" PointX="5.375" PointY="9.75" />
+        <EntityTypeShape EntityType="IT_InventoryModel.UoM" Width="1.5" PointX="9.375" PointY="6.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

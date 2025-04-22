@@ -1,24 +1,23 @@
 ﻿
-@using IT_Inventory.ViewModel
-@model IEnumerable<global::IT_Inventory.ViewModel.MaterialViewModel>
+@model IEnumerable<global::IT_Inventory.ViewModel.UoMViewModel>
 @{
-    ViewBag.Title = "Material Group";
+
+    ViewBag.Title = "Unit of Measure";
 }
 
 <!-- Main content -->
 <section class="content">
-
     <!-- Default box -->
     <div class="card">
         <div class="card-header">
             <div class="d-flex align-item-center">
-                <a class="btn btn-primary btn-sm" href="@Url.Action("Editor", "MaterialGroup", new { mode = "Create" })">
+                <a class="btn btn-primary btn-sm" href="@Url.Action("Editor", "UoM", new { mode = "Create" })">
                     <i class="fa fa-plus"></i>
                     Create
                 </a>
                 <div class="ml-auto d-flex align-item-center">
                     <div class="input-group input-group-sm mr-2" style="width: 150px;">
-                        <input type="text" id="tableSearch" class="form-control" placeholder="Search Material" />
+                        <input type="text" id="tableSearch" class="form-control" placeholder="Search UoM" />
                         <div class="input-group-append">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                         </div>
@@ -35,27 +34,16 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <table id="materialGroupTable" class="table table-striped projects">
+            <table id="UoMTable" class="table table-striped projects">
                 <thead>
                     <tr>
                         <th style="width: 15%">
-                            Material Group
+                            Name UoM
                         </th>
                         <th style="width: 20%">
-                            Material Description
+                            UoM Description
                         </th>
-                        <th style="width: 10%">
-                            Usefull Life
-                        </th>
-                        <th style="width: 10%">
-                            Quantity
-                        </th>
-                        <th style="width: 10%">
-                            Last Check Date
-                        </th>
-                        <th style="width: 10%">
-                            Max Warranty Date
-                        </th>
+
                         <th style="width: 20%; text-align: center">
                             Action
                         </th>
@@ -65,24 +53,19 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@item.MaterialGroup</td>
-                            <td>@item.MaterialDescription</td>
-                            <td>@item.AgeAccountingAsset</td>
-                            <td>@item.Quantity</td>
-                            <td>@item.LastCheckDate</td>
-                            <td>@item.MaxWarrantyDate</td>
+                            <td>@item.UoM_Code</td>
+                            <td>@item.UoM_Description</td>
                             <td>
                                 <div class="project-actions text-center">
-                                    <a href="@Url.Action("Editor", "MaterialGroup", new { id = item.EncodedId, mode = "View" })" class="btn btn-info btn-sm">
+                                    <a href="@Url.Action("Editor", "UoM", new { id = item.EncodedId, mode = "View" })" class="btn btn-info btn-sm">
                                         <i class="fa fa-eye"></i> View
                                     </a>
-                                    <a href="@Url.Action("Editor", "MaterialGroup",  new { id = item.EncodedId , mode = "Edit" })" class="btn btn-primary btn-sm">
+                                    <a href="@Url.Action("Editor", "UoM",  new { id = item.EncodedId , mode = "Edit" })" class="btn btn-primary btn-sm">
                                         <i class="fa fa-edit"></i> Edit
                                     </a>
-                                    <a href="@Url.Action("Editor", "MaterialGroup", new { id =item.EncodedId, mode = "Delete" })" class="btn btn-warning btn-sm">
+                                    <a href="@Url.Action("Editor", "UoM", new { id = item.EncodedId, mode = "Delete" })" class="btn btn-warning btn-sm">
                                         <i class="fa fa-trash"></i> Delete
                                     </a>
-
                                 </div>
                             </td>
                         </tr>
@@ -90,12 +73,8 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th style="width: 15%"> Material Group </th>
-                        <th style="width: 20%"> Material Description </th>
-                        <th style="width: 10%"> Usefull Life </th>
-                        <th style="width: 10%"> Quantity </th>
-                        <th style="width: 10%"> Last Check Date </th>
-                        <th style="width: 10%"> Max Warranty Date </th>
+                        <th> UoM Code</th>
+                        <th> UoM Description </th>
                     </tr>
                 </tfoot>
             </table>
@@ -104,18 +83,17 @@
     </div>
     <!-- /.card -->
 </section>
-<!-- jQuery -->
-
 <script>
     $(function () {
-        $('#materialGroupTable tfoot th').each(function () {
+        $('#UoMTable tfoot th').each(function () {
             var i = $(this).index();
-            if (i != 6) {
+            if (i != 2) {
                 var title = $(this).text().trim();
                 $(this).html('<input type="text" placeholder="Search ' + title + '" />');
             }
         });
-            var table = $('#materialGroupTable').DataTable({
+
+        var table = $('#UoMTable').DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -124,11 +102,12 @@
                 "ordering": true,
                 "info": true,
                 "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
-                "stateSave": true,
+
             });
-            table.columns().every(function (index) {
+
+        table.columns().every(function (index) {
             var that = this;
-            if (index != 6) {
+            if (index != 2) {
                 $('input', this.footer()).on('keyup change', function () {
                     that
                         .search(this.value)
@@ -136,11 +115,9 @@
                 });
             }
         });
-
                     $("#tableSearch").on("keyup", function () {
                         table.search(this.value).draw();
                     });
-
 
                     @if (TempData["SuccessMassage"]!= null)
 {
@@ -156,5 +133,3 @@
 }
                         });
 </script>
-
-

@@ -50,15 +50,6 @@
                                     <th style="width: 10%">
                                         Material Group
                                     </th>
-                                    <th style="width: 10%">
-                                        No Asset PGA
-                                    </th>
-                                    <th style="width: 10%">
-                                        No Asset Accounting
-                                    </th>
-                                    <th style="width: 10%">
-                                        No PO
-                                    </th>
                                     <th style="width: 20%; text-align: center">
                                         Action
                                     </th>
@@ -71,9 +62,7 @@
                                         <td>@item.Material_Code1</td>
                                         <td>@item.Material_Description</td>
                                         <td>@item.Material_Group</td>
-                                        <td>@item.No_Asset_PGA</td>
-                                        <td>@item.No_Asset_Accounting</td>
-                                        <td>@item.No_PO</td>
+                                       
                                         <td>
                                             <div class="project-actions text-center">
                                                 <a href="@Url.Action("Editor", "MaterialCode", new { id = item.EncodedId, mode = "View" })" class="btn btn-info btn-sm">
@@ -96,9 +85,7 @@
                                     <th> Material Code </th>
                                     <th> Material Description </th>
                                     <th> Material Group </th>
-                                    <th> No Asset PGA </th>
-                                    <th> No Asset Accounting </th>
-                                    <th> No PO </th>
+                                    
                                 </tr>
                             </tfoot>
                         </table>

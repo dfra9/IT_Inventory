@@ -19,11 +19,9 @@ namespace IT_Inventory.Models
         public string No_asset { get; set; }
         public string Company_Code { get; set; }
         public string Company_Name { get; set; }
-        public string Material_Group_Code { get; set; }
         public string Material_Group { get; set; }
         public string Material_Description { get; set; }
         public Nullable<int> Quantity { get; set; }
-        public string Unit { get; set; }
         public Nullable<System.DateTime> Acquisition_Date { get; set; }
         public string Acquisition_value { get; set; }
         public string No_Asset_PGA { get; set; }
@@ -46,5 +44,10 @@ namespace IT_Inventory.Models
         public string Delete_By { get; set; }
         public Nullable<System.DateTime> Delete_Date { get; set; }
         public Nullable<bool> Is_Deleted { get; set; }
+        public string Material_Code { get; set; }
+        public string Serial_Number { get; set; }
+        public string Device_Id { get; set; }
+        public string UoM { get; set; }
+        public string City_Name { get; set; }
     }
 }

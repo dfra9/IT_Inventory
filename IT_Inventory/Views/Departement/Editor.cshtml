@@ -19,7 +19,7 @@
                                     <div class="card-body">
                                         <div class="form-group row">
                                             <label for="Departement_Code" class="col-sm-2 col-form-label form-control-label">Departement Code</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-2">
 
                                                 @if (mode == "Create")
                                                 {
@@ -34,15 +34,15 @@
                                         </div>
                                         <div class="form-group row">
                                             <label for="Departement_Name" class="col-sm-2 col-form-label form-control-label">Departement Name</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-2">
                                                 @if (mode == "View" || mode == "Delete")
                                                 {
 
-                                                    @Html.TextBoxFor(model => model.Departement_Name, new { @class = "form-control", @placeholder = "Company Name", required = "required", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(model => model.Departement_Name, new { @class = "form-control", @placeholder = "Departement Name", required = "required", @readonly = "readonly" })
                                                 }
                                                 else
                                                 {
-                                                    @Html.TextBoxFor(model => model.Departement_Name, new { @class = "form-control", @placeholder = "Company Name", required = "required" })
+                                                    @Html.TextBoxFor(model => model.Departement_Name, new { @class = "form-control", @placeholder = "Departement Name", required = "required" })
                                                 }
                                                 @Html.ValidationMessageFor(model => model.Departement_Name, "", new { @class = "text-danger" })
                                             </div>

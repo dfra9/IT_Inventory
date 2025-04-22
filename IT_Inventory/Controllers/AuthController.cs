@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -107,5 +108,49 @@ namespace IT_Inventory.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(oldPassword) || !string.IsNullOrEmpty(newPassword) || !string.IsNullOrEmpty(confirmPassword))
+                {
+                    TempData["Message"] = "Please fill in all fields";
+                    return RedirectToAction("Index", "Home");
+                }
+                if (newPassword != confirmPassword)
+                {
+                    TempData["Message"] = "New password and confirmation do not match";
+                    return RedirectToAction("Index", "Home");
+                }
+                string currentUsername = Session["Username"]?.ToString();
+
+
+                var users = _db.Users.FirstOrDefault(u => u.Username == currentUsername && u.Is_Deleted != true);
+                if (users == null)
+                {
+                    TempData["Message"] = "User not found";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                if (!_userService.VerifyPassword(users.Password, oldPassword))
+                {
+                    TempData["Message"] = "Current is incorrect";
+                    return RedirectToAction("Index", "Home");
+                }
+                users.Password = _userService.HashPassword(newPassword);
+                users.Last_Login = DateTime.Now;
+                _db.SaveChanges();
+                TempData["Message"] = "Password changed successfully";
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "An error occurred while changing the password: " + ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
+
+        }
     }
 }

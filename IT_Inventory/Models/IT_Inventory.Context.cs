@@ -35,5 +35,6 @@ namespace IT_Inventory
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<Material_Code> Material_Code { get; set; }
         public virtual DbSet<Asset> Asset { get; set; }
+        public virtual DbSet<UoM> UoM { get; set; }
     }
 }

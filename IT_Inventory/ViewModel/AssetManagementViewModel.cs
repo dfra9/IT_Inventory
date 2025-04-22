@@ -14,11 +14,13 @@ namespace IT_Inventory.ViewModel
         [Required(ErrorMessage = "Company Code is required")]
         public string Company_Code { get; set; }
         public string Company_Name { get; set; }
-        public string Material_Group_Code { get; set; }
         public string Material_Group { get; set; }
+
+        public string Material_Code { get; set; }
+
         public string Material_Description { get; set; }
         public int? Quantity { get; set; }
-        public string Unit { get; set; }
+        public string UoM { get; set; }
         public DateTime? Acquisition_Date { get; set; }
         public string Acquisition_value { get; set; }
         public string No_Asset_PGA { get; set; }
@@ -44,6 +46,8 @@ namespace IT_Inventory.ViewModel
         [Required(ErrorMessage = "Transaction Date is required")]
         public DateTime? Transaction_Date { get; set; }
 
+        public string Serial_Number { get; set; }
+        public string Device_Id { get; set; }
         public string Create_By { get; set; }
         public DateTime? Create_Date { get; set; }
         public string Edit_By { get; set; }
@@ -52,11 +56,17 @@ namespace IT_Inventory.ViewModel
         public DateTime? Delete_Date { get; set; }
         public Nullable<bool> Is_Deleted { get; set; }
 
+
         public List<Company> Companies { get; set; }
         public List<Departement> Dept { get; set; }
         public List<Location> Locations { get; set; }
         public List<City> Cities { get; set; }
         public List<SelectListItem> StatusList { get; set; }
+
+        public List<UoM> UoMList { get; set; }
+        public List<Material_Group> MaterialGroup { get; set; }
+
+        public List<Material_Code> Material_Code1 { get; set; }
 
         public List<Asset> AssetHistory { get; set; }
 
@@ -84,9 +94,6 @@ namespace IT_Inventory.ViewModel
             };
 
         }
-
-
-
         public List<SelectListItem> GetCompanyListItem()
         {
             return Companies
@@ -97,6 +104,12 @@ namespace IT_Inventory.ViewModel
                     Text = c.Company_Code
                 })
                 .ToList();
+        }
+
+        public SelectList GetLocationListItemByCity(List<Location> locations, string selectedCity)
+        {
+            var filterLocations = locations.Where(l => l.City_Name == selectedCity).ToList();
+            return new SelectList(filterLocations, "Location_Code", "Location_Name");
         }
         public SelectList GetDepartementListItem()
         {
@@ -114,5 +127,21 @@ namespace IT_Inventory.ViewModel
         {
             return new SelectList(StatusList, "Value", "Text");
         }
+
+        public SelectList GetMaterialGroupListItem()
+        {
+            return new SelectList(MaterialGroup, "Material_Group1", "Material_Group1");
+        }
+
+        public SelectList GetMaterialCodeListItem()
+        {
+            return new SelectList(Material_Code1, "Material_Code1", "Material_Code1");
+        }
+
+        public SelectList GetUoMListItem()
+        {
+            return new SelectList(UoMList, "UoM_Description", "UoM_Description");
+        }
+
     }
 }

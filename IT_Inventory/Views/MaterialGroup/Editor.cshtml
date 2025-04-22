@@ -5,144 +5,153 @@
     var mode = ViewBag.Mode ?? "Create";
     ViewBag.Title = @mode + " - Material Group";
 }
-       
-        <!-- Main content -->
-        <section class="content">
-            @using (Html.BeginForm("Editor", "MaterialGroup", FormMethod.Post))
-            {
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="mode" value="@mode" />
-                <input type="hidden" name="id" value="@Model?.Material_Group1" />
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card card-primary">
-                            <div class="row justify-content-center">
-                                <div class="col-md-8">
+<!-- Main content -->
+<section class="content">
+    @using (Html.BeginForm("Editor", "MaterialGroup", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="mode" value="@mode" />
+        <input type="hidden" name="id" value="@Model?.Material_Group1" />
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <div class="card-body">
                                     <div class="form-group row">
-                                        <div class="card-body">
-                                            <div class="form-group row">
-                                                <label for="Material_Group1" class="col-sm-3 col-form-label form-control-label">Material Group</label>
-                                                <div class="col-sm-9">
-                                                    @if (mode == "Edit" || mode == "View" || mode == "Delete")
-                                                    {
-                                                        <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" readonly>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" required>
-                                                    }
-                                                </div>
-                                            </div>
+                                        <label for="Material_Group1" class="col-sm-3 col-form-label form-control-label">Material Group</label>
+                                        <div class="col-sm-3">
+                                            @if (mode == "Edit" || mode == "View" || mode == "Delete")
+                                            {
+                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" required>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
+                                        <div class="col-sm-9">
+                                            @if (mode == "View")
+                                            {
 
+                                                <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" required>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Age_Accounting_Asset" class="col-sm-3 col-form-label form-control-label">Usefull Life-Year</label>
+                                        <div class="col-sm-2">
+                                            @if (mode == "View")
+                                            {
+                                                <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" required>
+                                            }
+                                        </div>
+                                        <label for="Age_Accounting_Asset" class="col-sm-1 col-form-label form-control-label">Month</label>
+                                        <div class="col-sm-2">
+                                            @if (mode == "View")
+                                            {
+                                                <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" required>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Quantity" class="col-sm-3 col-form-label form-control-label">Quantity</label>
+                                        <div class="col-sm-1">
+                                            @if (mode == "View")
+                                            {
 
-                                            <div class="form-group row">
-                                                <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
-                                                <div class="col-sm-9">
-                                                    @if (mode == "View")
-                                                    {
-
-                                                        <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" required>
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="Age_Accounting_Asset" class="col-sm-3 col-form-label form-control-label">Age Accounting Asset</label>
-                                                <div class="col-sm-9">
-                                                    @if (mode == "View")
-                                                    {
-                                                        <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" readonly>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" required>
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="Quantity" class="col-sm-3 col-form-label form-control-label">Quantity</label>
-                                                <div class="col-sm-9">
-                                                    @if (mode == "View")
-                                                    {
-
-                                                        <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)" readonly>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)">
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="Last_Check_Date" class="col-sm-3 col-form-label form-control-label">Last Check Date</label>
-                                                <div class="col-sm-9">
-                                                    @if (mode == "View")
-                                                    {
-                                                        <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")">
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="Max_Warranty_Date" class="col-sm-3 col-form-label form-control-label">Max Warranty Date</label>
-                                                <div class="col-sm-9">
-                                                    @if (mode == "View")
-                                                    {
-                                                        <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")">
-                                                    }
-                                                </div>
-                                            </div>
+                                                <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)">
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Last_Check_Date" class="col-sm-3 col-form-label form-control-label">Last Check Date</label>
+                                        <div class="col-sm-2">
+                                            @if (mode == "View")
+                                            {
+                                                <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control " value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")">
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Max_Warranty_Date" class="col-sm-3 col-form-label form-control-label">Max Warranty Date</label>
+                                        <div class="col-sm-2">
+                                            @if (mode == "View")
+                                            {
+                                                <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
+                                            }
+                                            else
+                                            {
+                                                <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")">
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- /.card-body -->
                         </div>
                     </div>
+                    <!-- /.card-body -->
                 </div>
+            </div>
+        </div>
 
-                <div class="row">
-                    <div class="col-12 mb-4">
-                        <div class="button-container">
-                            <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
-                                <div>
-                                    <a href="@Url.Action("Index", "MaterialGroup")" class="btn btn-secondary">Cancel</a>
-                                </div>
-
-
-                                @if (mode == "Create")
-                                {
-                                    <input type="submit" value="Create" class="btn btn-success">
-                                }
-                                else if (mode == "Edit")
-                                {
-                                    <input type="submit" value="Save" class="btn btn-success">
-                                }
-                                else if (mode == "Delete")
-                                {
-                                    <input type="submit" value="Delete" class="btn btn-danger">
-
-                                }
-                            </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="button-container">
+                    <div style="display: flex; justify-content: flex-start; gap:10px; margin-top: 15px;">
+                        <div>
+                            <a href="@Url.Action("Index", "MaterialGroup")" class="btn btn-secondary">Cancel</a>
                         </div>
+
+
+                        @if (mode == "Create")
+                        {
+                            <input type="submit" value="Create" class="btn btn-success">
+                        }
+                        else if (mode == "Edit")
+                        {
+                            <input type="submit" value="Save" class="btn btn-success">
+                        }
+                        else if (mode == "Delete")
+                        {
+                            <input type="submit" value="Delete" class="btn btn-danger">
+
+                        }
                     </div>
                 </div>
+            </div>
+        </div>
 
-            }
-        </section>
+    }
+</section>
 
-        <script>
+<script>
 
         $(document).ready(function () {
             $("form").submit(function (e) {
@@ -185,5 +194,5 @@
                 </text>
             }
         });
-        </script>
+</script>
 
