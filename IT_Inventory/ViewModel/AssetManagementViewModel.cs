@@ -58,7 +58,7 @@ namespace IT_Inventory.ViewModel
         public DateTime? Delete_Date { get; set; }
         public Nullable<bool> Is_Deleted { get; set; }
 
-
+        public DashboardCountsModel DashboardCounts { get; set; }
         public List<Company> Companies { get; set; }
         [Required(ErrorMessage = "Departement is required")]
         public List<Departement> Dept { get; set; }
@@ -102,6 +102,16 @@ namespace IT_Inventory.ViewModel
             };
 
         }
+
+        public class DashboardCountsModel
+        {
+            public int TotalAssets { get; set; }
+            public int AvailableAssets { get; set; }
+            public int AssetsInUse { get; set; }
+            public int AssetsInMaintenance { get; set; }
+        }
+
+
         public List<SelectListItem> GetCompanyListItem()
         {
             return Companies

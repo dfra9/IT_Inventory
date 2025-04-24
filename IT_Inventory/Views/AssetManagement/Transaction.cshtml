@@ -191,7 +191,7 @@
                             @Html.ValidationMessageFor(m => m.UoM, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group col-4">
-                            <label>Usefull Life</label>
+                            <label>Acquisition Date</label>
                             @Html.TextBoxFor(m => m.Acquisition_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
                             @Html.ValidationMessageFor(m => m.Acquisition_Date, "", new { @class = "text-danger" })
                         </div>
@@ -424,6 +424,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    
+
    $(function () {
 
     $('.select2').select2({
@@ -747,6 +749,10 @@
                         tbody.prepend(row);
                     }
 
+                    if (data.dashboardCounts) {
+                        updateDashboardCounts(data.dashboardCounts);
+                    }
+
                     resetFormFields();
                 } else {
                     showErrorToast(data && data.message ? data.message : "Error saving asset");
@@ -769,6 +775,50 @@
             }
         });
     });
+
+       function updateDashboardCounts(dashboardCounts) {
+           if (!dashboardCounts) return;
+
+           if (dashboardCounts.TotalAssets !== undefined) {
+               $('#total-assets').text(dashboardCounts.TotalAssets);
+           }
+
+           if (dashboardCounts.AvailableAssets !== undefined) {
+               $('#available-assets').text(dashboardCounts.AvailableAssets);
+           }
+
+           if (dashboardCounts.AssetsInUse !== undefined) {
+               $('#assets-in-use').text(dashboardCounts.AssetsInUse);
+           }
+
+        
+           if (dashboardCounts.AssetsInMaintenance !== undefined) {
+               $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
+           }
+       }
+
+    
+       function refreshDashboardData() {
+           $.ajax({
+               url: '/AssetManagement/GetDashboardCountsJson',
+               type: 'GET',
+               dataType: 'json',
+               cache: false,
+               success: function (dashboardCounts) {
+                   console.log("Dashboard data refreshed successfully:", dashboardCounts);
+                   updateDashboardCounts(dashboardCounts);
+               },
+               error: function (xhr, status, error) {
+                   console.error('Error refreshing dashboard data:', error);
+                   console.error('Status:', status);
+                   console.error('Response:', xhr.responseText);
+               }
+           });
+       }
+
+       $(document).ready(function () {
+           refreshDashboardData();
+       });
 
     function resetFormFields() {
 
@@ -799,8 +849,11 @@
         $("#Condition").val("");
     }
 
+       
+
     $("#btnCancel").click(function () {
         window.location.href = '@Url.Action("Index", "Home")';
     });
+       
 });
 </script>

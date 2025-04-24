@@ -95,13 +95,12 @@
                 <!-- /.card -->
             </section>
 
-    <script>
+            <script>
         $(function () {
-            $('#materialCodeTable tfoot th').each(function () {
-                var i = $(this).index();
-                if (i != 6) {
-                    var title = $(this).text().trim();
-                    $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            $('#materialCodeTable tfoot th').each(function (i) {
+                var title = $('#materialCodeTable thead th').eq($(this).index()).text().trim();
+                if (i < 3) {
+                    $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Search ' + title + '" />');
                 }
             });
             var table = $('#materialCodeTable').DataTable({
@@ -116,34 +115,36 @@
                 "stateSave": true
             });
 
-            table.columns().every(function (index) {
+            table.columns().every(function (i) {
                 var that = this;
-                if (index != 6) {
+
+                if (i < 3) {
                     $('input', this.footer()).on('keyup change', function () {
-                        that
-                            .search(this.value)
-                            .draw();
+                        if (that.search() !== this.value) {
+                            that
+                                .search(this.value)
+                                .draw();
+                        }
                     });
                 }
             });
 
                     $("#tableSearch").on("keyup", function () {
-                        table.search(this.value).draw();
-                    });
+            table.search(this.value).draw();
+        });
 
-
-                    @if (TempData["SuccessMassage"]!= null)
-{
-                        <text>
-                    toastr.success('@TempData["SuccessMassage"]');
-                            </text>
-}
-                            @if (TempData["ErrorMassage"]!= null)
-{
-                    <text>
-                    toastr.error('@TempData["ErrorMassage"]');
-                            </text>
-}
-                        });
-    </script>
+        @if (TempData["SuccessMassage"]!= null)
+        {
+            <text>
+            toastr.success('@TempData["SuccessMassage"]');
+            </text>
+        }
+        @if (TempData["ErrorMassage"]!= null)
+        {
+            <text>
+            toastr.error('@TempData["ErrorMassage"]');
+            </text>
+        }
+    });
+            </script>
 

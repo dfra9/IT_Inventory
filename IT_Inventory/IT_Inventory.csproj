@@ -228,7 +228,7 @@
     <Compile Include="ViewModel\LocationViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MaterialCodeViewModel.cs" />
-    <Compile Include="ViewModel\MaterialViewModel.cs" />
+    <Compile Include="ViewModel\MaterialGroupViewModel.cs" />
     <Compile Include="ViewModel\UoMViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using IT_Inventory.Models;
 using IT_Inventory.ViewModel;
+using static IT_Inventory.ViewModel.AssetManagementViewModel;
 
 namespace IT_Inventory.Controllers
 {
@@ -198,8 +199,8 @@ namespace IT_Inventory.Controllers
                     db.Asset.Add(assetHistory);
                     db.SaveChanges();
 
-
                     var dashboardCounts = GetDashboardCounts();
+
                     if (Request.IsAjaxRequest())
                     {
                         return Json(new
@@ -213,12 +214,14 @@ namespace IT_Inventory.Controllers
                                 Transaction_Date = assetHistory.Transaction_Date.HasValue ? assetHistory.Transaction_Date.Value.ToString("yyyy-MM-dd") : "",
                                 assetHistory.Status,
                                 Submit_Date = assetHistory.Create_Date.HasValue ? assetHistory.Create_Date.Value.ToString("yyyy-MM-dd") : ""
-                            }
+                            },
+                            dashboardCounts = dashboardCounts
                         });
                     }
                     else
                     {
                         TempData["SuccessMessage"] = "Transaction successful";
+                        TempData["DashboardCounts"] = dashboardCounts;
                         return RedirectToAction("Transaction");
                     }
                 }
@@ -249,6 +252,7 @@ namespace IT_Inventory.Controllers
                     .OrderByDescending(a => a.Transaction_Date)
                     .Take(100)
                     .ToList();
+                viewModel.DashboardCounts = GetDashboardCounts();
                 return View(viewModel);
             }
             catch (Exception ex)
@@ -271,15 +275,17 @@ namespace IT_Inventory.Controllers
                 viewModel.MaterialGroup = db.Material_Group.Where(c => c.Is_Deleted != true).ToList();
                 viewModel.Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList();
                 viewModel.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
+                viewModel.DashboardCounts = GetDashboardCounts();
+
 
                 LoadDropdownData();
                 return View(viewModel);
             }
         }
 
-        private object GetDashboardCounts()
+        private DashboardCountsModel GetDashboardCounts()
         {
-            return new
+            return new DashboardCountsModel
             {
                 TotalAssets = db.Asset
             .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
@@ -293,13 +299,13 @@ namespace IT_Inventory.Controllers
             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
             .Count(),
 
-                AssetInUse = db.Asset
+                AssetsInUse = db.Asset
             .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
             .GroupBy(a => a.No_asset)
             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
             .Count(),
 
-                AssetInService = db.Asset
+                AssetsInMaintenance = db.Asset
             .Where(a => a.Is_Deleted != true && a.Status == "Service")
             .GroupBy(a => a.No_asset)
             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
@@ -461,6 +467,8 @@ namespace IT_Inventory.Controllers
                 asset.Edit_Date = DateTime.Now;
                 db.SaveChanges();
 
+                var dashboardCounts = GetDashboardCounts();
+
                 return Json(new
                 {
                     success = true,
@@ -472,7 +480,8 @@ namespace IT_Inventory.Controllers
                         Transaction_Date = newTransaction.Transaction_Date.HasValue ? newTransaction.Transaction_Date.Value.ToString("yyyy-MM-dd") : "",
                         Status = newTransaction.Status,
                         Submit_Date = newTransaction.Create_Date.HasValue ? newTransaction.Create_Date.Value.ToString("yyyy-MM-dd") : ""
-                    }
+                    },
+                    dashboardCounts = dashboardCounts
                 });
             }
             catch (Exception ex)
@@ -512,11 +521,13 @@ namespace IT_Inventory.Controllers
                 }
 
                 db.SaveChanges();
+                var dashboardCounts = GetDashboardCounts();
 
                 return Json(new
                 {
                     success = true,
-                    message = "Asset deleted successfully"
+                    message = "Asset deleted successfully",
+                    dashboardCounts = dashboardCounts
                 });
             }
             catch (Exception ex)
@@ -536,7 +547,7 @@ namespace IT_Inventory.Controllers
             }
 
             var latestAssets = assetData.GroupBy(a => a.No_asset)
-      .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault());
+        .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault());
             var assets = latestAssets.OrderByDescending(a => a.Transaction_Date).Select(a => new
             {
                 a.No_asset,
@@ -572,6 +583,38 @@ namespace IT_Inventory.Controllers
             }).Take(100)
               .ToList();
             return Json(assets, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetDashboardCountsJson()
+        {
+            var counts = new DashboardCountsModel
+            {
+                TotalAssets = db.Asset
+             .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
+             .GroupBy(a => a.No_asset)
+             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+             .Count(),
+
+                AvailableAssets = db.Asset
+             .Where(a => a.Is_Deleted != true && (a.Status == "Ready" || a.Status == "Return"))
+             .GroupBy(a => a.No_asset)
+             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+             .Count(),
+
+                AssetsInUse = db.Asset
+             .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
+             .GroupBy(a => a.No_asset)
+             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+             .Count(),
+
+                AssetsInMaintenance = db.Asset
+             .Where(a => a.Is_Deleted != true && a.Status == "Service")
+             .GroupBy(a => a.No_asset)
+             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+             .Count()
+            };
+
+            return Json(counts, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

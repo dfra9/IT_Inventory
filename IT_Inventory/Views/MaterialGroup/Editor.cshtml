@@ -12,7 +12,7 @@
     {
         @Html.AntiForgeryToken()
         <input type="hidden" name="mode" value="@mode" />
-        <input type="hidden" name="id" value="@Model?.Material_Group1" />
+        <input type="hidden" name="id" value="@Model?.Material_Group_Id" />
 
         <div class="row">
             <div class="col-md-12">
@@ -49,26 +49,50 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="Age_Accounting_Asset" class="col-sm-3 col-form-label form-control-label">Usefull Life-Year</label>
+                                        <label for="Year_Value" class="col-sm-3 col-form-label form-control-label">Useful Life-Year</label>
                                         <div class="col-sm-2">
+                                            @{
+                                                string yearValue = string.Empty;
+                                                string monthValue = string.Empty;
+
+                                                if (!string.IsNullOrEmpty(Model?.Age_Accounting_Asset))
+                                                {
+                                                    string ageAsset = Model.Age_Accounting_Asset;
+
+                                                    if (ageAsset.Contains("Years") && ageAsset.Contains("Month"))
+                                                    {
+                                                        string[] parts = ageAsset.Split(new string[] { "Years,", "Month" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        if (parts.Length >= 2)
+                                                        {
+                                                            yearValue = parts[0].Trim();
+                                                            monthValue = parts[1].Trim();
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        yearValue = ageAsset.Trim();
+                                                    }
+                                                }
+                                            }
+
                                             @if (mode == "View")
                                             {
-                                                <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" readonly>
+                                                <input type="text" id="Year_Value" name="Year_Value" class="form-control" value="@yearValue" readonly>
                                             }
                                             else
                                             {
-                                                <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" required>
+                                                <input type="text" id="Year_Value" name="Year_Value" class="form-control" value="@yearValue" required>
                                             }
                                         </div>
-                                        <label for="Age_Accounting_Asset" class="col-sm-1 col-form-label form-control-label">Month</label>
+                                        <label for="Month_Value" class="col-sm-1 col-form-label form-control-label">Month</label>
                                         <div class="col-sm-2">
                                             @if (mode == "View")
                                             {
-                                                <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" readonly>
+                                                <input type="text" id="Month_Value" name="Month_Value" class="form-control" value="@monthValue" readonly>
                                             }
                                             else
                                             {
-                                                <input type="text" id="Age_Accounting_Asset" name="Age_Accounting_Asset" class="form-control" value="@(Model?.Age_Accounting_Asset ?? "")" required>
+                                                <input type="text" id="Month_Value" name="Month_Value" class="form-control" value="@monthValue" required>
                                             }
                                         </div>
                                     </div>
@@ -121,6 +145,7 @@
             </div>
         </div>
 
+
         <div class="row">
             <div class="col-12 mb-4">
                 <div class="button-container">
@@ -157,42 +182,71 @@
             $("form").submit(function (e) {
                 var materialGroup = $("#Material_Group1").val();
                 var materialDesc = $("#Material_Description").val();
-                var ageAsset = $("#Age_Accounting_Asset").val();
+                var yearValue = $("#Year_Value").val();
+                var monthValue = $("#Month_Value").val();
                 var mode = $("input[name='mode']").val();
 
                 console.log("Material Group: " + materialGroup);
                 console.log("Material Description: " + materialDesc);
-                console.log("Age Asset: " + ageAsset);
-                console.log("Mode: " + mode);
+                console.log("Year Value: " + yearValue);
+                console.log("Month Value: " + monthValue);
 
-
-                if (!materialGroup || !materialDesc || !ageAsset) {
-                    alert("Please fill all required field");
+                if (!materialGroup) {
+                    alert("Material Group is required");
                     e.preventDefault();
                     return false;
                 }
 
-                if (mode == "Delete") {
-                    if (!confirm("Are you sure want to delete this Material Group?")) {
+                if (!materialDesc) {
+                    alert("Material Description is required");
+                    e.preventDefault();
+                    return false;
+                }
+
+                if (yearValue === "" || monthValue === "") {
+                    alert("Please provide Useful Life (Years and Months)");
+                    e.preventDefault();
+                    return false;
+                }
+
+
+                if (isNaN(yearValue) || isNaN(monthValue)) {
+                    alert("Years and Months must be numeric values");
+                    e.preventDefault();
+                    return false;
+                }
+
+                var combinedValue = yearValue + " Years, " + monthValue + " Month";
+                console.log("Combined Value: " + combinedValue);
+
+                $("input[name='Age_Accounting_Asset']").remove();
+
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "Age_Accounting_Asset",
+                    value: combinedValue
+                }).appendTo("form");
+
+                if (mode === "Delete") {
+                    if (!confirm("Are you sure you want to delete this Material Group?")) {
                         e.preventDefault();
                         return false;
                     }
                 }
             });
 
-
-             @if (TempData["SuccessMessage"] != null)
-            {
-                <text>
-                toastr.success('@TempData["SuccessMessage"]');
-                </text>
-            }
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <text>
-                toastr.error('@TempData["ErrorMessage"]');
-                </text>
-            }
-        });
+            @if (TempData["SuccessMessage"] != null)
+    {
+        <text>
+        toastr.success('@TempData["SuccessMessage"]');
+        </text>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <text>
+        toastr.error('@TempData["ErrorMessage"]');
+        </text>
+    }
+});
 </script>
 

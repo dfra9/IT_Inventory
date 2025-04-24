@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web.Mvc;
 using IT_Inventory.Models;
 using IT_Inventory.ViewModel;
+using static IT_Inventory.ViewModel.AssetManagementViewModel;
 
 
 namespace IT_Inventory.Controllers
@@ -15,148 +17,108 @@ namespace IT_Inventory.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            var user = Session["User"] as Users;
-            var viewModel = new AssetManagementViewModel
+            var dashboardCounts = new DashboardCountsModel
             {
                 TotalAssets = db.Asset
-            .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .Count(),
+                    .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
+                    .GroupBy(a => a.No_asset)
+                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                    .Count(),
 
                 AvailableAssets = db.Asset
-            .Where(a => a.Is_Deleted != true && (a.Status == "Ready" || a.Status == "Return"))
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .Count(),
+                    .Where(a => a.Is_Deleted != true && (a.Status == "Ready" || a.Status == "Return"))
+                    .GroupBy(a => a.No_asset)
+                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                    .Count(),
 
-                AssetInUse = db.Asset
-            .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .Count(),
+                AssetsInUse = db.Asset
+                    .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
+                    .GroupBy(a => a.No_asset)
+                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                    .Count(),
 
-                AssetInService = db.Asset
-            .Where(a => a.Is_Deleted != true && a.Status == "Service")
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .Count(),
-
-                DashHistory = db.Asset
-            .Where(a => a.Is_Deleted != true)
-            .OrderByDescending(a => a.Transaction_Date)
-            .Take(10)
-            .ToList()
-
+                AssetsInMaintenance = db.Asset
+                    .Where(a => a.Is_Deleted != true && a.Status == "Service")
+                    .GroupBy(a => a.No_asset)
+                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                    .Count()
             };
+
+            var viewModel = new AssetManagementViewModel
+            {
+                DashboardCounts = dashboardCounts,
+                DashHistory = GetDashboardHistory()
+            };
+
             return View(viewModel);
         }
 
 
+        private List<Asset> GetDashboardHistory()
+        {
+            return db.Asset
+                .Where(a => a.Is_Deleted != true)
+                .GroupBy(a => a.No_asset)
+                .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                .OrderByDescending(a => a.Transaction_Date)
+                .Take(10)
+                .ToList();
+        }
+
+
         [HttpPost]
-        public ActionResult GetDashboardData(DataTablesParameters parameters)
+        public ActionResult GetDashboardData(DataTablesParameters param)
         {
             try
             {
-
-                var query = db.Asset.AsQueryable();
-
-                query = query.Where(a => a.Is_Deleted != true);
-
-                if (!string.IsNullOrEmpty(parameters.Search?.Value))
-                {
-                    var search = parameters.Search.Value.ToLower();
-                    query = query.Where(a =>
-                        (a.No_asset != null && a.No_asset.ToLower().Contains(search)) ||
-                        (a.Material_Group != null && a.Material_Group.ToLower().Contains(search)) ||
-                        (a.Material_Description != null && a.Material_Description.ToLower().Contains(search)) ||
-                        (a.Location != null && a.Location.ToLower().Contains(search)) ||
-                        (a.Departement != null && a.Departement.ToLower().Contains(search)) ||
-                        (a.Status != null && a.Status.ToLower().Contains(search))
-                    );
-                }
-
-                if (parameters.Columns != null)
-                {
-                    for (int i = 0; i < parameters.Columns.Length; i++)
-                    {
-                        var column = parameters.Columns[i];
-                        if (column.Searchable && !string.IsNullOrEmpty(column.Search?.Value))
-                        {
-                            var searchValue = column.Search.Value.ToLower();
-                            query = ApplyColumnSearch(query, column.Data, searchValue);
-                        }
-                    }
-                }
-
-                int totalRecords = db.Asset.Count(a => a.Is_Deleted != true);
-
-                if (parameters.Order != null && parameters.Order.Length > 0)
-                {
-                    var sortColumn = parameters.Columns[parameters.Order[0].Column].Data;
-                    var sortDirection = parameters.Order[0].Dir;
-
-                    try
-                    {
-                        query = ApplySorting(query, sortColumn, sortDirection);
-                    }
-                    catch (Exception ex)
-                    {
-
-                        System.Diagnostics.Debug.WriteLine($"Sorting error: {ex.Message}");
-                        query = query.OrderByDescending(a => a.Transaction_Date);
-                    }
-                }
-                else
-                {
-
-                    query = query.OrderByDescending(a => a.Transaction_Date);
-                }
-
-                int filteredRecords = query.Count();
-
-                var pagedQuery = query
-                    .Skip(parameters.Start)
-                    .Take(parameters.Length);
-
-                var data = pagedQuery
-                    .Select(a => new
-                    {
-                        a.ID,
-                        a.No_asset,
-                        a.Company_Code,
-                        a.Material_Group,
-                        a.Material_Description,
-                        a.Acquisition_Date,
-                        a.Status,
-                        a.Departement,
-                        a.Location,
-                        a.Is_Deleted
-                    })
-                    .ToList();
+                int totalCount;
+                int filteredCount;
+                var assets = GetFilteredAssets(param, out totalCount, out filteredCount);
 
                 return Json(new
                 {
-                    draw = parameters.Draw,
-                    recordsTotal = totalRecords,
-                    recordsFiltered = filteredRecords,
-                    data = data
+                    draw = param.Draw,
+                    recordsTotal = totalCount,
+                    recordsFiltered = filteredCount,
+                    data = assets
                 });
             }
             catch (Exception ex)
             {
-
-                System.Diagnostics.Debug.WriteLine($"Error in GetDashboardData: {ex.Message}");
-
-                return Json(new
-                {
-                    draw = parameters.Draw,
-                    recordsTotal = 0,
-                    recordsFiltered = 0,
-                    data = new object[0],
-                    error = ex.Message
-                });
+                return Json(new { error = "Error getting dashboard data: " + ex.Message });
             }
+        }
+
+        private List<Asset> GetFilteredAssets(DataTablesParameters param, out int totalCount, out int filteredCount)
+        {
+            var assetQuery = db.Asset
+                .Where(a => a.Is_Deleted != true)
+                .GroupBy(a => a.No_asset)
+                .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                .AsQueryable();
+
+            totalCount = assetQuery.Count();
+
+            if (!string.IsNullOrEmpty(param.globalSearch))
+            {
+                string search = param.globalSearch.ToLower();
+                assetQuery = assetQuery.Where(a =>
+                    a.No_asset.ToLower().Contains(search) ||
+                    (a.Material_Group != null && a.Material_Group.ToLower().Contains(search)) ||
+                    (a.Material_Description != null && a.Material_Description.ToLower().Contains(search)) ||
+                    (a.Status != null && a.Status.ToLower().Contains(search)) ||
+                    (a.Location != null && a.Location.ToLower().Contains(search)) ||
+                    (a.Departement != null && a.Departement.ToLower().Contains(search))
+                );
+            }
+
+            filteredCount = assetQuery.Count();
+
+            return assetQuery
+                .OrderByDescending(a => a.Transaction_Date)
+                .Skip(param.Start)
+                .Take(param.Length)
+                .ToList();
         }
 
         private IQueryable<Asset> ApplyColumnSearch(IQueryable<Asset> query, string columnName, string searchValue)
@@ -206,7 +168,6 @@ namespace IT_Inventory.Controllers
                         return query.OrderByDescending(a => a.Acquisition_Date);
                 }
 
-                // Untuk kolom lainnya
                 MemberExpression property = Expression.Property(parameter, sortColumn);
                 var lambda = Expression.Lambda(property, parameter);
                 string methodName = sortDirection.ToLower() == "asc" ? "OrderBy" : "OrderByDescending";
@@ -241,6 +202,8 @@ namespace IT_Inventory.Controllers
             public SearchParameters Search { get; set; }
             public OrderParameters[] Order { get; set; }
             public ColumnParameters[] Columns { get; set; }
+
+            public string globalSearch { get; set; }
         }
 
         public class SearchParameters

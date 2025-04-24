@@ -49,7 +49,7 @@ namespace IT_Inventory.Controllers
         {
             var materialGroups = db.Material_Group.Where(u => u.Is_Deleted != true).AsEnumerable().Select(u =>
             {
-                var model = new MaterialViewModel
+                var model = new MaterialGroupViewModel
                 {
                     MaterialGroup = u.Material_Group1,
 
@@ -97,13 +97,12 @@ namespace IT_Inventory.Controllers
             return View(materialGroup);
 
         }
+
         [HttpPost]
-
+        [ValidateInput(false)]
         [ValidateAntiForgeryToken]
-
-        public ActionResult Editor(string id, Material_Group material_Group, string mode = "Create")
+        public ActionResult Editor(string id, Material_Group material_Group, string mode = "Create", string Year_Value = "0", string Month_Value = "0")
         {
-
             ModelState.Clear();
 
             var username = Session["Username"]?.ToString();
@@ -115,56 +114,78 @@ namespace IT_Inventory.Controllers
 
             try
             {
-
-
                 if (string.IsNullOrEmpty(material_Group.Material_Group1))
                 {
-                    TempData["ErrorMassage"] = "Material Group ID is required";
+                    TempData["ErrorMessage"] = "Material Group ID is required";
                     ViewBag.Mode = mode;
                     return View(material_Group);
+                }
+
+                if (!string.IsNullOrEmpty(Year_Value) || !string.IsNullOrEmpty(Month_Value))
+                {
+                    material_Group.Age_Accounting_Asset = $"{Year_Value ?? "0"} Years, {Month_Value ?? "0"} Month";
                 }
 
                 material_Group.Is_Deleted = false;
                 if (mode == "Create")
                 {
-                    var isExist = db.Material_Group.FirstOrDefault(u => u.Material_Group1 == material_Group.Material_Group1 && u.Is_Deleted != true);
+
+                    var isExist = db.Material_Group.FirstOrDefault(u =>
+                        u.Material_Group1 == material_Group.Material_Group1 &&
+                        u.Material_Description == material_Group.Material_Description &&
+                        u.Is_Deleted != true);
+
                     if (isExist != null)
                     {
-                        TempData["Message"] = "Material Group already exist in database";
+                        TempData["ErrorMessage"] = "Material Group with the same description already exists in database";
                         ViewBag.Mode = mode;
                         return View(material_Group);
                     }
+
                     material_Group.Create_By = username;
                     material_Group.Create_Date = DateTime.Now;
                     material_Group.Is_Deleted = false;
                     db.Material_Group.Add(material_Group);
-
-
                 }
-
                 else if (mode == "Edit")
                 {
                     string decodedId = id != null ? DecodeId(id) : material_Group.Material_Group1;
-                    var isExist = db.Material_Group.FirstOrDefault(u => u.Material_Group1 == material_Group.Material_Group1 && u.Is_Deleted != true);
-                    if (isExist == null)
+                    var existingGroup = db.Material_Group.FirstOrDefault(u => u.Material_Group1 == decodedId && u.Is_Deleted != true);
+
+                    if (existingGroup == null)
                     {
                         TempData["Message"] = "Material Group not found";
                         return RedirectToAction("Index");
                     }
-                    isExist.Material_Description = material_Group.Material_Description;
-                    isExist.Age_Accounting_Asset = material_Group.Age_Accounting_Asset;
-                    isExist.Quantity = material_Group.Quantity;
-                    isExist.Last_Check_Date = material_Group.Last_Check_Date;
-                    isExist.Max_Warranty_Date = material_Group.Max_Warranty_Date;
-                    isExist.Edit_By = Session["Username"].ToString();
-                    isExist.Edit_Date = DateTime.Now;
 
-                    db.Entry(isExist).State = EntityState.Modified;
+
+                    var duplicateExists = db.Material_Group.Any(u =>
+                        u.Material_Group1 == material_Group.Material_Group1 &&
+                        u.Material_Description == material_Group.Material_Description &&
+                        u.Material_Group_Id != existingGroup.Material_Group_Id &&
+                        u.Is_Deleted != true);
+
+                    if (duplicateExists)
+                    {
+                        TempData["ErrorMessage"] = "Another Material Group with the same ID and description already exists";
+                        ViewBag.Mode = mode;
+                        return View(material_Group);
+                    }
+
+                    existingGroup.Material_Description = material_Group.Material_Description;
+                    existingGroup.Age_Accounting_Asset = material_Group.Age_Accounting_Asset;
+                    existingGroup.Quantity = material_Group.Quantity;
+                    existingGroup.Last_Check_Date = material_Group.Last_Check_Date;
+                    existingGroup.Max_Warranty_Date = material_Group.Max_Warranty_Date;
+                    existingGroup.Edit_By = username;
+                    existingGroup.Edit_Date = DateTime.Now;
+
+                    db.Entry(existingGroup).State = EntityState.Modified;
                 }
                 else if (mode == "Delete")
                 {
                     string decodedId = id != null ? DecodeId(id) : material_Group.Material_Group1;
-                    var isExist = db.Material_Group.FirstOrDefault(u => u.Material_Group1 == material_Group.Material_Group1 && u.Is_Deleted != true);
+                    var isExist = db.Material_Group.FirstOrDefault(u => u.Material_Group1 == decodedId && u.Is_Deleted != true);
                     if (isExist == null)
                     {
                         TempData["Message"] = "Material Group not found";
@@ -176,30 +197,26 @@ namespace IT_Inventory.Controllers
                     isExist.Delete_Date = DateTime.Now;
                     db.Entry(isExist).State = EntityState.Modified;
                 }
-                int save = db.SaveChanges();
-                try
-                {
 
-                    db.SaveChanges();
-
-                    TempData["SuccessMessage"] = $"Material Group successfully {(mode == "Create" ? "created" : mode == "Edit" ? "updated" : "deleted")}";
-                    return RedirectToAction("Index");
-                }
-                catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+                db.SaveChanges();
+                TempData["SuccessMessage"] = $"Material Group successfully {(mode == "Create" ? "created" : mode == "Edit" ? "updated" : "deleted")}";
+                return RedirectToAction("Index");
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                foreach (var validationErrors in ex.EntityValidationErrors)
                 {
-                    foreach (var validationErrors in ex.EntityValidationErrors)
+                    foreach (var validationError in validationErrors.ValidationErrors)
                     {
-                        foreach (var validationError in validationErrors.ValidationErrors)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}");
-                        }
+                        System.Diagnostics.Debug.WriteLine($"Property: {validationError.PropertyName} Error: {validationError.ErrorMessage}");
                     }
-                    throw;
                 }
+                TempData["ErrorMessage"] = "Validation error occurred";
+                ViewBag.Mode = mode;
+                return View(material_Group);
             }
             catch (Exception ex)
             {
-
                 TempData["ErrorMessage"] = $"An error occurred while saving Material Group: {ex.Message}";
                 ViewBag.Mode = mode;
                 return View(material_Group);

@@ -2,8 +2,9 @@
 
 namespace IT_Inventory.ViewModel
 {
-    public class MaterialViewModel
+    public class MaterialGroupViewModel
     {
+        public int MaterialCodeId { get; set; }
         public int MaterialCode { get; set; }
 
         public string MaterialGroup { get; set; }

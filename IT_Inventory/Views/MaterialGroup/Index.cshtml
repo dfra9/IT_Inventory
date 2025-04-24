@@ -1,6 +1,6 @@
 ﻿
 @using IT_Inventory.ViewModel
-@model IEnumerable<global::IT_Inventory.ViewModel.MaterialViewModel>
+@model IEnumerable<global::IT_Inventory.ViewModel.MaterialGroupViewModel>
 @{
     ViewBag.Title = "Material Group";
 }
@@ -108,13 +108,14 @@
 
 <script>
     $(function () {
-        $('#materialGroupTable tfoot th').each(function () {
-            var i = $(this).index();
-            if (i != 6) {
-                var title = $(this).text().trim();
-                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+        $('#materialGroupTable tfoot th').each(function (i) {
+            var title = $('#materialGroupTable thead th').eq($(this).index()).text().trim();
+            if (i < 6) {
+                $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Search ' + title + '" />');
             }
         });
+
+
             var table = $('#materialGroupTable').DataTable({
                 "responsive": true,
                 "lengthChange": false,
@@ -126,23 +127,25 @@
                 "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
                 "stateSave": true,
             });
-            table.columns().every(function (index) {
+        table.columns().every(function (i) {
             var that = this;
-            if (index != 6) {
+
+            if (i < 6) {
                 $('input', this.footer()).on('keyup change', function () {
-                    that
-                        .search(this.value)
-                        .draw();
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value)
+                            .draw();
+                    }
                 });
             }
         });
 
-                    $("#tableSearch").on("keyup", function () {
-                        table.search(this.value).draw();
-                    });
+        $("#tableSearch").on("keyup", function () {
+            table.search(this.value).draw();
+        });
 
-
-                    @if (TempData["SuccessMassage"]!= null)
+                                       @if (TempData["SuccessMassage"]!= null)
 {
                         <text>
                     toastr.success('@TempData["SuccessMassage"]');

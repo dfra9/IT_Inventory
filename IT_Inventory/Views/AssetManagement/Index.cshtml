@@ -685,6 +685,9 @@
                 if (data.success) {
                     toastr.success(data.message || "Asset updated successfully");
                     $("#editAssetModal").modal('hide');
+                    if (data.dashboardCounts) {
+                        updateDashboardCounts(data.dashboardCounts);
+                    }
                     refreshAssetTable();
                 } else {
                     toastr.error(data.message || "Error updating asset");
@@ -726,6 +729,9 @@
                 if (response.success) {
                     toastr.success("Asset successfully deleted");
                     $("#deleteAssetModal").modal('hide');
+                    if (response.dashboardCounts) {
+                        updateDashboardCounts(response.dashboardCounts);
+                    }
                     refreshAssetTable();
                 } else {
                     toastr.error(response.message || "Failed to delete asset");
@@ -738,31 +744,48 @@
         });
     });
 
-    $('#confirmDeleteAsset').click(function() {
-        var assetNo = $('#deleteAssetId').val();
 
-        $.ajax({
-            url: '@Url.Action("DeleteAsset", "AssetManagement")',
-            type: 'POST',
-            data: {
-                No_asset: assetNo,
-                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function(response) {
-                if (response.success) {
-                    toastr.success("Asset successfully deleted");
-                    $("#deleteAssetModal").modal('hide');
-                    refreshAssetTable();
-                } else {
-                    toastr.error(response.message || "Failed to delete asset");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error:", error);
-                toastr.error("An error occurred while deleting the asset");
+        function updateDashboardCounts(dashboardCounts) {
+            if (!dashboardCounts) return;
+
+            
+            console.log("Received Dashboard Counts:", dashboardCounts);
+
+
+            if (dashboardCounts.TotalAssets !== undefined) {
+                $('#total-assets').text(dashboardCounts.TotalAssets);
             }
-        });
-    });
+
+            if (dashboardCounts.AvailableAssets !== undefined) {
+                $('#available-assets').text(dashboardCounts.AvailableAssets);
+            }
+
+            if (dashboardCounts.AssetsInUse !== undefined) {
+                $('#assets-in-use').text(dashboardCounts.AssetsInUse);
+            }
+
+            if (dashboardCounts.AssetsInMaintenance !== undefined) {
+                $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
+            }
+        }
+
+        function refreshDashboardData() {
+            $.ajax({
+                url: '/AssetManagement/GetDashboardCountsJson',
+                type: 'GET',
+                dataType: 'json',
+                cache: false,
+                success: function (dashboardCounts) {
+                    console.log("Dashboard data refreshed successfully:", dashboardCounts);
+                    updateDashboardCounts(dashboardCounts);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error refreshing dashboard data:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText);
+                }
+            });
+        }
 
     function loadLocationsByCity(cityName, targetDropdown) {
         if (!cityName) {

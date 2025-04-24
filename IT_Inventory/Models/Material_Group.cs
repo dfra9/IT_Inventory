@@ -14,6 +14,7 @@ namespace IT_Inventory.Models
     
     public partial class Material_Group
     {
+        public int Material_Group_Id { get; set; }
         public string Material_Group1 { get; set; }
         public string Material_Description { get; set; }
         public string Age_Accounting_Asset { get; set; }

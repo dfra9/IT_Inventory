@@ -30,11 +30,11 @@ namespace IT_Inventory
         public virtual DbSet<Company> Company { get; set; }
         public virtual DbSet<Departement> Departement { get; set; }
         public virtual DbSet<Location> Location { get; set; }
-        public virtual DbSet<Material_Group> Material_Group { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<Material_Code> Material_Code { get; set; }
         public virtual DbSet<Asset> Asset { get; set; }
         public virtual DbSet<UoM> UoM { get; set; }
+        public virtual DbSet<Material_Group> Material_Group { get; set; }
     }
 }
