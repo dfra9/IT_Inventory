@@ -21,8 +21,13 @@ namespace IT_Inventory.Controllers
                 MaterialGroup = db.Material_Group.Where(c => c.Is_Deleted != true).ToList(),
                 Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList(),
                 UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList(),
-                AssetHistory = db.Asset.Where(a => a.Is_Deleted != true).OrderByDescending(a => a.Transaction_Date).Take(100).ToList(),
-
+                AssetHistory = db.Asset
+                    .Where(a => a.Is_Deleted != true)
+                    .GroupBy(a => a.No_asset)
+                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                    .OrderByDescending(a => a.Transaction_Date)
+                    .Take(100)
+                    .ToList(),
             };
 
             var defaultCity = viewModel.Cities.FirstOrDefault()?.City_Name;
@@ -56,7 +61,11 @@ namespace IT_Inventory.Controllers
                     .ToList(),
                     Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList(),
                     UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList(),
-                    AssetHistory = db.Asset.Where(a => a.Is_Deleted != true).OrderByDescending(a => a.Transaction_Date).Take(100).ToList(),
+                    AssetHistory = db.Asset
+                    .Where(a => a.Is_Deleted != true)
+                    .OrderByDescending(a => a.Transaction_Date)
+                    .Take(100)
+                    .ToList(),
 
                 };
 
@@ -136,7 +145,11 @@ namespace IT_Inventory.Controllers
                 }
                 if (ModelState.IsValid)
                 {
-                    var existAsset = db.Asset.FirstOrDefault(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true);
+                    var existAsset = db.Asset
+                         .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
+                         .OrderByDescending(a => a.Transaction_Date)
+                         .FirstOrDefault();
+
 
                     var assetHistory = new Asset
                     {
@@ -181,13 +194,10 @@ namespace IT_Inventory.Controllers
                         existAsset.Location = locationName;
                         existAsset.Departement = departmentName;
                         existAsset.Condition = viewModel.Condition;
-                        db.Asset.Add(assetHistory);
                     }
-                    else
-                    {
-                        db.Asset.Add(assetHistory);
-                    }
+                    db.Asset.Add(assetHistory);
                     db.SaveChanges();
+
 
                     var dashboardCounts = GetDashboardCounts();
                     if (Request.IsAjaxRequest())
@@ -271,10 +281,29 @@ namespace IT_Inventory.Controllers
         {
             return new
             {
-                TotalAssets = db.Asset.Count(a => a.Is_Deleted != true),
-                AvailableAssets = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Ready"),
-                AssetInUse = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Borrowing"),
-                AssetInService = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Service")
+                TotalAssets = db.Asset
+            .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .Count(),
+
+                AvailableAssets = db.Asset
+            .Where(a => a.Is_Deleted != true && (a.Status == "Ready" || a.Status == "Return"))
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .Count(),
+
+                AssetInUse = db.Asset
+            .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .Count(),
+
+                AssetInService = db.Asset
+            .Where(a => a.Is_Deleted != true && a.Status == "Service")
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .Count()
             };
         }
 
@@ -355,6 +384,7 @@ namespace IT_Inventory.Controllers
         {
             try
             {
+
                 if (string.IsNullOrEmpty(No_asset))
                 {
                     return Json(new { success = false, message = "Asset number is required" });
@@ -387,7 +417,10 @@ namespace IT_Inventory.Controllers
                 }
 
 
-
+                asset = db.Asset
+           .Where(a => a.No_asset == No_asset && a.Is_Deleted != true)
+           .OrderByDescending(a => a.Transaction_Date)
+           .FirstOrDefault();
 
                 var newTransaction = new Asset
                 {
@@ -456,6 +489,44 @@ namespace IT_Inventory.Controllers
             }
         }
 
+        public ActionResult DeleteAsset(string No_asset)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(No_asset))
+                {
+                    return Json(new { success = false, message = "Asset number is required" });
+                }
+                var assetExists = db.Asset.Any(a => a.No_asset == No_asset && a.Is_Deleted != true);
+                if (!assetExists)
+                {
+                    return Json(new { success = false, message = "Asset not found" });
+                }
+
+                var assetRecords = db.Asset.Where(a => a.No_asset == No_asset && a.Is_Deleted != true).ToList();
+                foreach (var asset in assetRecords)
+                {
+                    asset.Is_Deleted = true;
+                    asset.Delete_By = User.Identity.Name ?? "System";
+                    asset.Delete_Date = DateTime.Now;
+                }
+
+                db.SaveChanges();
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Asset deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "An error occurred while deleting the asset: " + ex.Message });
+            }
+
+
+        }
+
         public ActionResult GetAssetData(string search)
         {
             var assetData = db.Asset.Where(a => a.Is_Deleted != true);
@@ -463,7 +534,10 @@ namespace IT_Inventory.Controllers
             {
                 assetData = assetData.Where(a => a.No_asset.Contains(search) || a.PIC.Contains(search) || a.Status.Contains(search));
             }
-            var assets = assetData.OrderByDescending(a => a.Transaction_Date).Select(a => new
+
+            var latestAssets = assetData.GroupBy(a => a.No_asset)
+      .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault());
+            var assets = latestAssets.OrderByDescending(a => a.Transaction_Date).Select(a => new
             {
                 a.No_asset,
                 a.Company_Name,
@@ -513,44 +587,6 @@ namespace IT_Inventory.Controllers
                 .ToList();
             return Json(locations, JsonRequestBehavior.AllowGet);
         }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteAsset(string No_asset)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(No_asset))
-                {
-                    return Json(new { success = false, message = "Asset number is required" });
-                }
-
-                var asset = db.Asset.FirstOrDefault(a => a.No_asset == No_asset && a.Is_Deleted != true);
-                if (asset == null)
-                {
-                    return Json(new { success = false, message = "Asset not found" });
-                }
-
-
-                asset.Is_Deleted = true;
-                asset.Delete_By = User.Identity.Name ?? "System";
-                asset.Delete_Date = DateTime.Now;
-
-                db.SaveChanges();
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Asset deleted successfully"
-                });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "An error occurred while deleting the asset: " + ex.Message });
-            }
-        }
-
 
         [HttpGet]
         private void LoadDropdownData()

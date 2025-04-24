@@ -18,16 +18,35 @@ namespace IT_Inventory.Controllers
             var user = Session["User"] as Users;
             var viewModel = new AssetManagementViewModel
             {
-                TotalAssets = db.Asset.Count(a => a.Is_Deleted != true),
-                AvailableAssets = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Ready"),
-                AssetInUse = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Borrowing"),
-                AssetInService = db.Asset.Count(a => a.Is_Deleted != true && a.Status == "Service"),
+                TotalAssets = db.Asset
+            .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .Count(),
+
+                AvailableAssets = db.Asset
+            .Where(a => a.Is_Deleted != true && (a.Status == "Ready" || a.Status == "Return"))
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .Count(),
+
+                AssetInUse = db.Asset
+            .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .Count(),
+
+                AssetInService = db.Asset
+            .Where(a => a.Is_Deleted != true && a.Status == "Service")
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .Count(),
 
                 DashHistory = db.Asset
-                    .Where(a => a.Is_Deleted != true)
-                    .OrderByDescending(a => a.Transaction_Date)
-                    .Take(10)
-                    .ToList()
+            .Where(a => a.Is_Deleted != true)
+            .OrderByDescending(a => a.Transaction_Date)
+            .Take(10)
+            .ToList()
 
             };
             return View(viewModel);
