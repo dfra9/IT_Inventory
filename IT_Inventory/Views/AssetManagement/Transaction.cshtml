@@ -96,6 +96,37 @@
     #editAssetForm label {
         font-weight: 600;
     }
+
+    .validation-error {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    select2-container--default.is-invalid .select2-selection--single {
+        background-color: #fff8f8;
+    }
+
+    .form-control.is-invalid {
+        background-color: #fff8f8;
+    }
+
+
+    .select2-container--default.is-invalid .select2-selection--single {
+        border-color: #dc3545 !important;
+    }
+
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+
+
+    .text-danger.validation-error {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+        font-weight: normal;
+    }
 </style>
 
 <section class="content">
@@ -120,7 +151,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group col-4">
-                            <label>No Asset</label>
+                            <label class="">No Asset</label>
                             @Html.TextBoxFor(m => m.No_asset, new { @class = "form-control", placeholder = "Input No Asset", id = "No_asset" })
                             @Html.ValidationMessageFor(m => m.No_asset, "", new { @class = "text-danger" })
                         </div>
@@ -136,7 +167,7 @@
                         </div>
                         <div class="form-group col-5">
                             <label>Material Group </label>
-                            @Html.DropDownListFor(m => m.Material_Group, Model.GetMaterialGroupListItem(), "Select Material Group", new { @class = "form-control select2", id = "materialGroupDropdown" })
+                            @Html.DropDownListFor(m => m.Material_Group, Model.GetMaterialGroupListItem(), new { @class = "form-control select2", id = "materialGroupDropdown" })
                             @Html.ValidationMessageFor(m => m.Material_Group, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group col-5">
@@ -146,7 +177,7 @@
                         </div>
                         <div class="form-group col-11">
                             <label>Asset Description</label>
-                            @Html.TextBoxFor(m => m.Material_Description, new { @class = "form-control", placeholder = "Input Asset Description" })
+                            @Html.TextBoxFor(m => m.Material_Description, new { @class = "form-control", placeholder = "Input Asset Description" , id="materialDescriptionDropdown"})
                             @Html.ValidationMessageFor(m => m.Material_Description, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group col-1">
@@ -156,7 +187,7 @@
                         </div>
                         <div class="form-group col-3">
                             <label>UoM</label>
-                            @Html.DropDownListFor(m => m.UoM, Model.GetUoMListItem(), "Select Material Code", new { @class = "form-control select2", id = "materialCodeDropdown" })
+                            @Html.DropDownListFor(m => m.UoM, Model.GetUoMListItem(), "Select UoM", new { @class = "form-control select2", id = "UoMDropdown" })
                             @Html.ValidationMessageFor(m => m.UoM, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group col-4">
@@ -181,7 +212,7 @@
                         </div>
                         <!-- /.form-group -->
                         <div class="form-group col-4">
-                            <label>No Asset Accopunting</label>
+                            <label>No Asset Accounting</label>
                             @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input Userfull-Life" })
                             @Html.ValidationMessageFor(m => m.No_Asset_Accounting, "", new { @class = "text-danger" })
                         </div>
@@ -210,17 +241,17 @@
                         <div class="form-group col-4">
                             <label>Departement </label>
                             @Html.DropDownListFor(m => m.Departement_Code, Model.GetDepartementListItem(), "Select Departement", new { @class = "form-control select2", id = "departementDropdown" })
-
+                            @Html.ValidationMessageFor(m => m.Departement_Code, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group col-4">
                             <label>City</label>
-                            @Html.DropDownListFor(m => m.City_Id, Model.GetCityListItem(), "Select City", new { @class = "form-control select2", id = "cityDropdown" })
-
+                            @Html.DropDownListFor(m => m.City_Name, Model.GetCityListItem(), "Select City", new { @class = "form-control select2", id = "cityDropdown" })
+                            @Html.ValidationMessageFor(m => m.City_Name, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group col-4">
                             <label>Location</label>
                             @Html.DropDownListFor(m => m.Locations, Model.GetLocationListItem(), "Select Location", new { @class = "form-control select2", id = "locationDropdown" })
-
+                            @Html.ValidationMessageFor(m => m.Locations, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group col-3">
                             <label>Last Check Date</label>
@@ -362,6 +393,7 @@
                     <th>Transaction Date</th>
                     <th>Status</th>
                     <th>Submit Date</th>
+
                 </tr>
             </thead>
             <tbody id="assetHistoryTable">
@@ -381,625 +413,394 @@
                 else
                 {
                     <tr>
-                        <td colspan="5">No Asset found</td>
+                        <td colspan="5" class="text-center">No Asset found</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
 
-    <div class="modal fade" id="editAssetModal" tabindex="-1" role="dialog" aria-labelledby="editAssetModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editAssetModalLabel">Edit Asset</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editAssetForm">
-                        <input hidden id="editAssetId" name="No_asset" />
-
-                        <div class="form-group">
-                            <label for="editStatus">Status</label>
-                            <select class="form-control" id="editStatus" name="Status">
-                                <option value="Return">Return</option>
-                                <option value="Borrowing">Borrowing</option>
-                                <option value="Service">Service</option>
-                                <option value="Ready">Ready</option>
-                                <option value="Assign">Assign</option>
-                                <option value="Write Off">Write Off</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editPIC">PIC / Vendor</label>
-                            <input type="text" class="form-control" id="editPIC" name="PIC" required />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editTransactionDate">Transaction Date</label>
-                            <input type="date" class="form-control" id="editTransactionDate" name="Transaction_Date" required />
-                        </div>
-                    </form>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="saveAssetChanges">Save changes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="modal fade" id="viewAssetModal" tabindex="-1" role="dialog" aria-labelledby="viewAssetModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewAssetModalLabel">Edit Asset</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <tbody id="assetDetailsTable">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    (function () {
-        function fetchCompanyName(companyCode) {
-            if (companyCode) {
-                $.ajax({
-                    url: '@Url.Action("GetCompanyNameByCode", "AssetManagement")',
-                    type: 'GET',
-                    data: { companyCode: companyCode },
-                    success: function (data) {
-                        $('#Company_Name').val(data);
-                    }, error: function (error) {
-                        console.error("Error Loading company name:", error)
-                        $('#Company_Name').val("");
-                        toastr.error("Error loading company name.");
-                    }
-                });
-            } else {
+   $(function () {
+
+    $('.select2').select2({
+        placeholder: "Select an option",
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('body')
+    });
+
+    function showErrorToast(message) {
+        toastr.error(message, {
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+            preventDuplicates: true,
+            newestOnTop: true
+        });
+    }
+
+    function fetchCompanyName(companyCode) {
+        if (!companyCode) {
+            $('#Company_Name').val("");
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("GetCompanyNameByCode", "AssetManagement")',
+            type: 'GET',
+            data: { companyCode: companyCode },
+            success: function (data) {
+                $('#Company_Name').val(data);
+            },
+            error: function (error) {
+                console.error("Error Loading company name:", error);
                 $('#Company_Name').val("");
+                showErrorToast("Error loading company name.");
             }
+        });
+    }
+
+    $("#cityDropdown").on('change', function () {
+        var selectedCityName = $(this).find('option:selected').text();
+        $("#locationDropdown").empty().trigger('change');
+
+        if (!selectedCityName || selectedCityName === "Select City") {
+            return;
         }
 
+        $.ajax({
+            url: '@Url.Action("GetLocationByCity", "AssetManagement")',
+            type: 'GET',
+            data: { cityId: selectedCityName },
+            success: function (locations) {
+                $("#locationDropdown")
+                    .empty()
+                    .append('<option value="">Select Option</option>');
 
-        $(document).on('click', '.btn-edit', function () {
-            var assetNo = $(this).data('asset-no');
-            var pic = $(this).data('pic');
-            var transactionDate = $(this).data('transaction-date');
-            var status = $(this).data('status');
-
-            $("#editAssetId").val(assetNo);
-            $("#editPIC").val(pic);
-            $("#editTransactionDate").val(transactionDate);
-            $("#editStatus").val(status).trigger('change');
-            $("#editAssetModal").modal('show');
-
-            $('#editAssetModal').data('originalData', {
-                status: status,
-                pic: pic,
-                transaction: transactionDate
-            });
-
-            $("#editAssetModal").modal('show');
-
-        });
-
-        $(document).on('click', '.btn-view', function () {
-            var assetNo = $(this).data('asset-no');
-            $.ajax({
-                url: '@Url.Action("GetAssetDetails", "AssetManagement")',
-                type: 'GET',
-                data: { assetNo: assetNo },
-                success: function (data) {
-                    renderAssetHistory(data);
-                    $("#viewAssetModal").modal('show');
-                },
-                error: function (error) {
-                    console.error("Error loading asset details:", error);
-                    toastr.error("Error loading asset details.");
-                }
-            });
-        });
-
-        function confirmChanges(formData, originalData) {
-            if (formData.Status === originalData.status &&
-                formData.PIC === originalData.pic &&
-                formData.Transaction_Date === originalData.transaction) {
-                toastr.info("No changes were made");
-                return false;
-            }
-            return true;
-        }
-
-        $('#saveAssetChanges').click(function () {
-            var formData = {
-                No_asset: $("#editAssetId").val(),
-                Status: $("#editStatus").val(),
-                PIC: $("#editPIC").val(),
-                Transaction_Date: $("#editTransactionDate").val()
-            };
-
-            if (!formData.PIC) {
-                toastr.error("PIC is required.");
-                return;
-            }
-            if (!formData.Transaction_Date) {
-                toastr.error("Transaction Date is required.");
-                return;
-            }
-
-            var originalData = $('#editAssetModal').data('originalData');
-
-            if (formData.Status === originalData.status &&
-                formData.PIC === originalData.pic &&
-                formData.Transaction_Date === originalData.transaction) {
-                toastr.info("No changes were made");
-                return;
-            }
-
-            $.ajax({
-                url: '@Url.Action("UpdateAsset", "AssetManagement")',
-                type: 'POST',
-                data: formData,
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function (data) {
-                    if (data.success) {
-                        toastr.success(data.message);
-                        $("#editAssetModal").modal('hide');
-
-                        var $row = $(`#assetHistoryTable tr td:contains('${formData.No_asset}')`).closest('tr');
-                        $row.find('td:eq(1)').text(formData.PIC);
-                        $row.find('td:eq(2)').text(formData.Transaction_Date);
-                        $row.find('td:eq(3)').text(formData.Status);
-
-                        $row.find('.btn-view, .btn-edit').each(function () {
-                            $(this).data('pic', formData.PIC)
-                                .data('transaction-date', formData.Transaction_Date)
-                                .data('status', formData.Status);
-                        });
-                        } else {
-                        toastr.error(data.message);
-                        console.error("Error from server ", data.message)
-                    }
-                },
-                error: function (error) {
-                    toastr.error("Error updating asset.");
-                    console.error("Error updating asset:", error);
-                }
-            });
-        });
-
-
-            function renderAssetDetail(asset) {
-                var detailsHtml = '';
-                detailsHtml += '<tr>' +
-                    '<th>Company Code</th><td>' + (asset.Company_Code || '') + '</td>' +
-                    '<th>Company Name</th><td>' + (asset.Company_Name || '') + '</td>' +
-                    '</tr>';
-
-                detailsHtml += '<tr>' +
-                    '<th>Material Group</th><td>' + (asset.Material_Group || '') + '</td>' +
-                    '<th>Material Code</th><td>' + (asset.Material_Code || '') + '</td>' +
-                    '</tr>';
-
-                detailsHtml += '<tr>' +
-                    '<th>Material Description</th><td>' + (asset.Material_Description || '') + '</td>' +
-                    '<th>Quantity</th><td>' + (asset.Quantity || '') + '</td>' +
-                    '</tr>';
-
-                detailsHtml += '<tr>' +
-                    '<th>UoM</th><td>' + (asset.UoM || '') + '</td>' +
-                    '<th>PIC</th><td>' + (asset.PIC || '') + '</td>' +
-                    '</tr>';
-
-                detailsHtml += '<tr>' +
-                    '<th>Transaction Date</th><td>' + formatDate(asset.Transaction_Date) + '</td>' +
-                    '<th>Acquisition Date</th><td>' + formatDate(asset.Acquisition_Date) + '</td>' +
-                    '</tr>';
-
-                detailsHtml += '<tr>' +
-                    '<th>Serial Number</th><td>' + (asset.Serial_Number || '') + '</td>' +
-                    '<th>Device ID</th><td>' + (asset.Device_Id || '') + '</td>' +
-                    '</tr>';
-
-                detailsHtml += '<tr>' +
-                    '<th>Latest User</th><td>' + (asset.Latest_User || '') + '</td>' +
-                    '<th>Location</th><td>' + (asset.Locations || '') + '</td>' +
-                    '</tr>';
-
-                detailsHtml += '<tr>' +
-                    '<th>Condition</th><td>' + (asset.Condition || '') + '</td>' +
-                    '<th>Last Check Date</th><td>' + formatDate(asset.Last_Check_Date) + '</td>' +
-                    '</tr>';
-
-                $('#assetDetailsTable').html(detailsHtml);
-            }
-
-        function renderAssetHistory(data) {
-            var tbody = $("#assetHistoryTable");
-            tbody.empty();
-
-            if (data && data.length > 0) {
-                $.each(data, function (i, item) {
-                    var row = "<tr>" +
-                        "<td>" + (item.No_asset || "") + "</td>" +
-                        "<td>" + (item.PIC || "") + "</td>" +
-                        "<td>" + formatDate(item.Transaction_Date) + "</td>" +
-                        "<td>" + (item.Status || "") + "</td>" +
-                        "<td>" + formatDate(item.Submit_Date) + "</td>" +
-                        "<td>" +
-                        "<button type='button' class='btn btn-info btn-sm btn-view' data-asset-no='" + item.No_asset + "'><i class='fas fa-eye'></i></button> " +
-                        "<button type='button' class='btn btn-primary btn-sm btn-edit' " +
-                        "data-asset-no='" + item.No_asset + "' " +
-                        "data-pic='" + (item.PIC || "") + "' " +
-                        "data-transaction-date='" + formatDate(item.Transaction_Date) + "' " +
-                        "data-status='" + (item.Status || "") + "'>" +
-                        "<i class='fas fa-edit'></i></button>" +
-                        "</td>" +
-                        "</tr>";
-                    tbody.append(row);
-                });
-            } else {
-                tbody.append("<tr><td colspan='6'>No data found</td></tr>");
-            }
-        }
-
-            $(function () {
-            $(document).on('click', '.btn-view', function () {
-                var assetNo = $(this).data('asset-no');
-                $.ajax({
-                    url: '@Url.Action("GetAssetDetails", "AssetManagement")',
-                    type: 'GET',
-                    data: { assetNo: assetNo },
-                    success: function (data) {
-                        renderAssetDetails(data);
-                        $("#viewAssetModal").modal('show');
-                    },
-                    error: function (error) {
-                        console.error("Error loading asset details:", error);
-                        toastr.error("Error loading asset details.");
-                    }
-                });
-            });
-
-
-
-                $(function () {
-            $('.select2').select2({
-                placeholder: "Select an option",
-                allowClear: true,
-                width: '100%',
-                dropdownParent: $('body')
-            });
-
-            $("#cityDropdown").on('change', function () {
-                var selectCity = $(this).val();
-                var selectedCityName = $(this).find('option:selected').text();
-
-                        $("#locationDropdown").empty().trigger('change');
-
-                        if (selectCityName) {
-                            $.ajax({
-                                url: '@Url.Action("GetLocationByCity", "AssetManagement")',
-                                type: 'GET',
-                                data: { cityId: selectedCityName },
-                                success: function (location) {
-                                    $("#locationDropdown").empty();
-                                    $("#locationDropdown").append('<option value=""> Select Option </option>');
-
-                                    $.each(location, function (i, location) {
-                                        $("#locationDropdown").append(`<option value="${location.locationCode}">
-                                ${location.locationName}
-                            </option>`);
-                                    });
-
-                                    $("#locationDropdown").select2().trigger('change');
-                                },
-                                error: function (error) {
-                                    console.error("Error loading locations:", error);
-                                    toastr.error("Error loading locations.");
-                                }
-                            });
-                        }
-                    });
-
-
-            $("#companyCodeDropdown").on('change', function () {
-                var companyCode = $(this).val();
-                fetchCompanyName(companyCode);
-            });
-
-            var initialCompanyCode = $("#companyCodeDropdown").val();
-            if (initialCompanyCode) {
-                fetchCompanyName(initialCompanyCode);
-            }
-
-            function handleStatusFormDisplay() {
-
-                $(".status-form").hide();
-
-                var status = $("#statusDropdown").val();
-                if (!status || status === "") {
-                    return;
-                }
-
-                switch (status) {
-                    case 'Return':
-                        $('#returnForm').show();
-                        break;
-                    case 'Borrowing':
-                        $('#borrowForm').show();
-                        break;
-                    case 'Service':
-                        $('#serviceForm').show();
-                        break;
-                    case 'Ready':
-                        $('#readyForm').show();
-                        break;
-                    case 'Assign':
-                        $('#assignForm').show();
-                        break;
-                    case 'Write Off':
-                        $('#writeOffForm').show();
-                        break;
-                }
-            }
-
-            $("#statusDropdown").on('change', function () {
-
-                handleStatusFormDisplay();
-            });
-            handleStatusFormDisplay();
-
-
-
-
-
-            $("#btnSearch").click(function () {
-                var search = $("input[name='table_search']").val();
-                $.ajax({
-                    url: '@Url.Action("SearchAssetHistory", "AssetManagement")',
-                    type: 'GET',
-                    data: { search: search },
-                    success: function (data) {
-                        renderAssetHistory(data);
-                    },
-                    error: function (error) {
-                        console.log(error);
-                        toastr.error("Error searching asset history");
-                    }
-                });
-            });
-
-
-            function renderAssetHistory(data) {
-                var tbody = $("#assetHistoryTable");
-                tbody.empty();
-
-                if (data && data.length > 0) {
-                    $.each(data, function (i, item) {
-                        var row = $("<tr>").append(
-                            $("<td>").text(item.No_asset || ""),
-                            $("<td>").text(item.PIC || ""),
-                            $("<td>").text(formatDate(item.Transaction_Date)),
-                            $("<td>").text(item.Status || ""),
-                            $("<td>").text(formatDate(item.Submit_Date)),
-                            $("<td>").html(
-                                `<div class="btn-group" role="group">
-                        <button type="button" class="btn btn-info btn-sm btn-view"
-                            data-asset-no="${item.No_asset}"
-                            data-pic="${item.PIC || ''}"
-                            data-transaction-date="${formatDate(item.Transaction_Date)}"
-                            data-status="${item.Status || ''}">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm btn-edit"
-                            data-asset-no="${item.No_asset}"
-                            data-pic="${item.PIC || ''}"
-                            data-transaction-date="${formatDate(item.Transaction_Date)}"
-                            data-status="${item.Status || ''}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>`
-                            )
+                if (locations && locations.length > 0) {
+                    locations.forEach(function (location) {
+                        $("#locationDropdown").append(
+                            `<option value="${location.locationCode}">
+                            ${location.locationName}
+                        </option>`  
                         );
-                        tbody.append(row);
                     });
                 } else {
-                    tbody.append(
-                        $("<tr>").append(
-                            $("<td>").attr("colspan", "5").text("No data found")
-                        )
-                    );
+                    console.log("No locations found for city:", selectedCityName);
                 }
-            }
 
-
-
-
-            function formatDate(dateString) {
-                if (!dateString) return "";
-
-                try {
-
-                    if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
-                        var timeStamp = parseInt(dateString.substr(6));
-                        var date = new Date(timeStamp);
-                        if (isNaN(date.getTime())) return "";
-
-                        var year = date.getFullYear();
-                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
-                        var day = date.getDate().toString().padStart(2, '0');
-                        return year + '-' + month + '-' + day;
-                    } else {
-
-                        var date = new Date(dateString);
-                        if (isNaN(date.getTime())) return "";
-
-                        var year = date.getFullYear();
-                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
-                        var day = date.getDate().toString().padStart(2, '0');
-                        return year + '-' + month + '-' + day;
-                    }
-                } catch (e) {
-                    console.error("Error parsing date:", e);
-                    return "";
-                }
-            }
-
-
-            $("#btnCancel").click(function () {
-                window.location.href = '@Url.Action("Index", "Home")';
-            });
-
-            $("#btnCancelStatus").click(function () {
-                $("#statusDropdown").val("").trigger("change");
-                $(".status-form").hide();
-            });
-
-            $("#btnSave").click(function (e) {
-                e.preventDefault();
-
-                console.log("Form Data:", {
-                    NoAsset: $("#No_asset").val(),
-                    CompanyCode: $("#companyCodeDropdown").val(),
-                    Status: $("#statusDropdown").val(),
-                    PIC: $("#hiddenPIC").val(),
-                    TransactionDate: $("#hiddenTransactionDate").val()
+                $("#locationDropdown").select2({
+                    placeholder: "Select Location",
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $('body')
                 });
-
-                if (!$("#No_asset").val()) {
-                    toastr.error("No Asset is required.");
-                    return;
-                }
-                if (!$("#companyCodeDropdown").val()) {
-                    toastr.error("Company Code is required");
-                    return;
-                }
-                var status = $("#statusDropdown").val();
-                if (!status) {
-                    toastr.error("Status Is Required");
-                    return;
-                }
-
-                var picValue = "";
-                var dateValue = "";
-
-                switch (status) {
-                    case 'Return':
-                        picValue = $("#returnPIC").val();
-                        dateValue = $("#returnDate").val();
-                        break;
-                    case 'Borrowing':
-                        picValue = $("#borrowPIC").val();
-                        dateValue = $("#borrowDate").val();
-                        break;
-                    case 'Service':
-                        picValue = $("#servicePIC").val();
-                        dateValue = $("#serviceDate").val();
-                        break;
-                    case 'Ready':
-                        picValue = $("#readyPIC").val();
-                        dateValue = $("#readyDate").val();
-                        break;
-                    case 'Assign':
-                        picValue = $("#assignPIC").val();
-                        dateValue = $("#assignDate").val();
-                        break;
-                    case 'Write Off':
-                        picValue = $("#writeOffPIC").val();
-                        dateValue = $("#writeOffDate").val();
-                        break;
-                }
-
-                if (!picValue) {
-                    toastr.error("PIC is required.");
-                    return;
-                }
-                if (!dateValue) {
-                    toastr.error("Transaction Date is required.");
-                    return;
-                }
-
-                $("#hiddenPIC").val(picValue);
-                $("#hiddenTransactionDate").val(dateValue);
-
-                console.log("form data before submit", {
-                    NoAsset: $("#No_asset").val(),
-                    Status: status,
-                    PIC: picValue,
-                    TransactionDate: dateValue,
-                    FormData: $("#assetForm").serialize()
-                });
-
-
-                $.ajax({
-                    url: $("#assetForm").attr("action"),
-                    type: 'POST',
-                    data: $("#assetForm").serialize(),
-                    success: function (data) {
-                        if (data.success) {
-                            toastr.success(data.message);
-
-                            var tbody = $("#assetHistoryTable");
-                            var assetData = data.assetData;
-                            var row = "<tr>" +
-                                "<td>" + (assetData.No_asset || "") + "</td>" +
-                                "<td>" + (assetData.PIC || "") + "</td>" +
-                                "<td>" + (assetData.Transaction_Date || "") + "</td>" +
-                                "<td>" + (assetData.Status || "") + "</td>" +
-                                "<td>" + (assetData.Submit_Date || "") + "</td>" +
-                                "</tr>";
-
-                            if (tbody.find("tr td[colspan='6']").length > 0) {
-                                tbody.empty();
-                            }
-                            tbody.prepend(row);
-                            resetFormFields();
-                        } else {
-                            toastr.error(data.message);
-                            console.error("Error from server ", data.message)
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error saving asset:", xhr.responseText);
-                        toastr.error("Error saving asset, please try again");
-                    }
-                });
-            });
-            function resetFormFields() {
-
-                $("#statusDropdown").val("").trigger("change");
-                $(".status-form input").val("");
-                $("#hiddenPIC").val("");
-                $("#hiddenTransactionDate").val("");
+            },
+            error: function (error) {
+                console.error("Error loading locations:", error);
+                showErrorToast("Error loading locations.");
             }
-
         });
-    })();
+    });
+
+    $("#companyCodeDropdown").on('change', function () {
+        fetchCompanyName($(this).val());
+    });
+
+    var initialCompanyCode = $("#companyCodeDropdown").val();
+    if (initialCompanyCode) {
+        fetchCompanyName(initialCompanyCode);
+    }
+
+    function handleStatusFormDisplay() {
+        $(".status-form").hide();
+
+        var status = $("#statusDropdown").val();
+        if (!status) return;
+
+        const statusFormMap = {
+            'Return': '#returnForm',
+            'Borrowing': '#borrowForm',
+            'Service': '#serviceForm',
+            'Ready': '#readyForm',
+            'Assign': '#assignForm',
+            'Write Off': '#writeOffForm'
+        };
+
+        const formSelector = statusFormMap[status];
+        if (formSelector) {
+            $(formSelector).show();
+        }
+    }
+
+    $("#statusDropdown").on('change', handleStatusFormDisplay);
+    handleStatusFormDisplay();
+
+    function formatDate(dateString) {
+        if (!dateString) return "";
+
+        try {
+            let date;
+            if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                const timeStamp = parseInt(dateString.substr(6));
+                date = new Date(timeStamp);
+            } else {
+                date = new Date(dateString);
+            }
+
+            if (isNaN(date.getTime())) return "";
+
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        } catch (e) {
+            console.error("Error parsing date:", e);
+            return "";
+        }
+    }
+
+    $("#btnSearch").click(function () {
+        var search = $("input[name='table_search']").val();
+        $.ajax({
+            url: '@Url.Action("SearchAssetHistory", "AssetManagement")',
+            type: 'GET',
+            data: { search: search },
+            success: function (data) {
+                renderAssetHistory(data);
+            },
+            error: function (error) {
+                console.log(error);
+                showErrorToast("Error searching asset history");
+            }
+        });
+    });
+
+    function renderAssetHistory(data) {
+        var tbody = $("#assetHistoryTable");
+        tbody.empty();
+
+        if (data && data.length > 0) {
+            data.forEach(function (item) {
+                var row = $("<tr>").append(
+                    $("<td>").text(item.No_asset || ""),
+                    $("<td>").text(item.PIC || ""),
+                    $("<td>").text(formatDate(item.Transaction_Date)),
+                    $("<td>").text(item.Status || ""),
+                    $("<td>").text(formatDate(item.Create_Date))
+                );
+                tbody.append(row);
+            });
+        } else {
+            tbody.append(
+                $("<tr>").append(
+                    $("<td>").attr("colspan", "5").text("No data found")
+                )
+            );
+        }
+    }
 
 
+    $("#btnSave").click(function (e) {
+        e.preventDefault();
 
+        $(".is-invalid").removeClass("is-invalid");
+        $(".validation-error").remove();
+
+        let isValid = true;
+
+        if (!$("#No_asset").val()) {
+            $("#No_asset").addClass("is-invalid");
+            showErrorToast("No Asset is required.");
+            isValid = false;
+        } 
+
+        if (!$("#materialGroupDropdown").val()) {
+            $("#materialGroupDropdown").next(".select2-container").addClass("is-invalid");
+            showErrorToast("Material Group is required");
+            isValid = false;
+        }
+        
+        if (!$("#departementDropdown").val()) {
+            $("#departementDropdown").next(".select2-container").addClass("is-invalid");
+            showErrorToast("Departement is required");
+            isValid = false;
+        }
+        if (!$("#cityDropdown").val()) {
+            $("#cityDropdown").next(".select2-container").addClass("is-invalid");
+            showErrorToast("City is required");
+            isValid = false;
+        }
+        if (!$("#locationDropdown").val()) {
+            $("#locationDropdown").next(".select2-container").addClass("is-invalid");
+            showErrorToast("Location is required");
+            isValid = false;
+        }
+        if (!$("#materialDescriptionDropdown").val()) {
+            $("#materialDescriptionDropdown").addClass("is-invalid");
+            showErrorToast("Asset Description is required");
+            isValid = false;
+        }
+
+        const status = $("#statusDropdown").val();
+        if (!status) {
+            $("#statusDropdown").next(".select2-container").addClass("is-invalid");
+            $("#statusDropdown").after('<span class="text-danger validation-error">Status is required.</span>');
+            isValid = false;
+        } else {
+
+            let picValue = "";
+            let dateValue = "";
+            let picFieldId = "";
+            let dateFieldId = "";
+
+            switch (status) {
+                case 'Return':
+                    picValue = $("#returnPIC").val();
+                    dateValue = $("#returnDate").val();
+                    picFieldId = "returnPIC";
+                    dateFieldId = "returnDate";
+                    break;
+                case 'Borrowing':
+                    picValue = $("#borrowPIC").val();
+                    dateValue = $("#borrowDate").val();
+                    picFieldId = "borrowPIC";
+                    dateFieldId = "borrowDate";
+                    break;
+                case 'Service':
+                    picValue = $("#servicePIC").val();
+                    dateValue = $("#serviceDate").val();
+                    picFieldId = "servicePIC";
+                    dateFieldId = "serviceDate";
+                    break;
+                case 'Ready':
+                    picValue = $("#readyPIC").val();
+                    dateValue = $("#readyDate").val();
+                    picFieldId = "readyPIC";
+                    dateFieldId = "readyDate";
+                    break;
+                case 'Assign':
+                    picValue = $("#assignPIC").val();
+                    dateValue = $("#assignDate").val();
+                    picFieldId = "assignPIC";
+                    dateFieldId = "assignDate";
+                    break;
+                case 'Write Off':
+                    picValue = $("#writeOffPIC").val();
+                    dateValue = $("#writeOffDate").val();
+                    picFieldId = "writeOffPIC";
+                    dateFieldId = "writeOffDate";
+                    break;
+            }
+
+            if (!picValue) {
+                $(`#${picFieldId}`).addClass("is-invalid");
+                $(`#${picFieldId}`).after(`<span class="text-danger validation-error">PIC is required for ${status} status.</span>`);
+                isValid = false;
+            }
+
+            if (!dateValue) {
+                $(`#${dateFieldId}`).addClass("is-invalid");
+                $(`#${dateFieldId}`).after(`<span class="text-danger validation-error">Date is required for ${status} status.</span>`);
+                isValid = false;
+            }
+
+            $("#hiddenPIC").val(picValue);
+            $("#hiddenTransactionDate").val(dateValue);
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        const saveBtn = $(this);
+        const originalText = saveBtn.html();
+        saveBtn.html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+        saveBtn.prop('disabled', true);
+
+        $.ajax({
+            url: $("#assetForm").attr("action"),
+            type: 'POST',
+            data: $("#assetForm").serialize(),
+            success: function (data) {
+                if (data && data.success) {
+                    toastr.success(data.message || "Transaction successful");
+
+                    var tbody = $("#assetHistoryTable");
+                    var assetData = data.assetData;
+                    if (assetData) {
+                        var row = "<tr>" +
+                            "<td>" + (assetData.No_asset || "") + "</td>" +
+                            "<td>" + (assetData.PIC || "") + "</td>" +
+                            "<td>" + (assetData.Transaction_Date || "") + "</td>" +
+                            "<td>" + (assetData.Status || "") + "</td>" +
+                            "<td>" + (assetData.Submit_Date || "") + "</td>" +
+                            "</tr>";
+
+                        if (tbody.find("tr td[colspan='5']").length > 0) {
+                            tbody.empty();
+                        }
+                        tbody.prepend(row);
+                    }
+
+                    resetFormFields();
+                } else {
+                    showErrorToast(data && data.message ? data.message : "Error saving asset");
+                    console.error("Error from server:", data ? data.message : "Unknown error");
+                }
+                saveBtn.html(originalText);
+                saveBtn.prop('disabled', false);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error saving asset:", xhr.responseText);
+                try {
+                    
+                    const response = JSON.parse(xhr.responseText);
+                    showErrorToast(response.message || "Error saving asset, please try again");
+                } catch (e) {
+                    showErrorToast("Error saving asset, please try again");
+                }
+                saveBtn.html(originalText);
+                saveBtn.prop('disabled', false);
+            }
+        });
+    });
+
+    function resetFormFields() {
+
+        $("#statusDropdown").val("").trigger("change");
+        $(".status-form input").val("");
+        $("#hiddenPIC").val("");
+        $("#hiddenTransactionDate").val("");
+
+        $("#No_asset").val("");
+        $("#companyCodeDropdown").val("").trigger("change");
+        $("#materialGroupDropdown").val("").trigger("change");
+        $("#materialCodeDropdown").val("").trigger("change");
+        $("#Material_Description").val("");
+        $("#Quantity").val("");
+        $("#UoM").val("").trigger("change");
+        $("#Acquisition_Date").val("");
+        $("#Acquisition_value").val("");
+        $("#No_Asset_PGA").val("");
+        $("#No_Asset_Accounting").val("");
+        $("#No_PO").val("");
+        $("#Serial_Number").val("");
+        $("#Device_Id").val("");
+        $("#Latest_User").val("");
+        $("#Departement_Code").val("").trigger("change");
+        $("#cityDropdown").val("").trigger("change");
+        $("#Locations").val("").trigger("change");
+        $("#Last_Check_Date").val("");
+        $("#Condition").val("");
+    }
+
+    $("#btnCancel").click(function () {
+        window.location.href = '@Url.Action("Index", "Home")';
+    });
+});
 </script>

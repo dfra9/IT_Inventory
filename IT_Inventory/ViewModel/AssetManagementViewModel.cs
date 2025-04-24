@@ -13,11 +13,14 @@ namespace IT_Inventory.ViewModel
         public string No_asset { get; set; }
         [Required(ErrorMessage = "Company Code is required")]
         public string Company_Code { get; set; }
+        [Required(ErrorMessage = "Company_Name is required")]
         public string Company_Name { get; set; }
+
+        [Required(ErrorMessage = "Material Group is required")]
         public string Material_Group { get; set; }
-
+        [Required(ErrorMessage = "Material Code is required")]
         public string Material_Code { get; set; }
-
+        [Required(ErrorMessage = "Material Description is required")]
         public string Material_Description { get; set; }
         public int? Quantity { get; set; }
         public string UoM { get; set; }
@@ -28,14 +31,13 @@ namespace IT_Inventory.ViewModel
         public string No_PO { get; set; }
         public string Latest_User { get; set; }
 
-
         public string Departement_Code { get; set; }
 
         public string Departement_Name { get; set; }
-        public string Location_Code { get; set; }
-        public string Location_Name { get; set; }
-        public string City_Id { get; set; }
 
+        public string Locations { get; set; }
+        public string Location_Name { get; set; }
+        public string City_Name { get; set; }
         public DateTime? Last_Check_Date { get; set; }
         public string Condition { get; set; }
         [Required(ErrorMessage = "Status is required")]
@@ -58,8 +60,11 @@ namespace IT_Inventory.ViewModel
 
 
         public List<Company> Companies { get; set; }
+        [Required(ErrorMessage = "Departement is required")]
         public List<Departement> Dept { get; set; }
-        public List<Location> Locations { get; set; }
+        [Required(ErrorMessage = "Location is required")]
+        public List<Location> LocationsList { get; set; }
+        [Required(ErrorMessage = "City is required")]
         public List<City> Cities { get; set; }
         public List<SelectListItem> StatusList { get; set; }
 
@@ -80,9 +85,12 @@ namespace IT_Inventory.ViewModel
         {
             Companies = new List<Company>();
             Dept = new List<Departement>();
-            Locations = new List<Location>();
+            LocationsList = new List<Location>();
             Cities = new List<City>();
             AssetHistory = new List<Asset>();
+            MaterialGroup = new List<Material_Group>();
+            Material_Code1 = new List<Material_Code>();
+            UoMList = new List<UoM>();
             StatusList = new List<SelectListItem>
             {
                 new SelectListItem { Value = "Return", Text = "Return" },
@@ -121,7 +129,7 @@ namespace IT_Inventory.ViewModel
         }
         public SelectList GetLocationListItem()
         {
-            return new SelectList(Locations, "Location_Code", "Location_Name");
+            return new SelectList(LocationsList ?? new List<Location>(), "Location_Code", "Location_Name");
         }
         public SelectList GetStatusListItem()
         {
@@ -130,7 +138,25 @@ namespace IT_Inventory.ViewModel
 
         public SelectList GetMaterialGroupListItem()
         {
-            return new SelectList(MaterialGroup, "Material_Group1", "Material_Group1");
+            var materialGroups = MaterialGroup ?? new List<Material_Group>();
+
+
+            var selectListItems = materialGroups
+                .Select(m => new SelectListItem
+                {
+                    Value = m.Material_Group1,
+                    Text = m.Material_Group1
+                })
+                .ToList();
+
+
+            selectListItems.Insert(0, new SelectListItem
+            {
+                Value = "",
+                Text = "Select Material Group"
+            });
+
+            return new SelectList(selectListItems, "Value", "Text");
         }
 
         public SelectList GetMaterialCodeListItem()

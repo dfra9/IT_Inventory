@@ -2842,6 +2842,7 @@
     <Content Include="Views\AssetManagement\Transaction.cshtml" />
     <Content Include="Views\UoM\Index.cshtml" />
     <Content Include="Views\UoM\Editor.cshtml" />
+    <Content Include="Views\AssetManagement\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

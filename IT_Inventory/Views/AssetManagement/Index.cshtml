@@ -1,0 +1,1015 @@
+﻿@{
+    ViewBag.Title = "Asset List";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-dropdown {
+        z-index: 9999;
+    }
+
+    .select2-container--default .select2-selection--single {
+        height: calc(2.25rem + 2px);
+        padding: .375rem .75rem;
+    }
+
+    .btn-view, .btn-edit, .btn-delete {
+        margin-right: 5px;
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .modal-header .close {
+            color: white;
+        }
+
+    #assetTable tr:hover {
+        background-color: #f1f7ff;
+        cursor: pointer;
+    }
+
+    .status-borrowing {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .status-return {
+        color: #007bff;
+    }
+
+    .status-service {
+        color: #ffc107;
+        font-weight: bold;
+    }
+
+    .status-ready {
+        color: #17a2b8;
+    }
+
+    .status-assign {
+        color: #6610f2;
+    }
+
+    .status-write-off {
+        color: #dc3545;
+    }
+
+    .select2-container--default .select2-selection--single {
+        height: calc(2.25rem + 2px);
+        padding: 0.275rem 0.75rem;
+        line-height: 1.5;
+    }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5;
+            padding-left: 0;
+            color: #495057;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(2.25rem + 2px);
+        }
+
+    .input-group-sm {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    #tableSearch {
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        background-color: #fff;
+        background-clip: padding-box;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        width: 100%;
+    }
+
+
+    .dataTables_filter,
+    .dataTables_length {
+        display: none !important;
+    }
+
+    .select2-results__option {
+        padding: 8px 12px;
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #007bff;
+    }
+
+    .select2-results__option[aria-selected=true] {
+        background-color: #e9ecef;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+</style>
+<section class="content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex align-item-center">
+                <a class="btn btn-primary btn-sm" href="@Url.Action("Transaction", "AssetManagement", new { mode = "Create" })">
+                    <i class="fa fa-plus"></i>
+                    Create
+                </a>
+                <div class="ml-auto d-flex align-item-center">
+                    <div class="input-group input-group-sm mr-2" style="width: 150px;">
+                        <input type="text" id="tableSearch" class="form-control" placeholder="Search..." />
+                        <div class="input-group-append">
+                        </div>
+                    </div>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body table-responsive p-0">
+        <table id="assetDataTable" class="table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>No Assets</th>
+                    <th>Company Name</th>
+                    <th>Material Group</th>
+                    <th>Material Code</th>
+                    <th>Asset Description</th>
+                    <th>Departement</th>
+                    <th>Location</th>
+                    <th>PIC / Vendor</th>
+                    <th>Status</th>
+                    <th>Transaction Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="assetListTable">
+                @if (Model.AssetHistory != null && Model.AssetHistory.Count > 0)
+                {
+                    foreach (var item in Model.AssetHistory)
+                    {
+                        <tr>
+                            <td>@item.No_asset</td>
+                            <td>@item.Company_Name</td>
+                            <td>@item.Material_Group</td>
+                            <td>@item.Material_Code</td>
+                            <td>@item.Material_Description</td>
+                            <td>@item.Departement</td>
+                            <td>@item.Location</td>
+                            <td>@item.PIC</td>
+                            <td>@item.Status</td>
+                            <td>@(item.Transaction_Date != null ? ((DateTime)item.Transaction_Date).ToString("yyyy-MM-dd"): "")</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btn-sm btn-view"
+                                            data-asset-no="@item.No_asset">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm btn-edit"
+                                            data-asset-no="@item.No_asset">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm btn-delete"
+                                            data-asset-no="@item.No_asset"
+                                            data-asset-desc="@item.Material_Description">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">No Asset found</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="viewAssetModal" tabindex="-1" role="dialog" aria-labelledby="viewAssetModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewAssetModalLabel">Edit Asset</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody id="assetDetailsTable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editAssetModal" tabindex="-1" role="dialog" aria-labelledby="editAssetModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAssetModalLabel">Edit Asset</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAssetForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="editAssetId" name="No_asset" />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="editCompanyCode">Company</label>
+                                    <select class="form-control select2" id="editCompanyCode" name="Company_Code">
+                                        <option value="">Select Company</option>
+                                        @if (Model.Companies != null)
+                                        {
+                                            foreach (var company in Model.Companies)
+                                            {
+                                                <option value="@company.Company_Code">@company.Company_Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editMaterialGroup">Material Group</label>
+                                    <select class="form-control select2" id="editMaterialGroup" name="Material_Group">
+                                        <option value="">Select Material Group</option>
+                                        @if (Model.MaterialGroup != null)
+                                        {
+                                            foreach (var group in Model.MaterialGroup)
+                                            {
+                                                <option value="@group.Material_Group1">@group.Material_Group1</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editMaterialCode">Material Code</label>
+                                    <select class="form-control select2" id="editMaterialCode" name="Material_Code">
+                                        <option value="">Select Material Code</option>
+                                        @if (Model.Material_Code1 != null)
+                                        {
+                                            foreach (var code in Model.Material_Code1)
+                                            {
+                                                <option value="@code.Material_Code1">@code.Material_Code1</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editMaterialDescription">Material Description</label>
+                                    <input type="text" class="form-control" id="editMaterialDescription" name="Material_Description" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="editDepartment">Department</label>
+                                    <select class="form-control select2" id="editDepartment" name="Departement_Name">
+                                        <option value="">Select Department</option>
+                                        @if (Model.Dept != null)
+                                        {
+                                            foreach (var dept in Model.Dept)
+                                            {
+                                                <option value="@dept.Departement_Name">@dept.Departement_Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="editCity">City</label>
+                                    <select class="form-control select2" id="editCity" name="City_Name">
+                                        <option value="">Select City</option>
+                                        @if (Model.Cities != null)
+                                        {
+                                            foreach (var city in Model.Cities)
+                                            {
+                                                <option value="@city.City_Name">@city.City_Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editLocation">Location</label>
+                                    <select class="form-control select2" id="editLocation" name="Location_Name">
+                                        <option value="">Select Location</option>
+
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editStatus">Status</label>
+                                    <select class="form-control select2" id="editStatus" name="Status">
+                                        <option value="">Select Status</option>
+                                        <option value="Return">Return</option>
+                                        <option value="Borrowing">Borrowing</option>
+                                        <option value="Service">Service</option>
+                                        <option value="Ready">Ready</option>
+                                        <option value="Assign">Assign</option>
+                                        <option value="Write Off">Write Off</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveAssetChanges">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteAssetModal" tabindex="-1" role="dialog" aria-labelledby="deleteAssetModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title" id="deleteAssetModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this asset?</p>
+                    <p><strong>Asset No:</strong> <span id="deleteAssetNo"></span></p>
+                    <p><strong>Description:</strong> <span id="deleteAssetDesc"></span></p>
+                    <form id="deleteAssetForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="deleteAssetId" name="No_asset" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAsset">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+
+        $('.select2').select2({
+            placeholder: "Select an option",
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('body')
+        });
+
+    var assetTable = $('#assetDataTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        dom: '<"top"f><"data-table-wrapper"rt><"bottom"ip>',
+        language: {
+            search: "",
+            lengthMenu: "Show _MENU_ entries",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            infoEmpty: "No data available",
+            infoFiltered: "(filtered from _MAX_ total entries)",
+            paginate: {
+                first: "First",
+                last: "Last",
+                next: "Next",
+                previous: "Previous"
+            }
+        }
+    });
+
+    $('#tableSearch').on('keyup', function () {
+        assetTable.search($(this).val()).draw();
+    });
+
+
+
+    $("#editStatus").on('select2:select', function (e) {
+
+        $(this).trigger('change.select2');
+    });
+
+
+    $('#tableSearch').on('keyup', function () {
+        assetTable.search($(this).val()).draw();
+    });
+
+    $(document).on('click', '.btn-view', function() {
+        var assetNo = $(this).data('asset-no');
+        $.ajax({
+            url: '@Url.Action("GetAssetDetails", "AssetManagement")',
+            type: 'GET',
+            data: { assetId: assetNo },
+            success: function(data) {
+                if (data.success) {
+                    renderAssetDetails(data);
+                    $("#viewAssetModal").modal('show');
+                } else {
+                    toastr.error(data.message || "Error loading asset detail");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+                toastr.error("Error loading asset details");
+            }
+        });
+    });
+
+    function initializeEditModal() {
+        const statusForms = {
+            'Return': {
+                picLabel: 'PIC / Vendor',
+                dateLabel: 'Return Date'
+            },
+            'Borrowing': {
+                picLabel: 'PIC / Vendor',
+                dateLabel: 'Borrow Date'
+            },
+            'Service': {
+                picLabel: 'PIC / Vendor',
+                dateLabel: 'Service Date'
+            },
+            'Ready': {
+                picLabel: 'PIC / Vendor',
+                dateLabel: 'Available Date'
+            },
+            'Assign': {
+                picLabel: 'PIC',
+                dateLabel: 'Assign Date'
+            },
+            'Write Off': {
+                picLabel: 'Approved By',
+                dateLabel: 'Write Off Date'
+            }
+        };
+
+        $("#dynamicStatusForms").remove();
+
+        const dynamicForms = $('<div id="dynamicStatusForms"></div>');
+
+        Object.entries(statusForms).forEach(([status, { picLabel, dateLabel }]) => {
+            const sanitizedStatus = status.replace(/\s+/g, '');
+            const statusFormId = `edit${sanitizedStatus}Form`;
+            const picId = `edit${sanitizedStatus}PIC`;
+            const dateId = `edit${sanitizedStatus}Date`;
+
+            const statusForm = $(`
+                <div id="${statusFormId}" class="edit-status-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="${picId}">${picLabel}</label>
+                        <input type="text" class="form-control" id="${picId}" name="PIC" placeholder="${picLabel}" />
+                    </div>
+                    <div class="form-group">
+                        <label for="${dateId}">${dateLabel}</label>
+                        <input type="date" class="form-control" id="${dateId}" name="Transaction_Date" />
+                    </div>
+                </div>
+            `);
+
+            dynamicForms.append(statusForm);
+        });
+
+        $("#editAssetModal .modal-body form").append(dynamicForms);
+
+
+        $("#editStatus").on('change', function () {
+            const status = $(this).val();
+            $(".edit-status-form").hide();
+            if (status) {
+                const sanitizedStatus = status.replace(/\s+/g, '');
+                console.log("Looking for form:", `#edit${sanitizedStatus}Form`);
+                $(`#edit${sanitizedStatus}Form`).show();
+                const formElement = $(`#edit${sanitizedStatus}Form`);
+                if (formElement.length) {
+                    formElement.show();
+                    console.log("Form displayed");
+                } else {
+                    console.error("Form not found:", `#edit${sanitizedStatus}Form`);
+                }
+                $(this).trigger('change.select2');
+            }
+        });
+    }
+
+
+    $(document).on('click', '.btn-edit', function() {
+        var assetNo = $(this).data('asset-no');
+
+        initializeEditModal();
+
+        $.ajax({
+            url: '@Url.Action("GetAssetDetails", "AssetManagement")',
+            type: 'GET',
+            data: { assetId: assetNo },
+            success: function(data) {
+                if (!data || data.success === false) {
+                    toastr.error(data?.message || "Error loading asset details");
+                    return;
+                }
+
+                const assetData = data;
+
+                $("#editAssetId").val(assetData.No_asset || '');
+                $("#editCompanyCode").val(assetData.Company_Code || '').trigger('change');
+                $("#editMaterialGroup").val(assetData.Material_Group || '').trigger('change');
+                $("#editMaterialCode").val(assetData.Material_Code || '').trigger('change');
+                $("#editMaterialDescription").val(assetData.Material_Description || '');
+                $("#editDepartment").val(assetData.Departement || '').trigger('change');
+
+                $("#editCity").val(assetData.City || '').trigger('change');
+
+                $("#editCity").off('change.populateLocation').on('change.populateLocation', function () {
+                    loadLocationsByCity(assetData.City, '#editLocation');
+
+                    setTimeout(function () {
+                        $("#editLocation").val(assetData.Location || '').trigger('change');
+                    }, 500);
+                }).trigger('change');
+
+                const status = assetData.Status || '';
+                setTimeout(function() {
+                    $("#editStatus").val(status).trigger('change');
+
+                    const sanitizedStatus = status.replace(/\s+/g, '');
+                    const picField = $(`#edit${sanitizedStatus}PIC`);
+                    const dateField = $(`#edit${sanitizedStatus}Date`);
+
+                    if (picField.length) {
+                        picField.val(assetData.PIC || '');
+                    }
+
+                    if (dateField.length) {
+                        dateField.val(formatDateForInput(assetData.Transaction_Date));
+                    }
+
+                    $('#editAssetModal').data('originalData', {
+                        status: status,
+                        pic: assetData.PIC || '',
+                        transactionDate: formatDateForInput(assetData.Transaction_Date)
+                    });
+
+                    $("#editAssetModal").modal('show');
+                }, 800);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+                toastr.error("Error loading asset details");
+            }
+        });
+    });
+
+        function validateAssetForm() {
+            const requiredFields = [
+                '#editCompanyCode',
+                '#editMaterialGroup',
+                '#editMaterialCode',
+                '#editStatus'
+            ];
+
+            let isValid = true;
+            requiredFields.forEach(field => {
+                if (!$(field).val()) {
+                    $(field).addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $(field).removeClass('is-invalid');
+                }
+            });
+
+            return isValid;
+        }
+
+    $('#saveAssetChanges').click(function () {
+        var status = $("#editStatus").val();
+        if (!validateAssetForm()) return;
+
+        if (!$("#editAssetId").val()) {
+            toastr.error("No Asset is required");
+            return;
+        }
+
+        if (!status) {
+            toastr.error("Status is required");
+            return;
+        }
+
+        const sanitizedStatus = status.replace(/\s+/g, '');
+        const picSelector = `#edit${sanitizedStatus}PIC`;
+        const dateSelector = `#edit${sanitizedStatus}Date`;
+
+        if ($(picSelector).length === 0) {
+            console.error("PIC field not found:", picSelector);
+            toastr.error("PIC field not found for the selected status");
+            return;
+        }
+
+        if ($(dateSelector).length === 0) {
+            console.error("Date field not found:", dateSelector);
+            toastr.error("Date field not found for the selected status");
+            return;
+        }
+
+        const pic = $(picSelector).val();
+        const transactionDate = $(dateSelector).val();
+
+        console.log("PIC:", pic);
+        console.log("Transaction Date:", transactionDate);
+
+        if (!pic) {
+            toastr.error("PIC is required");
+            return;
+        }
+
+        if (!transactionDate) {
+            toastr.error("Transaction Date is required");
+            return;
+        }
+
+        var formData = {
+            No_asset: $("#editAssetId").val(),
+            Status: status,
+            PIC: pic,
+            Transaction_Date: transactionDate,
+            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+        };
+
+        var originalData = $('#editAssetModal').data('originalData');
+        if (formData.Status === originalData.status &&
+            formData.PIC === originalData.pic &&
+            formData.Transaction_Date === originalData.transactionDate) {
+            toastr.info("No changes were made");
+            $("#editAssetModal").modal('hide');
+            return;
+        }
+
+        console.log("Sending data:", formData);
+
+        $.ajax({
+            url: '@Url.Action("UpdateAsset", "AssetManagement")',
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                console.log("Response received:", data);
+                if (data.success) {
+                    toastr.success(data.message || "Asset updated successfully");
+                    $("#editAssetModal").modal('hide');
+                    refreshAssetTable();
+                } else {
+                    toastr.error(data.message || "Error updating asset");
+                    console.error("Error from server:", data);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX error:", error);
+                console.error("Status:", status);
+                console.error("Response:", xhr.responseText);
+                toastr.error("Error updating asset");
+            }
+        });
+    });
+
+
+    $(document).on('click', '.btn-delete', function() {
+        var assetNo = $(this).data('asset-no');
+        var assetDesc = $(this).data('asset-desc');
+
+        $('#deleteAssetId').val(assetNo);
+        $('#deleteAssetNo').text(assetNo);
+        $('#deleteAssetDesc').text(assetDesc);
+
+        $("#deleteAssetModal").modal('show');
+    });
+
+    $('#confirmDeleteAsset').click(function() {
+        var assetNo = $('#deleteAssetId').val();
+
+        $.ajax({
+            url: '@Url.Action("DeleteAsset", "AssetManagement")',
+            type: 'POST',
+            data: {
+                No_asset: assetNo,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    toastr.success("Asset successfully deleted");
+                    $("#deleteAssetModal").modal('hide');
+                    refreshAssetTable();
+                } else {
+                    toastr.error(response.message || "Failed to delete asset");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+                toastr.error("An error occurred while deleting the asset");
+            }
+        });
+    });
+
+    $('#confirmDeleteAsset').click(function() {
+        var assetNo = $('#deleteAssetId').val();
+
+        $.ajax({
+            url: '@Url.Action("DeleteAsset", "AssetManagement")',
+            type: 'POST',
+            data: {
+                No_asset: assetNo,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    toastr.success("Asset successfully deleted");
+                    $("#deleteAssetModal").modal('hide');
+                    refreshAssetTable();
+                } else {
+                    toastr.error(response.message || "Failed to delete asset");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+                toastr.error("An error occurred while deleting the asset");
+            }
+        });
+    });
+
+    function loadLocationsByCity(cityName, targetDropdown) {
+        if (!cityName) {
+            $(targetDropdown).empty().append('<option value="">Select Location</option>').trigger('change');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("GetLocationByCity", "AssetManagement")',
+            type: 'GET',
+            data: { cityId: cityName },
+            success: function (locations) {
+                $(targetDropdown).empty().append('<option value="">Select Location</option>');
+                if (locations && locations.length > 0) {
+                    locations.forEach(function (location) {
+                        $(targetDropdown).append(`<option value="${location.locationName}">${location.locationName}</option>`);
+                    });
+                }
+                $(targetDropdown).trigger('change');
+            },
+            error: function (error) {
+                console.error("Error loading locations:", error);
+                toastr.error("Error loading locations");
+            }
+        });
+    }
+
+    function refreshAssetTable() {
+        $.ajax({
+            url: '@Url.Action("GetAssetData", "AssetManagement")',
+            type: 'GET',
+            success: function(refreshedData) {
+                assetTable.clear().draw();
+
+                if (refreshedData && refreshedData.length > 0) {
+                    refreshedData.forEach(function(asset) {
+                        var statusClass = getStatusClass(asset.Status);
+
+                        assetTable.row.add([
+                            asset.No_asset || '',
+                            asset.Company_Name || '',
+                            asset.Material_Group || '',
+                            asset.Material_Code || '',
+                            asset.Material_Description || '',
+                            asset.Departement || '',
+                            asset.Location || '',
+                            asset.PIC || '',
+                            `<span class="${statusClass}">${asset.Status || ''}</span>`,
+                            formatDate(asset.Transaction_Date),
+                            `
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info btn-sm btn-view"
+                                    data-asset-no="${asset.No_asset}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm btn-edit"
+                                    data-asset-no="${asset.No_asset}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm btn-delete"
+                                    data-asset-no="${asset.No_asset}"
+                                    data-asset-desc="${asset.Material_Description || ''}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            `
+                        ]);
+                    });
+                } else {
+                    assetTable.row.add([
+                        'No data', '', '', '', '', '', '', '', '', '',
+                        ''
+                    ]);
+                }
+
+                assetTable.draw();
+            },
+            error: function(error) {
+                console.error("Error refreshing asset table:", error);
+                toastr.error("Error refreshing asset table");
+            }
+        });
+    }
+
+    function getStatusClass(status) {
+        const statusClassMap = {
+            'Borrowing': 'status-borrowing',
+            'Return': 'status-return',
+            'Service': 'status-service',
+            'Ready': 'status-ready',
+            'Assign': 'status-assign',
+            'Write Off': 'status-write-off'
+        };
+        return statusClassMap[status] || '';
+    }
+
+    function renderAssetDetails(asset) {
+        var detailsHtml = `
+            <tr>
+                <th style="width:20%">No Asset</th>
+                <td>${asset.No_asset || ''}</td>
+            </tr>
+            <tr>
+                <th>Company</th>
+                <td>${asset.Company_Name || ''} (${asset.Company_Code || ''})</td>
+            </tr>
+            <tr>
+                <th>Material Group</th>
+                <td>${asset.Material_Group || ''}</td>
+            </tr>
+            <tr>
+                <th>Material Code</th>
+                <td>${asset.Material_Code || ''}</td>
+            </tr>
+            <tr>
+                <th>Material Description</th>
+                <td>${asset.Material_Description || ''}</td>
+            </tr>
+            <tr>
+                <th>Quantity</th>
+                <td>${asset.Quantity || ''} ${asset.UoM || ''}</td>
+            </tr>
+            <tr>
+                <th>Serial Number</th>
+                <td>${asset.Serial_Number || ''}</td>
+            </tr>
+            <tr>
+                <th>Device ID</th>
+                <td>${asset.Device_Id || ''}</td>
+            </tr>
+            <tr>
+                <th>Acquisition Date</th>
+                <td>${formatDate(asset.Acquisition_Date)}</td>
+            </tr>
+            <tr>
+                <th>Department</th>
+                <td>${asset.Departement || ''}</td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td>${asset.Location || ''} (${asset.City || ''})</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td><span class="badge status-${(asset.Status || '').toLowerCase().replace(/\s+/g, '-')}">${asset.Status || ''}</span></td>
+            </tr>
+            <tr>
+                <th>PIC / Vendor</th>
+                <td>${asset.PIC || ''}</td>
+            </tr>
+            <tr>
+                <th>Transaction Date</th>
+                <td>${formatDate(asset.Transaction_Date)}</td>
+            </tr>
+            <tr>
+                <th>Condition</th>
+                <td>${asset.Condition || ''}</td>
+            </tr>
+        `;
+
+        $('#assetDetailsTable').html(detailsHtml);
+        $('#viewAssetModalLabel').text(`Asset Details: ${asset.No_asset}`);
+    }
+
+    function formatDateForInput(dateString) {
+        if (!dateString) return '';
+
+        try {
+            if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                var timeStamp = parseInt(dateString.substr(6));
+                var date = new Date(timeStamp);
+                return formatDateObject(date);
+            }
+
+            var date = new Date(dateString);
+            return formatDateObject(date);
+        } catch (e) {
+            console.error("Error parsing date:", e);
+            return '';
+        }
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return "";
+
+        try {
+            if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                var timeStamp = parseInt(dateString.substr(6));
+                var date = new Date(timeStamp);
+                return formatDateObject(date);
+            }
+
+            var date = new Date(dateString);
+            return formatDateObject(date);
+        } catch (e) {
+            console.error("Error parsing date:", e);
+            return "";
+        }
+    }
+
+    function formatDateObject(date) {
+        if (isNaN(date.getTime())) return "";
+
+        var year = date.getFullYear();
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+
+
+
+    $('#editAssetModal').on('shown.bs.modal', function () {
+
+        $('.select2').each(function () {
+            const val = $(this).val();
+
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).select2('destroy');
+            }
+
+            $(this).select2({
+                dropdownParent: $('#editAssetModal'),
+                width: '100%'
+            });
+
+            if (val) {
+                $(this).val(val).trigger('change');
+            }
+        });
+    });
+
+    $("#editCity").on('change', function () {
+        var selectedCity = $(this).val();
+        loadLocationsByCity(selectedCity, '#editLocation');
+    });
+
+    initializeLocationDropdowns();
+
+    function initializeLocationDropdowns() {
+        $("#editCity").each(function () {
+            var $cityDropdown = $(this);
+            $cityDropdown.on('change', function () {
+                var selectedCity = $cityDropdown.val();
+                loadLocationsByCity(selectedCity, '#editLocation');
+            });
+        });
+    }
+});
+</script>
