@@ -99,6 +99,11 @@ namespace IT_Inventory.Controllers
                             userEdit.Password = userService.HashPassword(user.Password);
                         }
 
+                        if (!string.IsNullOrEmpty(user.Long_Name))
+                        {
+                            userEdit.Long_Name = user.Long_Name;
+                        }
+
                         userEdit.Departement = user.Departement;
                         userEdit.City = user.City;
                         userEdit.Location = user.Location;
@@ -152,8 +157,6 @@ namespace IT_Inventory.Controllers
             ViewBag.City = db.City.ToList();
             ViewBag.Location = db.Location.ToList();
         }
-
-
 
     }
 }
