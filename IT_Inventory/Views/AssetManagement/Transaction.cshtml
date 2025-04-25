@@ -751,6 +751,8 @@
 
                     if (data.dashboardCounts) {
                         updateDashboardCounts(data.dashboardCounts);
+                    } else {
+                        refreshDashboardData();
                     }
 
                     resetFormFields();
@@ -775,6 +777,12 @@
             }
         });
     });
+
+
+       $(document).ready(function () {
+           refreshDashboardData();
+       });
+
 
        function updateDashboardCounts(dashboardCounts) {
            if (!dashboardCounts) return;
@@ -810,16 +818,15 @@
                },
                error: function (xhr, status, error) {
                    console.error('Error refreshing dashboard data:', error);
-                   console.error('Status:', status);
-                   console.error('Response:', xhr.responseText);
+                 
                }
            });
        }
 
-       $(document).ready(function () {
-           refreshDashboardData();
-       });
 
+
+
+       
     function resetFormFields() {
 
         $("#statusDropdown").val("").trigger("change");

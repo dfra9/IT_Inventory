@@ -283,35 +283,7 @@ namespace IT_Inventory.Controllers
             }
         }
 
-        private DashboardCountsModel GetDashboardCounts()
-        {
-            return new DashboardCountsModel
-            {
-                TotalAssets = db.Asset
-            .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .Count(),
 
-                AvailableAssets = db.Asset
-            .Where(a => a.Is_Deleted != true && (a.Status == "Ready" || a.Status == "Return"))
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .Count(),
-
-                AssetsInUse = db.Asset
-            .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .Count(),
-
-                AssetsInMaintenance = db.Asset
-            .Where(a => a.Is_Deleted != true && a.Status == "Service")
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .Count()
-            };
-        }
 
         public string GetCompanyName(string companyCode)
         {
@@ -534,8 +506,6 @@ namespace IT_Inventory.Controllers
             {
                 return Json(new { success = false, message = "An error occurred while deleting the asset: " + ex.Message });
             }
-
-
         }
 
         public ActionResult GetAssetData(string search)
@@ -585,36 +555,33 @@ namespace IT_Inventory.Controllers
             return Json(assets, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetDashboardCountsJson()
+        private DashboardCountsModel GetDashboardCounts()
         {
-            var counts = new DashboardCountsModel
+
+            var latestAssets = db.Asset
+                .Where(a => a.Is_Deleted != true)
+                .GroupBy(a => a.No_asset)
+                .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                .ToList();
+
+            return new DashboardCountsModel
             {
-                TotalAssets = db.Asset
-             .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
-             .GroupBy(a => a.No_asset)
-             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-             .Count(),
+                TotalAssets = latestAssets
+                    .Where(a => a.Status != "Write Off")
+                    .Count(),
 
-                AvailableAssets = db.Asset
-             .Where(a => a.Is_Deleted != true && (a.Status == "Ready" || a.Status == "Return"))
-             .GroupBy(a => a.No_asset)
-             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-             .Count(),
+                AvailableAssets = latestAssets
+                    .Where(a => a.Status == "Ready" || a.Status == "Return")
+                    .Count(),
 
-                AssetsInUse = db.Asset
-             .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
-             .GroupBy(a => a.No_asset)
-             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-             .Count(),
+                AssetsInUse = latestAssets
+                    .Where(a => a.Status == "Borrowing" || a.Status == "Assign")
+                    .Count(),
 
-                AssetsInMaintenance = db.Asset
-             .Where(a => a.Is_Deleted != true && a.Status == "Service")
-             .GroupBy(a => a.No_asset)
-             .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-             .Count()
+                AssetsInMaintenance = latestAssets
+                    .Where(a => a.Status == "Service")
+                    .Count()
             };
-
-            return Json(counts, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

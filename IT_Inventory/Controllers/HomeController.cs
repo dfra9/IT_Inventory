@@ -17,32 +17,20 @@ namespace IT_Inventory.Controllers
         [Authorize]
         public ActionResult Index()
         {
+
+            var latestAssets = db.Asset
+       .Where(a => a.Is_Deleted != true)
+       .GroupBy(a => a.No_asset)
+       .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+       .ToList();
             var dashboardCounts = new DashboardCountsModel
             {
-                TotalAssets = db.Asset
-                    .Where(a => a.Is_Deleted != true && a.Status != "Write Off")
-                    .GroupBy(a => a.No_asset)
-                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-                    .Count(),
-
-                AvailableAssets = db.Asset
-                    .Where(a => a.Is_Deleted != true && (a.Status == "Ready" || a.Status == "Return"))
-                    .GroupBy(a => a.No_asset)
-                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-                    .Count(),
-
-                AssetsInUse = db.Asset
-                    .Where(a => a.Is_Deleted != true && (a.Status == "Borrowing" || a.Status == "Assign"))
-                    .GroupBy(a => a.No_asset)
-                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-                    .Count(),
-
-                AssetsInMaintenance = db.Asset
-                    .Where(a => a.Is_Deleted != true && a.Status == "Service")
-                    .GroupBy(a => a.No_asset)
-                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-                    .Count()
+                TotalAssets = latestAssets.Count,
+                AvailableAssets = latestAssets.Count(a => a.Status == "Ready" || a.Status == "Return"),
+                AssetsInUse = latestAssets.Count(a => a.Status == "Borrowing" || a.Status == "Assign"),
+                AssetsInMaintenance = latestAssets.Count(a => a.Status == "Service")
             };
+
 
             var viewModel = new AssetManagementViewModel
             {
@@ -51,7 +39,7 @@ namespace IT_Inventory.Controllers
             };
 
             return View(viewModel);
-            return View();
+
         }
 
 

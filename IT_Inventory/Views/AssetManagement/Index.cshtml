@@ -391,6 +391,8 @@
             dropdownParent: $('body')
         });
 
+
+
     var assetTable = $('#assetDataTable').DataTable({
         responsive: true,
         pageLength: 10,
@@ -409,6 +411,9 @@
             }
         }
     });
+
+
+
 
     $('#tableSearch').on('keyup', function () {
         assetTable.search($(this).val()).draw();
@@ -687,6 +692,8 @@
                     $("#editAssetModal").modal('hide');
                     if (data.dashboardCounts) {
                         updateDashboardCounts(data.dashboardCounts);
+                    } else {
+                        refreshDashboardData();
                     }
                     refreshAssetTable();
                 } else {
@@ -768,6 +775,10 @@
                 $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
             }
         }
+
+        $(document).ready(function () {
+            refreshDashboardData();
+        });
 
         function refreshDashboardData() {
             $.ajax({
