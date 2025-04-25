@@ -71,7 +71,7 @@
                                     {
                                         <div class="form-group row">
                                             <label for="IsAdmin" class="col-sm-3 col-form-label form-control-label">User Is Admin?</label>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-5">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" id="Is_Admin" name="Is_Admin" value="True" @(Model.Is_Admin == true ? "checked" : "") />
                                                 </div>
@@ -81,7 +81,7 @@
 
                                     <div class="form-group row">
                                         <label for="Password" class="col-sm-3 col-form-label form-control-label">Password</label>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-5">
                                             <div class="input-group">
                                                 <input type="password" id="Password" name="Password" class="form-control" placeholder="@(mode == "Edit" ? "Change Password" : "Enter password")"
                                                        @(mode == "Edit" ? "" : "required")>

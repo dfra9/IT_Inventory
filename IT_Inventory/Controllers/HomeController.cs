@@ -51,6 +51,7 @@ namespace IT_Inventory.Controllers
             };
 
             return View(viewModel);
+            return View();
         }
 
 
