@@ -319,15 +319,15 @@ $(document).ready(function () {
             }
         },
         "columns": [
-            { "data": "No_asset", "name": "No_asset", "autoWidth": true },
+            { "data": "No_asset", "name": "No_asset", "autoWidth": true, "type": "string", "orderable": true },
             { "data": "Material_Group", "name": "Material_Group", "autoWidth": true },
-            { "data": "Material_Description", "name": "Material_Description", "autoWidth": true },
-            { "data": "Acquisition_Date", "name": "Acquisition_Date", "autoWidth": true, render: function (data) { return formatDate(data); } },
-            { "data": "Status", "name": "Status", "autoWidth": true },
-            { "data": "Location", "name": "Location", "autoWidth": true },
-            { "data": "Departement", "name": "Departement", "autoWidth": true }
+            { "data": "Material_Description", "name": "Material_Description", "autoWidth": true, "type": "string", "orderable": true },
+            { "data": "Transaction_Date", "name": "Transaction_Date", "autoWidth": true, "type": "date", "orderable": true, render: function (data) { return formatDate(data); } },
+            { "data": "Status", "name": "Status", "autoWidth": true, "type": "string","orderable": true },
+            { "data": "Location", "name": "Location", "autoWidth": true, "type": "string", "orderable": true },
+            { "data": "Departement", "name": "Departement", "autoWidth": true, "type": "string", "orderable": true }   
         ],
-        "order": [[0, "desc"]],
+        "order": [[3, "desc"]],
         "createdRow": function (row, data, index) {
             if (data.Is_Deleted) {
                 $(row).addClass('bgOff');
@@ -343,6 +343,8 @@ $(document).ready(function () {
         }
     });
 
+
+    $('#dashboardTable thead tr').clone(true).appendTo('#dashboardTable thead');
     $('#dashboardTable tfoot input').on('keyup change clear', function () {
         table.column($(this).parent().index())
             .search(this.value)
