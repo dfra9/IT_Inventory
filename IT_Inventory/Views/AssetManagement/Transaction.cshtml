@@ -621,9 +621,21 @@
             isValid = false;
         } 
 
+        if (!$("#companyCodeDropdown").val()) {
+            $("#companyCodeDropdown").next(".select2-container").addClass("is-invalid");
+            showErrorToast("Company Code is required");
+            isValid = false;
+        }
+
         if (!$("#materialGroupDropdown").val()) {
             $("#materialGroupDropdown").next(".select2-container").addClass("is-invalid");
             showErrorToast("Material Group is required");
+            isValid = false;
+        }
+
+        if (!$("#materialCodeDropdown").val()) {
+            $("#materialCodeDropdown").next(".select2-container").addClass("is-invalid");
+            showErrorToast("Material Code is required");
             isValid = false;
         }
         

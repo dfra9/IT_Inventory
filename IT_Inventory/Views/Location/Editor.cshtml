@@ -37,7 +37,7 @@
                                         </div>
 
                                         <div class="form-group row">
-                                            @Html.LabelFor(model => model.City_Name, new { @class = "control-label col-md-2" })
+                                            <label for="City_Name" class="col-sm-2 col-form-label form-control-label">City Name</label>
                                             <div class="col-md-3">
                                                 @if (mode == "View" || mode == "Delete")
                                                 {
@@ -47,7 +47,7 @@
                                                 {
                                                     @Html.DropDownListFor(model => model.City_Name, Model.Cities, "-- Select City --", new { @class = "form-control", required = "required" })
                                                 }
-                                                
+
                                                 @Html.ValidationMessageFor(model => model.City_Name, "", new { @class = "text-danger" })
                                             </div>
                                         </div>

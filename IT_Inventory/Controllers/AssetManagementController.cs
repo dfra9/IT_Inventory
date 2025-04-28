@@ -112,9 +112,17 @@ namespace IT_Inventory.Controllers
                 {
                     ModelState.AddModelError("No_asset", "No Asset is required");
                 }
+                if (string.IsNullOrEmpty(viewModel.Material_Code))
+                {
+                    ModelState.AddModelError("Material_Code", "Material Code is required");
+                }
                 if (string.IsNullOrEmpty(viewModel.Material_Group))
                 {
                     ModelState.AddModelError("Material_Group", "Material Group is required");
+                }
+                if (string.IsNullOrEmpty(viewModel.Company_Code))
+                {
+                    ModelState.AddModelError("Company_Code", "Company Code is required");
                 }
                 if (string.IsNullOrEmpty(viewModel.Departement_Code))
                 {
