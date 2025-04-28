@@ -2839,7 +2839,7 @@
     <Content Include="Views\City\Editor.cshtml" />
     <Content Include="Views\Location\Index.cshtml" />
     <Content Include="Views\Location\Editor.cshtml" />
-    <Content Include="Views\AssetManagement\Transaction.cshtml" />
+    <Content Include="Views\AssetManagement\Editor.cshtml" />
     <Content Include="Views\UoM\Index.cshtml" />
     <Content Include="Views\UoM\Editor.cshtml" />
     <Content Include="Views\AssetManagement\Index.cshtml" />

@@ -29,6 +29,7 @@ namespace IT_Inventory.Controllers
                     .OrderByDescending(a => a.Transaction_Date)
                     .Take(100)
                     .ToList(),
+                DashboardCounts = GetDashboardCounts()
             };
 
             var defaultCity = viewModel.Cities.FirstOrDefault()?.City_Name;
@@ -48,58 +49,114 @@ namespace IT_Inventory.Controllers
             return View(viewModel);
         }
 
-        public ActionResult Transaction()
+        public ActionResult Editor(string id = null, string mode = "Create")
         {
+            AssetManagementViewModel viewModel = new AssetManagementViewModel();
+            viewModel.mode = mode;
 
+            LoadDropdownData();
+
+
+            viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).ToList();
+            viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList();
+            viewModel.Cities = db.City.Where(c => c.Is_Deleted != true).ToList();
+            viewModel.MaterialGroup = db.Material_Group
+            .Where(c => c.Is_Deleted != true || c.Is_Deleted == null)
+            .ToList();
+            viewModel.Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList();
+            viewModel.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
+
+            if (id != null && (mode == "Edit" || mode == "View" || mode == "Delete"))
             {
-                var viewModel = new AssetManagementViewModel
+                var asset = db.Asset
+                .Where(a => a.No_asset == id && a.Is_Deleted != true)
+                .OrderByDescending(a => a.Transaction_Date)
+                .FirstOrDefault();
+
+                if (asset != null)
                 {
-                    Companies = db.Company.Where(c => c.Is_Deleted != true).ToList(),
-                    Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList(),
-                    Cities = db.City.Where(c => c.Is_Deleted != true).ToList(),
-                    MaterialGroup = db.Material_Group
-                    .Where(c => c.Is_Deleted != true || c.Is_Deleted == null)
-                    .ToList(),
-                    Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList(),
-                    UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList(),
-                    AssetHistory = db.Asset
-                    .Where(a => a.Is_Deleted != true)
-                    .OrderByDescending(a => a.Transaction_Date)
-                    .Take(100)
-                    .ToList(),
+                    viewModel.No_asset = asset.No_asset;
+                    viewModel.Company_Code = asset.Company_Code;
+                    viewModel.Company_Name = asset.Company_Name;
+                    viewModel.Material_Group = asset.Material_Group;
+                    viewModel.Material_Code = asset.Material_Code;
+                    viewModel.Material_Description = asset.Material_Description;
+                    viewModel.Quantity = asset.Quantity;
+                    viewModel.UoM = asset.UoM;
+                    viewModel.Serial_Number = asset.Serial_Number;
+                    viewModel.Device_Id = asset.Device_Id;
+                    viewModel.Acquisition_Date = asset.Acquisition_Date;
+                    viewModel.Acquisition_value = asset.Acquisition_value;
+                    viewModel.No_Asset_PGA = asset.No_Asset_PGA;
+                    viewModel.No_Asset_Accounting = asset.No_Asset_Accounting;
+                    viewModel.No_PO = asset.No_PO;
+                    viewModel.Latest_User = asset.Latest_User;
 
-                };
+                    viewModel.Departement_Code = db.Departement
+                        .Where(d => d.Departement_Name == asset.Departement && d.Is_Deleted != true)
+                        .Select(d => d.Departement_Code)
+                        .FirstOrDefault();
+                    viewModel.Departement_Name = asset.Departement;
+                    viewModel.City_Name = asset.City;
+                    var location = db.Location.FirstOrDefault(l =>
+                l.Location_Name == asset.Location &&
+                l.City_Name == asset.City &&
+                l.Is_Deleted != true);
+                    viewModel.Locations = location?.Location_Code;
+                    viewModel.Location_Name = asset.Location;
+                    if (!string.IsNullOrEmpty(asset.City))
+                    {
+                        viewModel.LocationsList = db.Location
+                            .Where(l => l.City_Name == asset.City && l.Is_Deleted != true)
+                            .ToList();
+                    }
+                    viewModel.Last_Check_Date = asset.Last_Check_Date;
+                    viewModel.Condition = asset.Condition;
+                    viewModel.Status = asset.Status;
+                    viewModel.PIC = asset.PIC;
+                    viewModel.Transaction_Date = asset.Transaction_Date.HasValue ? (DateTime)asset.Transaction_Date : DateTime.Now;
+                    viewModel.AssetHistory = db.Asset
+                   .Where(a => a.No_asset == id && a.Is_Deleted != true)
+                   .OrderByDescending(a => a.Transaction_Date)
+                   .ToList();
 
-                var defaultCity = viewModel.Cities.FirstOrDefault()?.City_Name;
-                viewModel.LocationsList = db.Location
-                    .Where(l => l.Is_Deleted != true && l.City_Name == defaultCity)
-                    .ToList();
-                viewModel.Companies = viewModel.Companies ?? new List<Company>();
-                viewModel.Dept = viewModel.Dept ?? new List<Departement>();
-                viewModel.LocationsList = viewModel.LocationsList ?? new List<Location>();
-                viewModel.Cities = viewModel.Cities ?? new List<City>();
-                viewModel.MaterialGroup = viewModel.MaterialGroup ?? new List<Material_Group>();
-                viewModel.Material_Code1 = viewModel.Material_Code1 ?? new List<Material_Code>();
-                viewModel.UoMList = viewModel.UoMList ?? new List<UoM>();
-                viewModel.AssetHistory = viewModel.AssetHistory ?? new List<Asset>();
-
-                LoadDropdownData();
-                return View(viewModel);
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Asset not found.";
+                    return RedirectToAction("Index");
+                }
             }
+            else
+            {
+                viewModel.AssetHistory = new List<Asset>();
+            }
+
+            ViewBag.Mode = mode;
+            return View(viewModel);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Transaction(AssetManagementViewModel viewModel)
+        public ActionResult Editor(AssetManagementViewModel viewModel)
         {
             try
             {
+                string mode = viewModel.mode ?? "Create";
+
+                if (mode == "Delete")
+                {
+                    return DeleteAsset(viewModel.No_asset);
+                }
                 string locationName = null;
                 if (!string.IsNullOrEmpty(viewModel.Locations))
                 {
                     var location = db.Location.FirstOrDefault(l => l.Location_Code == viewModel.Locations && l.Is_Deleted != true);
                     locationName = location?.Location_Name;
                 }
+
+
 
                 string departmentName = null;
                 if (!string.IsNullOrEmpty(viewModel.Departement_Code))
@@ -214,7 +271,7 @@ namespace IT_Inventory.Controllers
                         return Json(new
                         {
                             success = true,
-                            message = "Transaction successful",
+                            message = mode == "Create" ? "Asset created successfully" : "Asset updated successfully",
                             assetData = new
                             {
                                 assetHistory.No_asset,
@@ -228,27 +285,14 @@ namespace IT_Inventory.Controllers
                     }
                     else
                     {
-                        TempData["SuccessMessage"] = "Transaction successful";
+                        TempData["SuccessMessage"] = mode == "Create" ? "Asset created successfully" : "Asset updated successfully";
                         TempData["DashboardCounts"] = dashboardCounts;
-                        return RedirectToAction("Transaction");
+                        return RedirectToAction("Index");
                     }
                 }
-                else
-                {
-                    if (Request.IsAjaxRequest())
-                    {
-                        var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
-                            .ToDictionary(
-                                kvp => kvp.Key,
-                                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                            );
-
-                        return Json(new { success = false, message = "Validation failed", errors = errors });
-                    }
-                }
-
 
                 LoadDropdownData();
+
                 viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).ToList();
                 viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList();
                 viewModel.LocationsList = db.Location.Where(c => c.Is_Deleted != true).ToList();
@@ -256,11 +300,32 @@ namespace IT_Inventory.Controllers
                 viewModel.MaterialGroup = db.Material_Group.Where(c => c.Is_Deleted != true).ToList();
                 viewModel.Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList();
                 viewModel.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.AssetHistory = db.Asset.Where(a => a.Is_Deleted != true)
-                    .OrderByDescending(a => a.Transaction_Date)
-                    .Take(100)
-                    .ToList();
+
+                if (mode != "Create" && !string.IsNullOrEmpty(viewModel.No_asset))
+                {
+                    viewModel.AssetHistory = db.Asset
+               .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
+               .OrderByDescending(a => a.Transaction_Date)
+               .ToList();
+                }
+                else
+                {
+                    viewModel.AssetHistory = new List<Asset>();
+                }
+
                 viewModel.DashboardCounts = GetDashboardCounts();
+                ViewBag.Mode = mode;
+                if (Request.IsAjaxRequest())
+                {
+                    var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                        );
+
+                    return Json(new { success = false, message = "Validation failed", errors = errors });
+                }
+
                 return View(viewModel);
             }
             catch (Exception ex)
@@ -275,6 +340,20 @@ namespace IT_Inventory.Controllers
                         details = ex.ToString()
                     });
                 }
+
+                string mode = viewModel.mode ?? "Create";
+
+                if (mode != "Create" && !string.IsNullOrEmpty(viewModel.No_asset))
+                {
+                    viewModel.AssetHistory = db.Asset
+                        .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
+                        .OrderByDescending(a => a.Transaction_Date)
+                        .ToList();
+                }
+                else
+                {
+                    viewModel.AssetHistory = new List<Asset>();
+                }
                 ModelState.AddModelError("", "An error occurred while processing your request: " + ex.Message);
                 viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).ToList();
                 viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList();
@@ -285,7 +364,7 @@ namespace IT_Inventory.Controllers
                 viewModel.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
                 viewModel.DashboardCounts = GetDashboardCounts();
 
-
+                ViewBag.Mode = mode;
                 LoadDropdownData();
                 return View(viewModel);
             }
@@ -328,8 +407,10 @@ namespace IT_Inventory.Controllers
                 {
                     return Json(new { success = false, message = "Asset ID is required." }, JsonRequestBehavior.AllowGet);
                 }
-
-                var asset = db.Asset.FirstOrDefault(a => a.No_asset == assetId && a.Is_Deleted != true);
+                var asset = db.Asset
+                    .Where(a => a.No_asset == assetId && a.Is_Deleted != true)
+                    .OrderByDescending(a => a.Transaction_Date)
+                    .FirstOrDefault();
                 if (asset == null)
                 {
                     return Json(new { success = false, message = "Asset not found." }, JsonRequestBehavior.AllowGet);
@@ -338,24 +419,24 @@ namespace IT_Inventory.Controllers
                 return Json(new
                 {
                     success = true,
-                    asset.No_asset,
-                    asset.Company_Code,
-                    asset.Company_Name,
-                    asset.Material_Group,
-                    asset.Material_Code,
-                    asset.Material_Description,
-                    asset.Quantity,
-                    asset.UoM,
-                    asset.Serial_Number,
-                    asset.Device_Id,
-                    asset.Acquisition_Date,
-                    asset.Acquisition_value,
-                    asset.PIC,
-                    asset.Status,
-                    asset.Transaction_Date,
-                    asset.Location,
-                    asset.Departement,
-                    asset.Condition
+                    No_asset = asset.No_asset,
+                    Company_Code = asset.Company_Code,
+                    Company_Name = asset.Company_Name,
+                    Material_Group = asset.Material_Group,
+                    Material_Code = asset.Material_Code,
+                    Material_Description = asset.Material_Description,
+                    Quantity = asset.Quantity,
+                    UoM = asset.UoM,
+                    Serial_Number = asset.Serial_Number,
+                    Device_Id = asset.Device_Id,
+                    Acquisition_Date = asset.Acquisition_Date,
+                    Acquisition_value = asset.Acquisition_value,
+                    PIC = asset.PIC,
+                    Status = asset.Status,
+                    Transaction_Date = asset.Transaction_Date,
+                    Location = asset.Location,
+                    Departement = asset.Departement,
+                    Condition = asset.Condition
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -376,7 +457,10 @@ namespace IT_Inventory.Controllers
                     return Json(new { success = false, message = "Asset number is required" });
                 }
 
-                var asset = db.Asset.FirstOrDefault(a => a.No_asset == No_asset && a.Is_Deleted != true);
+                var asset = db.Asset
+                    .Where(a => a.No_asset == No_asset && a.Is_Deleted != true)
+                    .OrderByDescending(a => a.Transaction_Date)
+                    .FirstOrDefault();
                 if (asset == null)
                 {
                     return Json(new { success = false, message = "Asset not found" });
@@ -401,12 +485,6 @@ namespace IT_Inventory.Controllers
                 {
                     return Json(new { success = false, message = $"Transaction Date for {Status} status is required" });
                 }
-
-
-                asset = db.Asset
-           .Where(a => a.No_asset == No_asset && a.Is_Deleted != true)
-           .OrderByDescending(a => a.Transaction_Date)
-           .FirstOrDefault();
 
                 var newTransaction = new Asset
                 {
@@ -484,15 +562,26 @@ namespace IT_Inventory.Controllers
             {
                 if (string.IsNullOrEmpty(No_asset))
                 {
-                    return Json(new { success = false, message = "Asset number is required" });
+                    if (Request.IsAjaxRequest())
+
+                        return Json(new { success = false, message = "Asset number is required" });
+
+                    TempData["ErrorMessage"] = "Asset number is required";
+                    return RedirectToAction("Index");
+
                 }
                 var assetExists = db.Asset.Any(a => a.No_asset == No_asset && a.Is_Deleted != true);
                 if (!assetExists)
                 {
-                    return Json(new { success = false, message = "Asset not found" });
+                    if (Request.IsAjaxRequest())
+                        return Json(new { success = false, message = "Asset not found" });
+
+                    TempData["ErrorMessage"] = "Asset not found";
+                    return RedirectToAction("Index");
                 }
 
                 var assetRecords = db.Asset.Where(a => a.No_asset == No_asset && a.Is_Deleted != true).ToList();
+
                 foreach (var asset in assetRecords)
                 {
                     asset.Is_Deleted = true;
@@ -503,16 +592,30 @@ namespace IT_Inventory.Controllers
                 db.SaveChanges();
                 var dashboardCounts = GetDashboardCounts();
 
-                return Json(new
+                if (Request.IsAjaxRequest())
                 {
-                    success = true,
-                    message = "Asset deleted successfully",
-                    dashboardCounts = dashboardCounts
-                });
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Asset deleted successfully",
+                        dashboardCounts = dashboardCounts
+                    });
+                }
+
+                TempData["SuccessMassage"] = "Asset deleted successfully";
+                TempData["DashboardCounts"] = dashboardCounts;
+                return RedirectToAction("Index");
             }
+
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "An error occurred while deleting the asset: " + ex.Message });
+                if (Request.IsAjaxRequest())
+                {
+                    return Json(new { success = false, message = "An error occurred while deleting the asset: " + ex.Message });
+                }
+
+                TempData["ErrorMassage"] = "An error occurred while deleting the asset: " + ex.Message;
+                return RedirectToAction("Index");
             }
         }
 
@@ -524,8 +627,9 @@ namespace IT_Inventory.Controllers
                 assetData = assetData.Where(a => a.No_asset.Contains(search) || a.PIC.Contains(search) || a.Status.Contains(search));
             }
 
-            var latestAssets = assetData.GroupBy(a => a.No_asset)
-        .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault());
+            var latestAssets = assetData
+                .GroupBy(a => a.No_asset)
+                .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault());
             var assets = latestAssets.OrderByDescending(a => a.Transaction_Date).Select(a => new
             {
                 a.No_asset,

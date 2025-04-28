@@ -308,13 +308,16 @@ $(document).ready(function () {
             "dataType": "json",
             "data": function (d) {
 
-                d.globalSearch = $('#tableSearch').val();
-                $('#dashboardTable tfoot input').each(function (index) {
+                if (d.order && d.order.length > 0) {
+                    d.order.forEach(function (orderInfo, index) {
+                        d.columns[orderInfo.column].orderable = true;
+                    });
+                }
 
-                    if (this.value) {
-                        d.columns[index].search.value = this.value;
-                    }
-                });
+                d.globalSearch = $('#tableSearch').val();
+
+                
+                
                 return d;
             }
         },

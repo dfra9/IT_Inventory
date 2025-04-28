@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Web.Mvc;
 using IT_Inventory.Models;
 using IT_Inventory.ViewModel;
@@ -101,7 +100,31 @@ namespace IT_Inventory.Controllers
                 );
             }
 
+            if (param.Columns != null)
+            {
+                for (int i = 0; i < param.Columns.Length; i++)
+                {
+                    var column = param.Columns[i];
+                    if (!string.IsNullOrEmpty(column.Search?.Value))
+                    {
+                        assetQuery = ApplyColumnSearch(assetQuery, column.Data, column.Search.Value);
+                    }
+                }
+            }
+
             filteredCount = assetQuery.Count();
+
+            if (param.Order != null && param.Order.Length > 0)
+            {
+                var orderParam = param.Order[0];
+                var sortColumn = param.Columns[orderParam.Column].Data;
+                assetQuery = ApplySorting(assetQuery, sortColumn, orderParam.Dir);
+            }
+            else
+            {
+
+                assetQuery = assetQuery.OrderByDescending(a => a.Transaction_Date);
+            }
 
             return assetQuery
                 .OrderByDescending(a => a.Transaction_Date)
@@ -146,39 +169,48 @@ namespace IT_Inventory.Controllers
         {
             try
             {
-                ParameterExpression parameter = Expression.Parameter(typeof(Asset), "a");
-
-
-                if (sortColumn == "Acquisition_Date")
+                query = query.GroupBy(a => a.No_asset).Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault());
+                switch (sortColumn)
                 {
-                    if (sortDirection.ToLower() == "asc")
-                        return query.OrderBy(a => a.Acquisition_Date);
-                    else
-                        return query.OrderByDescending(a => a.Acquisition_Date);
+                    case "No_asset":
+                        return sortDirection.ToLower() == "asc"
+                            ? query.OrderBy(a => a.No_asset)
+                            : query.OrderByDescending(a => a.No_asset);
+                    case "Material_Group":
+                        return sortDirection.ToLower() == "asc"
+                            ? query.OrderBy(a => a.Material_Group)
+                            : query.OrderByDescending(a => a.Material_Group);
+                    case "Material_Description":
+                        return sortDirection.ToLower() == "asc"
+                            ? query.OrderBy(a => a.Material_Description)
+                            : query.OrderByDescending(a => a.Material_Description);
+                    case "Transaction_Date":
+                        return sortDirection.ToLower() == "asc"
+                            ? query.OrderBy(a => a.Transaction_Date)
+                            : query.OrderByDescending(a => a.Transaction_Date);
+                    case "Status":
+                        return sortDirection.ToLower() == "asc"
+                            ? query.OrderBy(a => a.Status)
+                            : query.OrderByDescending(a => a.Status);
+                    case "Location":
+                        return sortDirection.ToLower() == "asc"
+                            ? query.OrderBy(a => a.Location)
+                            : query.OrderByDescending(a => a.Location);
+                    case "Departement":
+                        return sortDirection.ToLower() == "asc"
+                            ? query.OrderBy(a => a.Departement)
+                            : query.OrderByDescending(a => a.Departement);
+                    default:
+                        return query.OrderByDescending(a => a.Transaction_Date);
                 }
-
-                MemberExpression property = Expression.Property(parameter, sortColumn);
-                var lambda = Expression.Lambda(property, parameter);
-                string methodName = sortDirection.ToLower() == "asc" ? "OrderBy" : "OrderByDescending";
-
-                var result = query.Provider.CreateQuery(
-                    Expression.Call(
-                        typeof(Queryable),
-                        methodName,
-                        new Type[] { query.ElementType, property.Type },
-                        query.Expression,
-                        Expression.Quote(lambda)
-                    )
-                );
-
-                return (IQueryable<Asset>)result;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Sorting error: {ex.Message}");
-                return sortDirection.ToLower() == "asc"
-                    ? query.OrderBy(a => a.No_asset)
-                    : query.OrderByDescending(a => a.No_asset);
+                return query
+            .GroupBy(a => a.No_asset)
+            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+            .OrderByDescending(a => a.Transaction_Date);
             }
         }
 

@@ -22,6 +22,7 @@ namespace IT_Inventory.ViewModel
         public string Material_Code { get; set; }
         [Required(ErrorMessage = "Material Description is required")]
         public string Material_Description { get; set; }
+        public string mode { get; set; }
         public int? Quantity { get; set; }
         public string UoM { get; set; }
         public DateTime? Acquisition_Date { get; set; }
@@ -133,9 +134,18 @@ namespace IT_Inventory.ViewModel
         {
             return new SelectList(Dept, "Departement_Code", "Departement_Name");
         }
-        public SelectList GetCityListItem()
+        public IEnumerable<SelectListItem> GetCityListItem()
         {
-            return new SelectList(Cities, "City_Id", "City_Name");
+            var items = new List<SelectListItem>();
+            if (Cities != null)
+            {
+                items = Cities.Select(c => new SelectListItem
+                {
+                    Value = c.City_Name,
+                    Text = c.City_Name
+                }).ToList();
+            }
+            return items;
         }
         public SelectList GetLocationListItem()
         {

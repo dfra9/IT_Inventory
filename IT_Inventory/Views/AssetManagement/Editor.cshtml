@@ -1,0 +1,1162 @@
+﻿
+@model global::IT_Inventory.ViewModel.AssetManagementViewModel
+@{
+    var mode = ViewBag.Mode ?? "Create";
+    ViewBag.Title = @mode + " - Asset Management";
+    var readOnly = mode == "View" || mode == "Delete";
+    var showHistory = mode != "Create";
+}
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+
+    .select2-dropdown {
+        z-index: 9999;
+    }
+
+
+    .select2-search__field {
+        width: 100% !important;
+        padding: 6px !important;
+    }
+
+
+    .select2-container--default .select2-selection--single {
+        height: calc(2.25rem + 2px);
+        padding: .375rem .75rem;
+    }
+
+    .btn-view, .btn-edit {
+        margin-right: 5px;
+    }
+
+    #assetDetailsTable th {
+        width: 20%;
+        background-color: #f8f9fa;
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .modal-header .close {
+            color: white;
+        }
+
+    #assetHistoryTable tr:hover {
+        background-color: #f1f7ff;
+        cursor: pointer;
+    }
+
+    #assetHistoryTable th:last-child,
+    #assetHistoryTable td:last-child {
+        width: 120px;
+        text-align: center;
+    }
+
+
+    .status-borrowing {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+
+    .status-return {
+        color: #007bff;
+    }
+
+    .status-service {
+        color: #ffc107;
+        font-weight: bold;
+    }
+
+    .status-ready {
+        color: #17a2b8;
+    }
+
+    .status-assign {
+        color: #6610f2;
+    }
+
+    .status-write-off {
+        color: #dc3545;
+    }
+
+    #editAssetModal .modal-dialog {
+        max-width: 500px;
+    }
+
+    #viewAssetModal .modal-dialog {
+        max-width: 800px;
+    }
+
+    #editAssetForm .form-group {
+        margin-bottom: 1rem;
+    }
+
+    #editAssetForm label {
+        font-weight: 600;
+    }
+
+    .validation-error {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    select2-container--default.is-invalid .select2-selection--single {
+        background-color: #fff8f8;
+    }
+
+    .form-control.is-invalid {
+        background-color: #fff8f8;
+    }
+
+
+    .select2-container--default.is-invalid .select2-selection--single {
+        border-color: #dc3545 !important;
+    }
+
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+
+
+    .text-danger.validation-error {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
+        font-weight: normal;
+    }
+</style>
+
+<section class="content">
+    @using (Html.BeginForm("Editor", "AssetManagement", FormMethod.Post, new { id = "assetForm" }))
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="mode" value="@mode" />
+
+        <div class="card card-default">
+            <div class="card-header">
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group col-4">
+                            <label class="">No Asset</label>
+                            @if (mode == "Create")
+                            {
+                                @Html.TextBoxFor(m => m.No_asset, new { @class = "form-control", placeholder = "Input No Asset", id = "No_asset" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.No_asset, new { @class = "form-control", placeholder = "Input No Asset", id = "No_asset", @readonly = "readonly" })
+                            }
+                            @Html.ValidationMessageFor(m => m.No_asset, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group col-4">
+                            <label>Company Code</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Company_Code, new { @class = "form-control", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Company_Code, Model.GetCompanyListItem(), "Select Company Code", new { @class = "form-control select2", id = "companyCodeDropdown" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Company_Code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Company Name</label>
+                            @Html.TextBoxFor(m => m.Company_Name, new { @class = "form-control", @readonly = "readonly", id = "Company_Name" })
+                        </div>
+                        <div class="form-group col-5">
+                            <label>Material Group </label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Material_Group, new { @class = "form-control", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Material_Group, Model.GetMaterialGroupListItem(), "Select Material Group", new { @class = "form-control select2", id = "materialGroupDropdown" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Material_Group, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-5">
+                            <label>Material Code</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Material_Code, new { @class = "form-control", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Material_Code, Model.GetMaterialCodeListItem(), "Select Material Code", new { @class = "form-control select2", id = "materialCodeDropdown" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Material_Code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-11">
+                            <label>Asset Description</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Material_Description, new { @class = "form-control", placeholder = "Input Asset Description", id = "materialDescriptionDropdown", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Material_Description, new { @class = "form-control", placeholder = "Input Asset Description", id = "materialDescriptionDropdown" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Material_Description, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-1">
+                            <label>Quantity</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", type = "number", placeholder = "Input Quantity", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", type = "number", placeholder = "Input Quantity" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Quantity, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-3">
+                            <label>UoM</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.UoM, new { @class = "form-control", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.UoM, Model.GetUoMListItem(), "Select UoM", new { @class = "form-control select2", id = "UoMDropdown" })
+                            }
+                            @Html.ValidationMessageFor(m => m.UoM, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Acquisition Date</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Acquisition_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Acquisition_Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Acquisition_Date, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-1">
+                            <label>Acquisition Value</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Acquisition_value, new { @class = "form-control", type = "number", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Acquisition_value, new { @class = "form-control", type = "number" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Acquisition_value, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+
+                    <!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group col-4">
+                            <label>No Asset PGA</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.No_Asset_PGA, new { @class = "form-control", placeholder = "Input No Asset PGA", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.No_Asset_PGA, new { @class = "form-control", placeholder = "Input No Asset PGA" })
+                            }
+                            @Html.ValidationMessageFor(m => m.No_Asset_PGA, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group col-4">
+                            <label>No Asset Accounting</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+
+                                @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input Userfull-Life", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input Userfull-Life" })
+                            }
+
+                            @Html.ValidationMessageFor(m => m.No_Asset_Accounting, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group col-2">
+                            <label>No PO</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No PO", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No PO" })
+                            }
+                            @Html.ValidationMessageFor(m => m.No_PO, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Serial Number</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Serial_Number, new { @class = "form-control", placeholder = "Input Serial Number", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Serial_Number, new { @class = "form-control", placeholder = "Input Serial Number" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Serial_Number, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Device Id</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Device_Id, new { @class = "form-control", placeholder = "Input Device Id", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Device_Id, new { @class = "form-control", placeholder = "Input Device Id" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Device_Id, "", new { @class = "text-danger" })
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group col-8">
+                            <label>Latest User</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input Latest User", @readonly = "readOnly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input Latest User" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Latest_User, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Departement </label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Departement_Name, new { @class = "form-control", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Departement_Code, Model.GetDepartementListItem(), "Select Departement", new { @class = "form-control select2", id = "departementDropdown" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Departement_Code, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-4">
+                            <label>City</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.City_Name, new { @class = "form-control", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.City_Name, Model.GetCityListItem(), "Select City", new { @class = "form-control select2", id = "cityDropdown" })
+                            }
+                            @Html.ValidationMessageFor(m => m.City_Name, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group col-4">
+                            <label>Location</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Location_Name, new { @class = "form-control", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Locations, Model.GetLocationListItem(), "Select Location", new { @class = "form-control select2", id = "locationDropdown" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Locations, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-3">
+                            <label>Last Check Date</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date", type = "date", @readonly = readOnly })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date", type = "date" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Last_Check_Date, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Condition</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Condition, new { @class = "form-control", placeholder = "", @readonly = readOnly })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.Condition, new { @class = "form-control", placeholder = "" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Condition, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.col -->
+            <!-- /.row -->
+            <!-- /.card-body -->
+        </div>
+
+        <div class="card card-primary @(readOnly ?" collapse-card": "")">
+            <div class="card-header">
+                <h3 class="card-title">Status Information</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Status</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.Status, new { @class = "form-control", @readonly = "readonly" })
+                    }
+                    else if (mode == "Create" || mode == "Edit")
+                    {
+                        @Html.DropDownListFor(m => m.Status, new SelectList(new[]
+                                 {
+                       new {Value = "Return", Text = "Return"},
+                       new {Value = "Borrowing", Text = "Borrowing"},
+                       new {Value = "Service", Text = "Service"},
+                       new {Value = "Ready", Text = "Ready"},
+                       new {Value = "Assign", Text = "Assign"},
+                       new {Value = "Write Off", Text = "Write Off"},
+                   }, "Value", "Text"), Model.Status, new { @class = "form-control select2", id = "statusDropdown" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+                </div>
+                @Html.HiddenFor(m => m.PIC, new { id = "hiddenPIC" })
+                @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
+
+                @Html.HiddenFor(m => m.Transaction_Date, new { id = "hiddenTransactionDate" })
+                @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
+                @if (!readOnly)
+                {
+                    <div id="returnForm" class="status-form" style="display: none">
+                        <div class="form-group">
+                            <label>PIC / Vendor</label>
+                            <input type="text" class="form-control" placeholder="PIC / Vendor" id="returnPIC" />
+                        </div>
+                        <div class="form-group">
+                            <label>Return Date</label>
+                            <input type="date" class="form-control" id="returnDate" />
+                        </div>
+                    </div>
+                    <div id="borrowForm" class="status-form" style="display: none">
+                        <div class="form-group">
+                            <label>PIC / Vendor</label>
+                            <input type="text" class="form-control" placeholder="PIC / Vendor" id="borrowPIC" />
+                        </div>
+                        <div class="form-group">
+                            <label>Borrow Date</label>
+                            <input type="date" class="form-control" id="borrowDate" />
+                        </div>
+                    </div>
+                    <div id="serviceForm" class="status-form" style="display: none">
+                        <div class="form-group">
+                            <label>PIC / Vendor</label>
+                            <input type="text" class="form-control" placeholder="PIC / Vendor" id="servicePIC" />
+                        </div>
+                        <div class="form-group">
+                            <label>Service Date</label>
+                            <input type="date" class="form-control" id="serviceDate" />
+                        </div>
+                    </div>
+                    <div id="readyForm" class="status-form" style="display: none">
+                        <div class="form-group">
+                            <label>PIC / Vendor</label>
+                            <input type="text" class="form-control" placeholder="PIC / Vendor" id="readyPIC" />
+                        </div>
+                        <div class="form-group">
+                            <label>Available Date</label>
+                            <input type="date" class="form-control" id="readyDate" />
+                        </div>
+                    </div>
+                    <div id="assignForm" class="status-form" style="display: none">
+                        <div class="form-group">
+                            <label>PIC</label>
+                            <input type="text" class="form-control" placeholder="PIC / Vendor" id="assignPIC" />
+                        </div>
+                        <div class="form-group">
+                            <label>Assign Date</label>
+                            <input type="date" class="form-control" id="assignDate" />
+                        </div>
+                    </div>
+                    <div id="writeOffForm" class="status-form" style="display: none">
+                        <div class="form-group">
+                            <label>Approved By</label>
+                            <input type="text" class="form-control" placeholder="PIC / Vendor" id="writeOffPIC" />
+                        </div>
+                        <div class="form-group">
+                            <label>Write Off Date</label>
+                            <input type="date" class="form-control" id="writeOffDate" />
+                        </div>
+                    </div>
+                }
+                <div class="form-group action-buttons">
+                    <button type="button" class=" btn btn-secondary" id="btnCancel">Cancel</button>
+                    @if (mode == "Create" || mode == "Edit")
+                    {
+                        <button type="button" class=" btn btn-primary float-right" id="btnSave">Save</button>
+                    }
+                    else if (mode == "Delete")
+                    {
+                        <button type="button" class=" btn btn-primary float-right" id="btnDelete">Delete Asset</button>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (showHistory)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Asset History
+                </h3>
+                <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default" id="btnSearch"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body table-responsive p-0">
+            <table class="table table-hover text-nowrap">
+                <thead>
+                    <tr>
+                        <th>No Assets</th>
+                        <th>PIC / Vendor</th>
+                        <th>Transaction Date</th>
+                        <th>Status</th>
+                        <th>Submit Date</th>
+
+                    </tr>
+                </thead>
+                <tbody id="assetHistoryTable">
+                    @if (Model.AssetHistory != null && Model.AssetHistory.Any())
+                    {
+                        foreach (var item in Model.AssetHistory)
+                        {
+                            <tr>
+                                <td>@item.No_asset</td>
+                                <td>@item.PIC</td>
+                                <td>@(item.Transaction_Date.HasValue ? item.Transaction_Date.Value.ToString("yyyy-MM-dd") : "")</td>
+                                <td>@item.Status</td>
+                                <td>@(item.Create_Date.HasValue ? item.Create_Date.Value.ToString("yyyy-MM-dd") : "")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center">No Asset found</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(function () {
+        var mode = "@mode";
+        var readOnly = mode === "View" || mode === "Delete";
+
+        console.log("Mode:", mode);
+        console.log("City Name:", "@Model.City_Name");
+        console.log("Location Code:", "@Model.Locations");
+        console.log("Location Name:", "@Model.Location_Name");
+
+        if (mode == "Edit" || mode == "View" || mode == "Delete") {
+            var statusValue = "@Model.Status";
+            var cityValue = "@Model.City_Name";
+            var locationValue = "@Model.Locations";
+
+            console.log("City Value:", cityValue);
+            console.log("Location Value:", locationValue);
+
+            if (mode == "Edit" && cityValue) {
+                $("#cityDropdown").val(cityValue).trigger('change');
+
+                $.ajax({
+                    url: '@Url.Action("GetLocationByCity", "AssetManagement")',
+                    type: "GET",
+                    data: { cityId: cityValue },
+                    success: function (locations) {
+                        $("#locationDropdown")
+                            .empty()
+                            .append('<option value="">Select Option </option>');
+
+                        if (locations && locations.length > 0) {
+                            locations.forEach(function (location) {
+                                var selected = (location.locationCode == locationValue) ? "selected" : "";
+                                $("#locationDropdown").append(
+                                    `<option value="${location.locationCode}" ${selected}>
+                                ${location.locationName}
+                                </option>`
+                                );
+                            });
+                        }
+                        $("#locationDropdown").select2({
+                            placeholder: "Select Location",
+                            allowClear: true,
+                            width: '100%',
+                            dropdownParent: $('body')
+                        });
+
+                        if (locationValue) {
+                            $("#locationDropdown").val(locationValue).trigger('change');
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Error loading locations:", error);
+                        showErrorToast("Error loading locations.");
+                    }
+                });
+
+            }
+            if (statusValue) {
+                $("#statusDropdown").val(statusValue).trigger('change');
+            }
+        }
+
+
+
+        $('.select2').select2({
+            placeholder: "Select an option",
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('body')
+        });
+
+        function showErrorToast(message) {
+            toastr.error(message, {
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+                preventDuplicates: true,
+                newestOnTop: true
+            });
+        }
+
+        function showSuccessToast(message) {
+            toastr.success(message, {
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+                preventDuplicates: true,
+                newestOnTop: true
+            });
+        }
+
+        function fetchCompanyName(companyCode) {
+            if (!companyCode) {
+                $('#Company_Name').val("");
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("GetCompanyNameByCode", "AssetManagement")',
+                type: 'GET',
+                data: { companyCode: companyCode },
+                success: function (data) {
+                    $('#Company_Name').val(data);
+                },
+                error: function (error) {
+                    console.error("Error Loading company name:", error);
+                    $('#Company_Name').val("");
+                    showErrorToast("Error loading company name.");
+                }
+            });
+        }
+
+        $("#cityDropdown").on('change', function () {
+            var selectedCityName = $(this).val();
+            $("#locationDropdown").empty().trigger('change');
+
+            if (!selectedCityName || selectedCityName === "Select City") {
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("GetLocationByCity", "AssetManagement")',
+                type: 'GET',
+                data: { cityId: selectedCityName },
+                success: function (locations) {
+                    $("#locationDropdown")
+                        .empty()
+                        .append('<option value="">Select Option</option>');
+
+                    if (locations && locations.length > 0) {
+                        locations.forEach(function (location) {
+                            $("#locationDropdown").append(
+                                `<option value="${location.locationCode}">
+                            ${location.locationName}
+                        </option>`
+                            );
+                        });
+                    } else {
+                        console.log("No locations found for city:", selectedCityName);
+                    }
+
+                    $("#locationDropdown").select2({
+                        placeholder: "Select Location",
+                        allowClear: true,
+                        width: '100%',
+                        dropdownParent: $('body')
+                    });
+                },
+                error: function (error) {
+                    console.error("Error loading locations:", error);
+                    showErrorToast("Error loading locations.");
+                }
+            });
+        });
+
+        $("#companyCodeDropdown").on('change', function () {
+            fetchCompanyName($(this).val());
+        });
+
+        var initialCompanyCode = $("#companyCodeDropdown").val();
+        if (initialCompanyCode) {
+            fetchCompanyName(initialCompanyCode);
+        }
+
+        function handleStatusFormDisplay() {
+            if (readOnly) return;
+
+            $(".status-form").hide();
+
+            var status = $("#statusDropdown").val();
+            if (!status) return;
+
+            const statusFormMap = {
+                'Return': '#returnForm',
+                'Borrowing': '#borrowForm',
+                'Service': '#serviceForm',
+                'Ready': '#readyForm',
+                'Assign': '#assignForm',
+                'Write Off': '#writeOffForm'
+            };
+
+            const formSelector = statusFormMap[status];
+            if (formSelector) {
+                $(formSelector).show();
+
+                const picSelector = formSelector.replace('Form', 'PIC');
+                const dateSelector = formSelector.replace('Form', "Date")
+
+                if ($("#hiddenPIC").val()) {
+                    $(picSelector).val($('#hiddenPIC').val());
+                }
+                if ($("#hiddenTransactionDate").val()) {
+                    $(dateSelector).val($('#hiddenTransactionDate').val());
+                }
+            }
+        }
+
+        $("#statusDropdown").on('change', handleStatusFormDisplay);
+        if (!readOnly) {
+            handleStatusFormDisplay();
+        }
+        function formatDate(dateString) {
+            if (!dateString) return "";
+
+            try {
+                let date;
+                if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                    const timeStamp = parseInt(dateString.substr(6));
+                    date = new Date(timeStamp);
+                } else {
+                    date = new Date(dateString);
+                }
+
+                if (isNaN(date.getTime())) return "";
+
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            } catch (e) {
+                console.error("Error parsing date:", e);
+                return "";
+            }
+        }
+
+        $("#btnSearch").click(function () {
+            var search = $("input[name='table_search']").val();
+            var noAsset = $("#No_asset").val();
+            $.ajax({
+                url: '@Url.Action("SearchAssetHistory", "AssetManagement")',
+                type: 'GET',
+                data: { search: search, noAsset: noAsset },
+                success: function (data) {
+                    renderAssetHistory(data);
+                },
+                error: function (error) {
+                    console.log(error);
+                    showErrorToast("Error searching asset history");
+                }
+            });
+        });
+
+        function renderAssetHistory(data) {
+            var tbody = $("#assetHistoryTable");
+            tbody.empty();
+
+            if (data && data.length > 0) {
+                data.forEach(function (item) {
+                    var row = $("<tr>").append(
+                        $("<td>").text(item.No_asset || ""),
+                        $("<td>").text(item.PIC || ""),
+                        $("<td>").text(formatDate(item.Transaction_Date)),
+                        $("<td>").text(item.Status || ""),
+                        $("<td>").text(formatDate(item.Create_Date))
+                    );
+                    tbody.append(row);
+                });
+            } else {
+                tbody.append(
+                    $("<tr>").append(
+                        $("<td>").attr("colspan", "5").text("No data found")
+                    )
+                );
+            }
+        }
+
+
+        $("#btnSave").click(function (e) {
+            e.preventDefault();
+
+            $(".is-invalid").removeClass("is-invalid");
+            $(".validation-error").remove();
+
+            let isValid = true;
+
+            if (!$("#No_asset").val()) {
+                $("#No_asset").addClass("is-invalid");
+                showErrorToast("No Asset is required.");
+                isValid = false;
+            }
+
+            if (!$("#companyCodeDropdown").val()) {
+                $("#companyCodeDropdown").next(".select2-container").addClass("is-invalid");
+                showErrorToast("Company Code is required");
+                isValid = false;
+            }
+
+            if (!$("#materialGroupDropdown").val()) {
+                $("#materialGroupDropdown").next(".select2-container").addClass("is-invalid");
+                showErrorToast("Material Group is required");
+                isValid = false;
+            }
+
+            if (!$("#materialCodeDropdown").val()) {
+                $("#materialCodeDropdown").next(".select2-container").addClass("is-invalid");
+                showErrorToast("Material Code is required");
+                isValid = false;
+            }
+
+            if (!$("#departementDropdown").val()) {
+                $("#departementDropdown").next(".select2-container").addClass("is-invalid");
+                showErrorToast("Departement is required");
+                isValid = false;
+            }
+            if (!$("#cityDropdown").val()) {
+                $("#cityDropdown").next(".select2-container").addClass("is-invalid");
+                showErrorToast("City is required");
+                isValid = false;
+            }
+            if (!$("#locationDropdown").val()) {
+                $("#locationDropdown").next(".select2-container").addClass("is-invalid");
+                showErrorToast("Location is required");
+                isValid = false;
+            }
+            if (!$("#materialDescriptionDropdown").val()) {
+                $("#materialDescriptionDropdown").addClass("is-invalid");
+                showErrorToast("Asset Description is required");
+                isValid = false;
+            }
+
+            const status = $("#statusDropdown").val();
+            if (!status) {
+                $("#statusDropdown").next(".select2-container").addClass("is-invalid");
+                $("#statusDropdown").after('<span class="text-danger validation-error">Status is required.</span>');
+                isValid = false;
+            } else {
+
+                let picValue = "";
+                let dateValue = "";
+                let picFieldId = "";
+                let dateFieldId = "";
+
+                switch (status) {
+                    case 'Return':
+                        picValue = $("#returnPIC").val();
+                        dateValue = $("#returnDate").val();
+                        picFieldId = "returnPIC";
+                        dateFieldId = "returnDate";
+                        break;
+                    case 'Borrowing':
+                        picValue = $("#borrowPIC").val();
+                        dateValue = $("#borrowDate").val();
+                        picFieldId = "borrowPIC";
+                        dateFieldId = "borrowDate";
+                        break;
+                    case 'Service':
+                        picValue = $("#servicePIC").val();
+                        dateValue = $("#serviceDate").val();
+                        picFieldId = "servicePIC";
+                        dateFieldId = "serviceDate";
+                        break;
+                    case 'Ready':
+                        picValue = $("#readyPIC").val();
+                        dateValue = $("#readyDate").val();
+                        picFieldId = "readyPIC";
+                        dateFieldId = "readyDate";
+                        break;
+                    case 'Assign':
+                        picValue = $("#assignPIC").val();
+                        dateValue = $("#assignDate").val();
+                        picFieldId = "assignPIC";
+                        dateFieldId = "assignDate";
+                        break;
+                    case 'Write Off':
+                        picValue = $("#writeOffPIC").val();
+                        dateValue = $("#writeOffDate").val();
+                        picFieldId = "writeOffPIC";
+                        dateFieldId = "writeOffDate";
+                        break;
+                }
+
+                if (!picValue) {
+                    $(`#${picFieldId}`).addClass("is-invalid");
+                    $(`#${picFieldId}`).after(`<span class="text-danger validation-error">PIC is required for ${status} status.</span>`);
+                    isValid = false;
+                }
+
+                if (!dateValue) {
+                    $(`#${dateFieldId}`).addClass("is-invalid");
+                    $(`#${dateFieldId}`).after(`<span class="text-danger validation-error">Date is required for ${status} status.</span>`);
+                    isValid = false;
+                }
+
+                $("#hiddenPIC").val(picValue);
+                $("#hiddenTransactionDate").val(dateValue);
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            const saveBtn = $(this);
+            const originalText = saveBtn.html();
+            saveBtn.html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+            saveBtn.prop('disabled', true);
+
+            $.ajax({
+                url: $("#assetForm").attr("action"),
+                type: 'POST',
+                data: $("#assetForm").serialize(),
+                success: function (data) {
+                    if (data && data.success) {
+                        toastr.success(data.message || "Transaction successful");
+
+                        var tbody = $("#assetHistoryTable");
+                        var assetData = data.assetData;
+                        if (assetData) {
+                            var row = "<tr>" +
+                                "<td>" + (assetData.No_asset || "") + "</td>" +
+                                "<td>" + (assetData.PIC || "") + "</td>" +
+                                "<td>" + (assetData.Transaction_Date || "") + "</td>" +
+                                "<td>" + (assetData.Status || "") + "</td>" +
+                                "<td>" + (assetData.Submit_Date || "") + "</td>" +
+                                "</tr>";
+
+                            if (tbody.find("tr td[colspan='5']").length > 0) {
+                                tbody.empty();
+                            }
+                            tbody.prepend(row);
+                        }
+
+                        if (data.dashboardCounts) {
+                            updateDashboardCounts(data.dashboardCounts);
+                        } else {
+                            refreshDashboardData();
+                        }
+                        if (mode === "Create") {
+
+                            resetFormFields();
+                        } else if (mode === "Edit") {
+                            window.location.href = '@Url.Action("Index", "AssetManagement")';
+                        }
+                    } else {
+                        showErrorToast(data && data.message ? data.message : "Error saving asset");
+                        console.error("Error from server:", data ? data.message : "Unknown error");
+                    }
+                    saveBtn.html(originalText);
+                    saveBtn.prop('disabled', false);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error saving asset:", xhr.responseText);
+                    try {
+
+                        const response = JSON.parse(xhr.responseText);
+                        showErrorToast(response.message || "Error saving asset, please try again");
+                    } catch (e) {
+                        showErrorToast("Error saving asset, please try again");
+                    }
+                    saveBtn.html(originalText);
+                    saveBtn.prop('disabled', false);
+                }
+            });
+        });
+
+
+        $("#btnDelete").click(function(e) {
+            e.preventDefault();
+
+            if (confirm("Are you sure you want to delete this asset?")) {
+
+                const deleteBtn = $(this);
+                const originalText = deleteBtn.html();
+                deleteBtn.html('<i class="fas fa-spinner fa-spin"></i> Deleting...');
+                deleteBtn.prop('disabled', true);
+
+                $.ajax({
+                    url: '@Url.Action("DeleteAsset", "AssetManagement")',
+                    type: 'POST',
+                    data: {
+                        No_asset: $("#No_asset").val(),
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showSuccessToast("Asset successfully deleted");
+                            
+                            window.location.href = '@Url.Action("Index", "AssetManagement")';
+                        } else {
+                            showErrorToast(response.message || "Failed to delete asset");
+                            deleteBtn.html(originalText);
+                            deleteBtn.prop('disabled', false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error deleting asset:", error);
+                        showErrorToast("An error occurred while deleting the asset");
+                        deleteBtn.html(originalText);
+                        deleteBtn.prop('disabled', false);
+                    }
+                });
+            }
+        });
+
+       $(document).ready(function () {
+           refreshDashboardData();
+       });
+
+
+       function updateDashboardCounts(dashboardCounts) {
+           if (!dashboardCounts) return;
+
+           if (dashboardCounts.TotalAssets !== undefined) {
+               $('#total-assets').text(dashboardCounts.TotalAssets);
+           }
+
+           if (dashboardCounts.AvailableAssets !== undefined) {
+               $('#available-assets').text(dashboardCounts.AvailableAssets);
+           }
+
+           if (dashboardCounts.AssetsInUse !== undefined) {
+               $('#assets-in-use').text(dashboardCounts.AssetsInUse);
+           }
+
+
+           if (dashboardCounts.AssetsInMaintenance !== undefined) {
+               $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
+           }
+       }
+
+
+       function refreshDashboardData() {
+           $.ajax({
+               url: '/AssetManagement/GetDashboardCountsJson',
+               type: 'GET',
+               dataType: 'json',
+               cache: false,
+               success: function (dashboardCounts) {
+                   console.log("Dashboard data refreshed successfully:", dashboardCounts);
+                   updateDashboardCounts(dashboardCounts);
+               },
+               error: function (xhr, status, error) {
+                   console.error('Error refreshing dashboard data:', error);
+
+               }
+           });
+       }
+
+    function resetFormFields() {
+
+        $("#statusDropdown").val("").trigger("change");
+        $(".status-form input").val("");
+        $("#hiddenPIC").val("");
+        $("#hiddenTransactionDate").val("");
+
+        $("#No_asset").val("");
+        $("#companyCodeDropdown").val("").trigger("change");
+        $("#materialGroupDropdown").val("").trigger("change");
+        $("#materialCodeDropdown").val("").trigger("change");
+        $("#Material_Description").val("");
+        $("#Quantity").val("");
+        $("#UoM").val("").trigger("change");
+        $("#Acquisition_Date").val("");
+        $("#Acquisition_value").val("");
+        $("#No_Asset_PGA").val("");
+        $("#No_Asset_Accounting").val("");
+        $("#No_PO").val("");
+        $("#Serial_Number").val("");
+        $("#Device_Id").val("");
+        $("#Latest_User").val("");
+        $("#Departement_Code").val("").trigger("change");
+        $("#cityDropdown").val("").trigger("change");
+        $("#Locations").val("").trigger("change");
+        $("#Last_Check_Date").val("");
+        $("#Condition").val("");
+    }
+
+
+
+    $("#btnCancel").click(function () {
+        window.location.href = '@Url.Action("Index", "AssetManagement")';
+    });
+
+});
+</script>
