@@ -14,7 +14,7 @@ namespace IT_Inventory.Controllers
 
         public DataUserController(IT_Inventory db, IUserService userService)
         {
-            this.db = db;
+            this.db = new IT_Inventory();
             this.userService = userService;
         }
 
@@ -45,6 +45,7 @@ namespace IT_Inventory.Controllers
         {
             if (mode == "Create")
             {
+                DropdownList();
                 return View(new Users());
             }
 
@@ -57,6 +58,7 @@ namespace IT_Inventory.Controllers
             }
 
             ViewBag.Mode = mode;
+            DropdownList();
             return View(user);
         }
 
@@ -138,25 +140,45 @@ namespace IT_Inventory.Controllers
             }
         }
 
-        private void GetCity()
+        [HttpGet]
+        public JsonResult GetLocationByCity(string cityId)
         {
-            var city = db.City
-                .Where(c => c.Is_Deleted != true)
-                .Select(c => new
+            try
+            {
+                if (string.IsNullOrEmpty(cityId))
                 {
-                    c.City_Id,
-                    c.City_Name
-                })
-                .ToList();
-            ViewBag.City = new SelectList(city, "City_Id", "City_Name");
+                    return Json(new object[0], JsonRequestBehavior.AllowGet);
+                }
+
+                var locations = db.Location
+                    .Where(l => l.City_Name == cityId && l.Is_Deleted != true)
+                    .Select(l => new
+                    {
+                        locationCode = l.Location_Code,
+                        locationName = l.Location_Name
+                    })
+                    .ToList();
+
+                return Json(locations, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
+
+
 
         private void DropdownList()
         {
-            ViewBag.Departements = db.Departement.ToList();
-            ViewBag.City = db.City.ToList();
-            ViewBag.Location = db.Location.ToList();
+            ViewBag.Departement = db.Departement.Where(c => c.Is_Deleted != true).ToList();
+            ViewBag.Location = db.Location.Where(c => c.Is_Deleted != true).ToList();
+            ViewBag.City = db.City.Where(c => c.Is_Deleted != true).ToList();
+
+
         }
+
+
 
     }
 }

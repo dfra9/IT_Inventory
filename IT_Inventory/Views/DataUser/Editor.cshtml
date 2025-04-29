@@ -40,7 +40,7 @@
         @Html.AntiForgeryToken()
         <input type="hidden" name="mode" value="@mode" />
         <input type="hidden" name="User_Id" value="@Model.User_Id" />
-        <input type="hidden" name="Username" id="Username" value="@Model.Username" />
+       
 
         <div class="row">
             <div class="col-md-12">
@@ -50,22 +50,22 @@
                             <div class="form-group row">
                                 <div class="card-body">
                                     <div class="form-group row">
-                                            @if (mode == "Delete" || mode == "Edit" || mode == "View")
-                                            {
-                                                <label for="Long_Name" class="col-sm-3 col-form-label form-control-label">User Name</label>
-                                                <div class="col-sm-5">
-                                                    <input type="text" id="Long_Name" name="Long_Name" class="form-control" value="@Model.Long_Name" @(mode == "Delete" || mode == "View" ? "readonly" : "")>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
-                                                <div class="col-sm-5">
-                                                    <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username">
-                                                </div>
-                                            }
-                                        </div>
-                               
+                                        @if (mode == "Delete" || mode == "Edit" || mode == "View")
+                                        {
+                                            <label for="Long_Name" class="col-sm-3 col-form-label form-control-label">User Name</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" id="Long_Name" name="Long_Name" class="form-control" value="@Model.Long_Name" @(mode == "Delete" || mode == "View" ? "readonly" : "")>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <label for="Input_Username" class="col-sm-3 col-form-label form-control-label">Username</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username">
+                                            </div>
+                                        }
+                                    </div>
+
 
                                     @if (Session["IsAdmin"] is bool IsAdmin && IsAdmin)
                                     {
@@ -98,40 +98,68 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="Departement" class="col-sm-3 col-form-label form-control-label">Departement</label>
+                                        <label for="Departement" class="col-sm-3 col-form-label">Department</label>
+                                        <div class="col-sm-5">
+                                            @if (mode == "View" || mode == "Delete")
+                                            {
+                                                <input type="text" id="Departement" name="Departement" class="form-control" value="@Model.Departement" readonly />
+                                            }
+                                            else
+                                            {
+                                                <select id="Departement" name="Departement" class="form-control select2">
+                                                    <option value="">Select Department</option>
+                                                    @if (ViewBag.Departement != null)
+                                                    {
+                                                        foreach (var dept in ViewBag.Departement)
+                                                        {
+                                                            <option value="@dept.Departement_Name" @(Model.Departement == dept.Departement_Name ? "selected" : "")>@dept.Departement_Name</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            }
+                                        </div>
+                                    </div>
 
-                                        <div class="col-sm-4">
-                                            <select id="Departement" name="Departement" class="form-control select2" required>
-                                                <option value="" disabled @(Model.Departement == null ? "Selected" : "")> Select Departement</option>
-                                                @foreach (var dept in departements)
-                                                {
-                                                    <option value="@dept.Departement_Name " @(Model.Departement == dept.Departement_Name ? "Selected" : "")> @dept.Departement_Name</option>
-                                                }
-                                            </select>
+                                    <div class="form-group row">
+                                        <label for="City" class="col-sm-3 col-form-label">City</label>
+                                        <div class="col-sm-5">
+                                            @if (mode == "View" || mode == "Delete")
+                                            {
+                                                <input type="text" id="City" name="City" class="form-control" value="@Model.City" readonly />
+                                            }
+                                            else
+                                            {
+                                                <select id="City" name="City" class="form-control select2">
+                                                    <option value="">Select City</option>
+                                                    @if (ViewBag.City != null)
+                                                    {
+                                                        foreach (var city in ViewBag.City)
+                                                        {
+                                                            <option value="@city.City_Name" @(Model.City == city.City_Name ? "selected" : "")>@city.City_Name</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            }
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
-                                        <label for="City" class="col-sm-3 col-form-label form-control-label">City</label>
-                                        <div class="col-sm-4">
-                                            <select id="City" name="City" class="form-control select2" required>
-                                                <option value="" disabled @(Model.City == null ? "Selected" : "")> Select City</option>
-                                                @foreach (var city in cities)
-                                                {
-                                                    <option value="@city.City_Name" @(Model.City == city.City_Name ? "Selected" : "")> @city.City_Name</option>
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="Location" class="col-sm-3 col-form-label form-control-label ">Location</label>
-                                        <div class="col-sm-4">
-                                            <select id="Location" name="Location" class="form-control select2" required>
-                                                <option value="" disabled @(Model.Location == null ? "Selected" : "")> Select Location</option>
-                                                @foreach (var loc in locations)
-                                                {
-                                                    <option value="@loc.Location_Name" @(Model.Location == loc.Location_Name ? "Selected" : "")> @loc.Location_Name</option>
-                                                }
-                                            </select>
+                                        <label for="Location" class="col-sm-3 col-form-label">Location</label>
+                                        <div class="col-sm-5">
+                                            @if (mode == "View" || mode == "Delete")
+                                            {
+                                                <input type="text" id="Location" name="Location" class="form-control" value="@Model.Location" readonly />
+                                            }
+                                            else
+                                            {
+                                                <select id="Location" name="Location" class="form-control select2">
+                                                    <option value="">Select Location</option>
+                                                    @if (mode == "Edit" && !string.IsNullOrEmpty(Model.Location))
+                                                    {
+                                                        <option value="@Model.Location" selected>@Model.Location</option>
+                                                    }
+                                                </select>
+                                            }
                                         </div>
                                     </div>
 
@@ -189,7 +217,7 @@
             $("#Password").prop("readonly", true);
             $("#Password").prop("disabled", false);
             $("#ChangePassword").prop("checked", false);
-            $("#Username").prop("checked", false);
+
 
         }
         else if (mode == "Create") {
@@ -232,7 +260,6 @@
             else {
                 $("#Password").prop("readonly", true);
                 $("#Password").prop("disabled", true);
-
                 $("#Password").val("");
             }
         });
@@ -246,27 +273,141 @@
             }
         });
 
+        $('#City').on('change', function () {
+            var cityValue = $(this).val();
+            console.log("City changed to:", cityValue);
+
+            if (cityValue) {
+                updateLocationDropdown(cityValue);
+            } else {
+                resetLocationDropdown();
+            }
+        });
+
+        function resetLocationDropdown() {
+            $('#Location').empty().append('<option value="">Select Location</option>');
+            $('#Location').trigger('change.select2');
+        }
+
+        function updateLocationDropdown(cityName) {
+            if (!cityName) return;
+
+           var currentLocation = '@Model.Location';
+            console.log("Fetching locations for city:", cityName);
+            $('#Location').empty().append('<option value="">Select Location</option>');
+
+            $.ajax({
+                url: '/DataUser/GetLocationByCity',
+                type: 'GET',
+                data: { cityId: cityName },
+                dataType: 'json',
+                success: function (locations) {
+                    console.log("Received locations:", locations);
+
+                    if (locations && locations.length > 0) {
+                        $.each(locations, function (i, location) {
+                            var isSelected = (location.locationName === currentLocation);
+                            $('#Location').append($('<option>', {
+                                value: location.locationName,
+                                text: location.locationName,
+                                selected: isSelected
+                            }));
+                            if (isSelected) {
+                                console.log("Found matching location:", location.locationName);
+                            }
+                        });
+
+                        console.log("Locations loaded successfully");
+                    } else {
+                        console.log('No locations found for the selected city');
+                        if (mode === "Edit" && currentLocation) {
+                            $('#Location').append($('<option>', {
+                                value: currentLocation,
+                                text: currentLocation + " (Current)",
+                                selected: true
+                            }));
+                            console.log("Added current location as fallback:", currentLocation);
+                        }
+                    }
+
+                    $('#Location').trigger('change');
+                    $('#Location').trigger('change.select2');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Failed to load locations:', error);
+                    console.log('Status:', status);
+                    console.log('Response:', xhr.responseText);
+                    if (mode === "Edit" && currentLocation) {
+                        $('#Location').append($('<option>', {
+                            value: currentLocation,
+                            text: currentLocation + " (Current)",
+                            selected: true
+                        }));
+                        $('#Location').trigger('change.select2');
+                    }
+                }
+            });
+        }
+
+
 
         $("form").submit(function (e) {
             $("input[name='Is_Admin_Hidden']").remove();
             var isAdmin = $("#Is_Admin").is(":checked");
             $("form").append('<input type="hidden" name="Is_Admin_Hidden" value="' + isAdmin + '">');
-        });
 
-        $("form").submit(function (e) {
             if (mode == "Delete") {
                 if (!confirm("Are you sure you want to delete this user?")) {
                     e.preventDefault();
                     return false;
                 }
             }
+
             if (mode == "Edit" && $("#ChangePassword").is(":checked") && $("#Password").val() == "") {
                 alert("Password must be filled");
                 e.preventDefault();
                 return false;
             }
+
+            if (mode == "Create") {
+                var requiredFields = [];
+                var missingFields = [];
+
+                if (mode == "Create") {
+
+                    if (!$("#Username").val() || $("#Username").val().trim() === "") {
+                        requiredFields.push("Username");
+                    }
+                }
+
+
+                if (!$("#Password").val() || $("#Password").val().trim() === "") {
+                    requiredFields.push("Password");
+                }
+                if (!$("#Departement").val() || $("#Departement").val().trim() === "") {
+                    requiredFields.push("Departement");
+                }
+                if (!$("#City").val() || $("#City").val().trim() === "") {
+                    requiredFields.push("City");
+                }
+                if (!$("#Location").val() || $("#Location").val().trim() === "") {
+                    requiredFields.push("Location");
+                }
+
+                if (requiredFields.length > 0) {
+                    alert("Please fill all required fields: " + requiredFields.join(", "));
+                    e.preventDefault();
+                    return false;
+                }
+            }
         });
 
+        if (mode == "Edit" && $('#City').val()) {
+            console.log("Initial city value:", $('#City').val());
+            setTimeout(function () {
+                updateLocationDropdown($('#City').val());
+            }, 300);
+        }
     });
 </script>
 
