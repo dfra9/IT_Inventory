@@ -68,7 +68,17 @@ namespace IT_Inventory.Controllers
                     draw = param.Draw,
                     recordsTotal = totalCount,
                     recordsFiltered = filteredCount,
-                    data = assets
+                    data = assets.Select(a => new
+                    {
+                        a.No_asset,
+                        a.Material_Group,
+                        a.Material_Description,
+                        Transaction_Date = a.Transaction_Date,
+                        a.Status,
+                        a.Location,
+                        a.Departement,
+                        a.Is_Deleted
+                    })
                 });
             }
             catch (Exception ex)
@@ -122,12 +132,10 @@ namespace IT_Inventory.Controllers
             }
             else
             {
-
                 assetQuery = assetQuery.OrderByDescending(a => a.Transaction_Date);
             }
 
             return assetQuery
-                .OrderByDescending(a => a.Transaction_Date)
                 .Skip(param.Start)
                 .Take(param.Length)
                 .ToList();
@@ -135,31 +143,30 @@ namespace IT_Inventory.Controllers
 
         private IQueryable<Asset> ApplyColumnSearch(IQueryable<Asset> query, string columnName, string searchValue)
         {
+            searchValue = searchValue.ToLower();
             switch (columnName)
             {
                 case "No_asset":
-                    return query.Where(a => a.No_asset != null && a.No_asset.ToLower().Contains(searchValue));
+                    return query.Where(a => (a.No_asset ?? "").ToLower().Contains(searchValue));
                 case "Material_Group":
-                    return query.Where(a => a.Material_Group != null && a.Material_Group.ToLower().Contains(searchValue));
+                    return query.Where(a => (a.Material_Group ?? "").ToLower().Contains(searchValue));
                 case "Material_Description":
-                    return query.Where(a => a.Material_Description != null && a.Material_Description.ToLower().Contains(searchValue));
+                    return query.Where(a => (a.Material_Description ?? "").ToLower().Contains(searchValue));
                 case "Location":
-                    return query.Where(a => a.Location != null && a.Location.ToLower().Contains(searchValue));
+                    return query.Where(a => (a.Location ?? "").ToLower().Contains(searchValue));
                 case "Departement":
-                    return query.Where(a => a.Departement != null && a.Departement.ToLower().Contains(searchValue));
+                    return query.Where(a => (a.Departement ?? "").ToLower().Contains(searchValue));
                 case "Status":
-                    return query.Where(a => a.Status != null && a.Status.ToLower().Contains(searchValue));
-                case "Acquisition_Date":
-
+                    return query.Where(a => (a.Status ?? "").ToLower().Contains(searchValue));
+                case "Transaction_Date":
                     if (DateTime.TryParse(searchValue, out DateTime date))
                     {
-                        return query.Where(a => a.Acquisition_Date.HasValue &&
-                                           a.Acquisition_Date.Value.Year == date.Year &&
-                                           a.Acquisition_Date.Value.Month == date.Month &&
-                                           a.Acquisition_Date.Value.Day == date.Day);
+                        return query.Where(a => a.Transaction_Date.HasValue &&
+                                           a.Transaction_Date.Value.Year == date.Year &&
+                                           a.Transaction_Date.Value.Month == date.Month &&
+                                           a.Transaction_Date.Value.Day == date.Day);
                     }
-                    return query.Where(a => a.Acquisition_Date.HasValue &&
-                                       a.Acquisition_Date.Value.ToString().Contains(searchValue));
+                    return query;
                 default:
                     return query;
             }
@@ -169,7 +176,7 @@ namespace IT_Inventory.Controllers
         {
             try
             {
-                query = query.GroupBy(a => a.No_asset).Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault());
+
                 switch (sortColumn)
                 {
                     case "No_asset":
@@ -178,28 +185,28 @@ namespace IT_Inventory.Controllers
                             : query.OrderByDescending(a => a.No_asset);
                     case "Material_Group":
                         return sortDirection.ToLower() == "asc"
-                            ? query.OrderBy(a => a.Material_Group)
-                            : query.OrderByDescending(a => a.Material_Group);
+                            ? query.OrderBy(a => a.Material_Group ?? string.Empty)
+                            : query.OrderByDescending(a => a.Material_Group ?? string.Empty);
                     case "Material_Description":
                         return sortDirection.ToLower() == "asc"
-                            ? query.OrderBy(a => a.Material_Description)
-                            : query.OrderByDescending(a => a.Material_Description);
+                            ? query.OrderBy(a => a.Material_Description ?? string.Empty)
+                            : query.OrderByDescending(a => a.Material_Description ?? string.Empty);
                     case "Transaction_Date":
                         return sortDirection.ToLower() == "asc"
                             ? query.OrderBy(a => a.Transaction_Date)
                             : query.OrderByDescending(a => a.Transaction_Date);
                     case "Status":
                         return sortDirection.ToLower() == "asc"
-                            ? query.OrderBy(a => a.Status)
-                            : query.OrderByDescending(a => a.Status);
+                            ? query.OrderBy(a => a.Status ?? string.Empty)
+                            : query.OrderByDescending(a => a.Status ?? string.Empty);
                     case "Location":
                         return sortDirection.ToLower() == "asc"
-                            ? query.OrderBy(a => a.Location)
-                            : query.OrderByDescending(a => a.Location);
+                            ? query.OrderBy(a => a.Location ?? string.Empty)
+                            : query.OrderByDescending(a => a.Location ?? string.Empty);
                     case "Departement":
                         return sortDirection.ToLower() == "asc"
-                            ? query.OrderBy(a => a.Departement)
-                            : query.OrderByDescending(a => a.Departement);
+                            ? query.OrderBy(a => a.Departement ?? string.Empty)
+                            : query.OrderByDescending(a => a.Departement ?? string.Empty);
                     default:
                         return query.OrderByDescending(a => a.Transaction_Date);
                 }
@@ -207,10 +214,7 @@ namespace IT_Inventory.Controllers
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Sorting error: {ex.Message}");
-                return query
-            .GroupBy(a => a.No_asset)
-            .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-            .OrderByDescending(a => a.Transaction_Date);
+                return query.OrderByDescending(a => a.Transaction_Date);
             }
         }
 

@@ -293,7 +293,6 @@ $(document).ready(function () {
         'Departement': 'Departement'
     };
 
-
     var table = $("#dashboardTable").DataTable({
         "processing": true,
         "serverSide": true,
@@ -313,14 +312,12 @@ $(document).ready(function () {
             "data": function (d) {
 
                 if (d.order && d.order.length > 0) {
-                  
-                    var columnHeader = $("#dashboardTable thead th").eq(d.order[0].column).text().trim();
+                    var columnIndex = d.order[0].column;
+                    var columnHeader = $("#dashboardTable thead th").eq(columnIndex).text().trim();
 
-                
                     d.orderColumn = columnMapping[columnHeader] || columnHeader;
                     d.orderDir = d.order[0].dir;
                 }
-
                 d.globalSearch = $('#tableSearch').val();
 
                 
@@ -351,8 +348,6 @@ $(document).ready(function () {
             "infoFiltered": "(filtered from _MAX_ total entries)"
         }
     });
-
-    $('#dashboardTable thead th').off('click');
 
     $('#dashboardTable thead th').off('click').on('click', function () {
         var columnIndex = $(this).index();
