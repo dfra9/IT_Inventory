@@ -40,7 +40,7 @@
         @Html.AntiForgeryToken()
         <input type="hidden" name="mode" value="@mode" />
         <input type="hidden" name="User_Id" value="@Model.User_Id" />
-       
+
 
         <div class="row">
             <div class="col-md-12">
@@ -50,31 +50,32 @@
                             <div class="form-group row">
                                 <div class="card-body">
                                     <div class="form-group row">
-                                        @if (mode == "Delete" || mode == "Edit" || mode == "View")
-                                        {
-                                            <label for="Long_Name" class="col-sm-3 col-form-label form-control-label">User Name</label>
-                                            <div class="col-sm-5">
-                                                <input type="text" id="Long_Name" name="Long_Name" class="form-control" value="@Model.Long_Name" @(mode == "Delete" || mode == "View" ? "readonly" : "")>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
-                                            <div class="col-sm-5">
+                                        <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
+                                        <div class="col-sm-5">
+                                            @if (mode == "View" || mode == "Delete" )
+                                            {
+                                                <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
+                                            }
+                                            else
+                                            {
                                                 <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username">
-                                            </div>
-                                        }
+                                            }
+                                        </div>
                                     </div>
 
-                                    @if (mode == "Create")
-                                    {
-                                        <div class="form-group row">
-                                            <label for="Long_Name" class="col-sm-3 col-form-label form-control-label">Long Name</label>
-                                            <div class="col-sm-5">
+                                    <div class="form-group row">
+                                        <label for="Long_Name" class="col-sm-3 col-form-label form-control-label">Long Name</label>
+                                        <div class="col-sm-5">
+                                            @if (mode == "View" || mode == "Delete")
+                                            {
+                                                <input type="text" id="Long_Name" name="Long_Name" class="form-control" value="@Model.Long_Name" readonly>
+                                            }
+                                            else
+                                            {
                                                 <input type="text" id="Long_Name" name="Long_Name" class="form-control" value="@Model.Long_Name">
-                                            </div>
+                                            }
                                         </div>
-                                    }
+                                    </div>
 
                                     @if (Session["IsAdmin"] is bool IsAdmin && IsAdmin)
                                     {
@@ -417,4 +418,3 @@
         }
     });
 </script>
-
