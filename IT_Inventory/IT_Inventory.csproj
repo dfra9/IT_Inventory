@@ -206,6 +206,9 @@
     <Compile Include="Models\Location.cs">
       <DependentUpon>IT_Inventory.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Log_Transaction.cs">
+      <DependentUpon>IT_Inventory.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Material_Code.cs">
       <DependentUpon>IT_Inventory.tt</DependentUpon>
     </Compile>

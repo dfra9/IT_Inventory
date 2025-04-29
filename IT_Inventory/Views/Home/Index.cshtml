@@ -283,11 +283,15 @@ $(document).ready(function () {
 
     refreshDashboardData();
 
-    $('#dashboardTable tfoot th').each(function (index) {
-        var title = $(this).text().trim();
-        $(this).html('<input type="text" placeholder="Search ' + title + '" class="form-control form-control-sm" />');
-    });
-
+    const columnMapping = {
+        'Label Asset': 'No_asset',
+        'Product Type': 'Material_Group',
+        'Description Product': 'Material_Description',
+        'Purchase Date': 'Transaction_Date',
+        'Status': 'Status',
+        'Location': 'Location',
+        'Departement': 'Departement'
+    };
 
 
     var table = $("#dashboardTable").DataTable({
@@ -309,26 +313,28 @@ $(document).ready(function () {
             "data": function (d) {
 
                 if (d.order && d.order.length > 0) {
-                    d.order.forEach(function (orderInfo, index) {
-                        d.columns[orderInfo.column].orderable = true;
-                    });
+                  
+                    var columnHeader = $("#dashboardTable thead th").eq(d.order[0].column).text().trim();
+
+                
+                    d.orderColumn = columnMapping[columnHeader] || columnHeader;
+                    d.orderDir = d.order[0].dir;
                 }
 
                 d.globalSearch = $('#tableSearch').val();
 
                 
-                
                 return d;
             }
         },
         "columns": [
-            { "data": "No_asset", "name": "No_asset", "autoWidth": true, "type": "string", "orderable": true },
+            { "data": "No_asset", "name": "No_asset",  "orderable": true },
             { "data": "Material_Group", "name": "Material_Group", "autoWidth": true },
-            { "data": "Material_Description", "name": "Material_Description", "autoWidth": true, "type": "string", "orderable": true },
-            { "data": "Transaction_Date", "name": "Transaction_Date", "autoWidth": true, "type": "date", "orderable": true, render: function (data) { return formatDate(data); } },
-            { "data": "Status", "name": "Status", "autoWidth": true, "type": "string","orderable": true },
-            { "data": "Location", "name": "Location", "autoWidth": true, "type": "string", "orderable": true },
-            { "data": "Departement", "name": "Departement", "autoWidth": true, "type": "string", "orderable": true }   
+            { "data": "Material_Description", "name": "Material_Description",  "orderable": true },
+            { "data": "Transaction_Date", "name": "Transaction_Date", "orderable": true, render: function (data) { return formatDate(data); } },
+            { "data": "Status", "name": "Status","orderable": true },
+            { "data": "Location", "name": "Location", "orderable": true },
+            { "data": "Departement", "name": "Departement", "orderable": true }   
         ],
         "order": [[3, "desc"]],
         "createdRow": function (row, data, index) {
@@ -346,12 +352,14 @@ $(document).ready(function () {
         }
     });
 
+    $('#dashboardTable thead th').off('click');
 
-    $('#dashboardTable thead tr').clone(true).appendTo('#dashboardTable thead');
-    $('#dashboardTable tfoot input').on('keyup change clear', function () {
-        table.column($(this).parent().index())
-            .search(this.value)
-            .draw();
+    $('#dashboardTable thead th').off('click').on('click', function () {
+        var columnIndex = $(this).index();
+        var currentDirection = table.order()[0][1];
+        var newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+
+        table.order([columnIndex, newDirection]).draw();
     });
 
     $("#tableSearch").on("keyup", function () {
@@ -388,5 +396,5 @@ $(document).ready(function () {
             return "";
         }
     }
-        });
+});
 </script>

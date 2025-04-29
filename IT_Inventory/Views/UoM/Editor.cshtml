@@ -10,6 +10,8 @@
     {
         @Html.AntiForgeryToken()
         @Html.HiddenFor(model => model.Is_Deleted)
+        @Html.HiddenFor(model => model.UoM_Id)
+        @Html.HiddenFor(model => model.EncodedId)
         <input type="hidden" name="mode" value="@mode" />
         <div class="row">
             <div class="col-md-12">
@@ -102,11 +104,12 @@
                 }
 
                 if (mode == "Delete") {
-                    if (!confirm("Are you sure want to delete this Company?")) {
+                    if (!confirm("Are you sure want to delete this Unit Of Measurement?")) {
                         e.preventDefault();
                         return false;
                     }
                 }
+                return true;
             });
 
     if ('@TempData["SuccessMessage"]' != '') {

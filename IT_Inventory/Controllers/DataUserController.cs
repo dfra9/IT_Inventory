@@ -29,6 +29,7 @@ namespace IT_Inventory.Controllers
             {
                 User_Id = u.User_Id,
                 Username = u.Username,
+                Long_Name = u.Long_Name,
                 Departement = u.Departement,
                 City = u.City,
                 Location = u.Location,
@@ -77,7 +78,7 @@ namespace IT_Inventory.Controllers
                             DropdownList();
                             return View(user);
                         }
-
+                        user.Long_Name = user.Long_Name;
                         user.Password = userService.HashPassword(user.Password);
                         user.Is_Admin = Request.Form["Is_Admin_Hidden"] == "True" || Request.Form["Is_Admin"] == "true" || Request.Form["Is_Admin"] == "true";
                         user.Create_Date = DateTime.Now;
@@ -100,12 +101,7 @@ namespace IT_Inventory.Controllers
                         {
                             userEdit.Password = userService.HashPassword(user.Password);
                         }
-
-                        if (!string.IsNullOrEmpty(user.Long_Name))
-                        {
-                            userEdit.Long_Name = user.Long_Name;
-                        }
-
+                        userEdit.Long_Name = user.Long_Name;
                         userEdit.Departement = user.Departement;
                         userEdit.City = user.City;
                         userEdit.Location = user.Location;
@@ -218,7 +214,6 @@ namespace IT_Inventory.Controllers
         }
 
 
-
         private void DropdownList()
         {
             ViewBag.Departement = db.Departement.Where(c => c.Is_Deleted != true).ToList();
@@ -227,8 +222,6 @@ namespace IT_Inventory.Controllers
 
 
         }
-
-
 
     }
 }

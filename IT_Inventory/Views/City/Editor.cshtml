@@ -23,9 +23,9 @@
                                                     <label for="City_Name" class="col-sm-2 col-form-label form-control-label">City Name </label>
                                                     <div class="col-sm-3">
 
-                                                        @if (mode == "Create")
+                                                        @if (mode == "View" || mode == "Delete")
                                                         {
-                                                            @Html.TextBoxFor(model => model.City_Name, new { @class = "form-control", @placeholder = "City Name", required = "required" })
+                                                            @Html.TextBoxFor(model => model.City_Name, new { @class = "form-control", @placeholder = "City Name", required = "required", @readonly = "readonly" })
                                                         }
                                                         else
                                                         {
@@ -90,8 +90,8 @@
     <script>
         $(document).ready(function () {
             $("form").submit(function (e) {
-                var cityName = $("#City Name").val();
-                var cityDesc = $("#City Description").val();
+                var cityName = $("#City_Name").val();
+                var cityDesc = $("#City_Description").val();
                 var mode = $("input[name='mode']").val();
 
                 console.log("City Name: " + cityName);
@@ -108,6 +108,7 @@
                         return false;
                     }
                 }
+                return true;
             });
     if ('@TempData["SuccessMessage"]' != '') {
     toastr.success('@TempData["SuccessMessage"]');

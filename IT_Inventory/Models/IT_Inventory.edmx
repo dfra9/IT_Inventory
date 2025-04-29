@@ -111,6 +111,20 @@
           <Property Name="Is_Deleted" Type="bit" />
           <Property Name="City_Name" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="Log_Transaction">
+          <Key>
+            <PropertyRef Name="UniqID" />
+          </Key>
+          <Property Name="UniqID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Type" Type="char" MaxLength="1" />
+          <Property Name="TableName" Type="varchar" MaxLength="128" />
+          <Property Name="PK" Type="varchar" MaxLength="1000" />
+          <Property Name="FieldName" Type="varchar" MaxLength="128" />
+          <Property Name="OldValue" Type="varchar" MaxLength="1000" />
+          <Property Name="NewValue" Type="varchar" MaxLength="1000" />
+          <Property Name="LogDate" Type="datetime" />
+          <Property Name="UserName" Type="varchar" MaxLength="128" />
+        </EntityType>
         <EntityType Name="Material_Code">
           <Key>
             <PropertyRef Name="Material_CodeId" />
@@ -192,6 +206,7 @@
           <EntitySet Name="Company" EntityType="Self.Company" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Departement" EntityType="Self.Departement" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Location" EntityType="Self.Location" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Log_Transaction" EntityType="Self.Log_Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Material_Code" EntityType="Self.Material_Code" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Material_Group" EntityType="Self.Material_Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UoM" EntityType="Self.UoM" Schema="dbo" store:Type="Tables" />
@@ -284,6 +299,7 @@
           <EntitySet Name="Asset" EntityType="IT_InventoryModel.Asset" />
           <EntitySet Name="UoM" EntityType="IT_InventoryModel.UoM" />
           <EntitySet Name="Material_Group" EntityType="IT_InventoryModel.Material_Group" />
+          <EntitySet Name="Log_Transaction" EntityType="IT_InventoryModel.Log_Transaction" />
         </EntityContainer>
         <EntityType Name="City">
           <Key>
@@ -392,6 +408,20 @@
           <Property Name="Delete_By" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Delete_Date" Type="DateTime" Precision="3" />
           <Property Name="Is_Deleted" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="Log_Transaction">
+          <Key>
+            <PropertyRef Name="UniqID" />
+          </Key>
+          <Property Name="UniqID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="TableName" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="PK" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="FieldName" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="OldValue" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="NewValue" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="LogDate" Type="DateTime" Precision="3" />
+          <Property Name="UserName" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -586,6 +616,21 @@
                 <ScalarProperty Name="Material_Description" ColumnName="Material_Description" />
                 <ScalarProperty Name="Material_Group1" ColumnName="Material_Group" />
                 <ScalarProperty Name="Material_Group_Id" ColumnName="Material_Group_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Log_Transaction">
+            <EntityTypeMapping TypeName="IT_InventoryModel.Log_Transaction">
+              <MappingFragment StoreEntitySet="Log_Transaction">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="LogDate" ColumnName="LogDate" />
+                <ScalarProperty Name="NewValue" ColumnName="NewValue" />
+                <ScalarProperty Name="OldValue" ColumnName="OldValue" />
+                <ScalarProperty Name="FieldName" ColumnName="FieldName" />
+                <ScalarProperty Name="PK" ColumnName="PK" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="UniqID" ColumnName="UniqID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

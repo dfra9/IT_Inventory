@@ -59,13 +59,22 @@
                                         }
                                         else
                                         {
-                                            <label for="Input_Username" class="col-sm-3 col-form-label form-control-label">Username</label>
+                                            <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
                                             <div class="col-sm-5">
                                                 <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username">
                                             </div>
                                         }
                                     </div>
 
+                                    @if (mode == "Create")
+                                    {
+                                        <div class="form-group row">
+                                            <label for="Long_Name" class="col-sm-3 col-form-label form-control-label">Long Name</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" id="Long_Name" name="Long_Name" class="form-control" value="@Model.Long_Name">
+                                            </div>
+                                        </div>
+                                    }
 
                                     @if (Session["IsAdmin"] is bool IsAdmin && IsAdmin)
                                     {
@@ -217,8 +226,6 @@
             $("#Password").prop("readonly", true);
             $("#Password").prop("disabled", false);
             $("#ChangePassword").prop("checked", false);
-
-
         }
         else if (mode == "Create") {
             $("#Password").prop("readonly", false);
@@ -236,6 +243,12 @@
             $("#Password").removeAttr("required");
         }
 
+        if (@Html.Raw(Model.Is_Admin == true ? "true" : "false")) {
+            $("#Is_Admin").prop("checked", true);
+        } else {
+            $("#Is_Admin").prop("checked", false);
+        }
+
         $("#Is_Admin").change(function () {
             if ($(this).is(":checked")) {
                 $("#Is_Admin").val("true");
@@ -244,12 +257,6 @@
                 $("#Is_Admin").val("false");
             }
         });
-
-        if ($("#Is_Admin").val() == true) {
-            $("#Is_Admin").prop("checked", true);
-        } else {
-            $("#Is_Admin").prop("checked", false);
-        }
 
         $("#ChangePassword").change(function () {
             if ($(this).is(":checked")) {

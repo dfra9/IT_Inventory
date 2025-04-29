@@ -122,16 +122,16 @@
         });
 
 
-                    @if (TempData["SuccessMassage"]!= null)
+                    @if (TempData["SuccessMessage"]!= null)
 {
                         <text>
-                    toastr.success('@TempData["SuccessMassage"]');
+                    toastr.success('@TempData["SuccessMessage"]');
                             </text>
 }
-                            @if (TempData["ErrorMassage"]!= null)
+                            @if (TempData["ErrorMessage"]!= null)
 {
                     <text>
-                    toastr.error('@TempData["ErrorMassage"]');
+                    toastr.error('@TempData["ErrorMessage"]');
                             </text>
 }
 

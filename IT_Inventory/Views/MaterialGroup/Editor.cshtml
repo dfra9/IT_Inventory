@@ -12,7 +12,7 @@
     {
         @Html.AntiForgeryToken()
         <input type="hidden" name="mode" value="@mode" />
-        <input type="hidden" name="id" value="@Model?.Material_Group_Id" />
+        <input type="hidden" name="id" value="@(mode != "Create" ? ViewBag.EncodedId : "")" />
 
         <div class="row">
             <div class="col-md-12">
@@ -39,7 +39,6 @@
                                         <div class="col-sm-9">
                                             @if (mode == "View")
                                             {
-
                                                 <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
                                             }
                                             else

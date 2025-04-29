@@ -41,9 +41,31 @@ namespace IT_Inventory.Controllers
                 {
                     if (mode == "Create")
                     {
-                        departement.Create_By = User.Identity.Name;
-                        departement.Create_Date = DateTime.Now;
-                        db.Departement.Add(departement);
+                        var existDepartement = db.Departement.FirstOrDefault(d => d.Departement_Code == departement.Departement_Code);
+
+                        if (existDepartement != null && existDepartement.Is_Deleted == true)
+                        {
+                            existDepartement.Departement_Name = departement.Departement_Name;
+                            existDepartement.Is_Deleted = false;
+                            existDepartement.Create_By = departement.Create_By;
+                            existDepartement.Create_Date = DateTime.Now;
+                            existDepartement.Edit_By = null;
+                            existDepartement.Edit_Date = null;
+                            existDepartement.Delete_By = null;
+                            existDepartement.Delete_Date = null;
+                        }
+                        else if (existDepartement != null && existDepartement.Is_Deleted != true)
+                        {
+                            TempData["ErrorMessage"] = "Departement Code already exists.";
+                            ViewBag.Mode = mode;
+                            return View(departement);
+                        }
+                        else
+                        {
+                            departement.Create_By = User.Identity.Name;
+                            departement.Create_Date = DateTime.Now;
+                            db.Departement.Add(departement);
+                        }
                     }
                     else if (mode == "Edit")
                     {

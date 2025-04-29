@@ -93,7 +93,7 @@ namespace IT_Inventory.Controllers
                 return RedirectToAction("Index");
             }
 
-
+            ViewBag.EncodedId = id;
             return View(materialGroup);
 
         }
@@ -159,19 +159,6 @@ namespace IT_Inventory.Controllers
                     }
 
 
-                    var duplicateExists = db.Material_Group.Any(u =>
-                        u.Material_Group1 == material_Group.Material_Group1 &&
-                        u.Material_Description == material_Group.Material_Description &&
-                        u.Material_Group_Id != existingGroup.Material_Group_Id &&
-                        u.Is_Deleted != true);
-
-                    if (duplicateExists)
-                    {
-                        TempData["ErrorMessage"] = "Another Material Group with the same ID and description already exists";
-                        ViewBag.Mode = mode;
-                        return View(material_Group);
-                    }
-
                     existingGroup.Material_Description = material_Group.Material_Description;
                     existingGroup.Age_Accounting_Asset = material_Group.Age_Accounting_Asset;
                     existingGroup.Quantity = material_Group.Quantity;
@@ -229,7 +216,6 @@ namespace IT_Inventory.Controllers
             ;
             if (string.IsNullOrEmpty(decodedid))
             {
-
                 TempData["Message"] = "Material Group not found";
                 return RedirectToAction("Index");
             }

@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     ViewBag.Title = "User Data";
 }
 <section class="content">
@@ -30,12 +31,13 @@
             <table id="userDataTable" class="table table-striped projects">
                 <thead>
                     <tr>
-                        <th style="width: 10%"> Username </th>
-                        <th style="width: 10%"> Is_Admin </th>
-                        <th style="width: 15%"> Departement </th>
-                        <th style="width: 15%"> City </th>
-                        <th style="width: 15%"> Location </th>
-                        <th style="width: 15%"> Last Login </th>
+                        <th > Username </th>
+                        <th > Long Name </th>
+                        <th > Is_Admin </th>
+                        <th > Departement </th>
+                        <th > City </th>
+                        <th > Location </th>
+                        <th > Last Login </th>
                         <th style="width: 20%; text-align: center"> Action </th>
                     </tr>
                 </thead>
@@ -44,6 +46,7 @@
                     {
                         <tr>
                             <td>@item.Username</td>
+                            <td>@item.Long_Name</td>
                             <td>@item.IsAdmin</td>
                             <td>@item.Departement</td>
                             <td>@item.City</td>
@@ -69,6 +72,7 @@
                 <tfoot>
                     <tr>
                         <th> Username </th>
+                        <th> Long Name </th>
                         <th> Is_Admin </th>
                         <th> Departement </th>
                         <th> City </th>
@@ -85,7 +89,7 @@
         $(function () {
             $('#userDataTable tfoot th').each(function () {
                 var i = $(this).index();
-                if (i != 6) {
+                if (i != 7) {
                     var title = $(this).text().trim();
                     $(this).html('<input type="text" placeholder="Search ' + title + '" />');
                 }
@@ -105,7 +109,7 @@
 
             table.columns().every(function (index) {
                 var that = this;
-                if (index != 6) { 
+                if (index != 7) { 
                     $('input', this.footer()).on('keyup change', function () {
                         that
                             .search(this.value)

@@ -279,6 +279,7 @@
     </div>
 
     <script>
+
         $(document).ready(function () {
             $("#btnChangePassword").click(function () {
                 $("#changePassOld").val("");
@@ -292,7 +293,7 @@
             var newPassword = $("#changePassNew").val();
             var confirmPassword = $("#changePassConfirm").val();
 
-            // Client-side validation
+
             if (!oldPassword) {
                 toastr.error("Old Password is required");
                 return;
