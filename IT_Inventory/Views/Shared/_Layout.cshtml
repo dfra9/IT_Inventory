@@ -13,7 +13,7 @@
     @Styles.Render("~/Content/Theme/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css")
     @Styles.Render("~/Content/Theme/AdminLTE/plugins/toastr/toastr.min.css")
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-  
+
 
 
 
@@ -58,16 +58,16 @@
                                     </div>
                                 </li>
                                 <li class="user-footer">
-                                    <div class="d-flex justify-content-between" >
+                                    <div class="d-flex justify-content-between">
                                         <button type="button" class="btn btn-primary btn-flat" id="btnChangePassword">Change Password</button>
-                                    
+
                                         @using (Html.BeginForm("LogOff", "Auth", FormMethod.Post, new { id = "logoutForm" }))
                                         {
                                             @Html.AntiForgeryToken()
                                             <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-default btn-flat bg-red">Log off</a>
                                         }
                                     </div>
-                            
+
                                 </li>
                             </ul>
                         </li>
@@ -279,55 +279,74 @@
     </div>
 
     <script>
-         $("#btnChangePassword").click(function () {
-     $("#changePassOld").val("");
-     $("#changePassNew").val("");
-     $("#changePassConfirm").val("");
+        $(document).ready(function () {
+            $("#btnChangePassword").click(function () {
+                $("#changePassOld").val("");
+                $("#changePassNew").val("");
+                $("#changePassConfirm").val("");
+                $("#ModalChangePassword").modal("show");
+            });
 
-     $("#ModalChangePassword").modal("show");
+     $("#btnConfirmChangePassword").click(function() {
+            var oldPassword = $("#changePassOld").val();
+            var newPassword = $("#changePassNew").val();
+            var confirmPassword = $("#changePassConfirm").val();
 
- });
+            // Client-side validation
+            if (!oldPassword) {
+                toastr.error("Old Password is required");
+                return;
+            }
 
- $("#btnConfirmChangePassword").click(function () {
-     var oldPassword = $("#changePassOld").val();
-     var newPassword = $("#changePassNew").val();
-     var confirmPassword = $("#changePassConfirm").val();
+            if (!newPassword) {
+                toastr.error("New Password is required");
+                return;
+            }
 
-     if (!oldPassword) {
-         alert("Old Password is required");
-         return;
-     }
+            if (!confirmPassword) {
+                toastr.error("Confirm Password is required");
+                return;
+            }
 
-     if (!newPassword) {
-         alert("New Password is required");
-         return;
-     }
+            if (newPassword != confirmPassword) {
+                toastr.error("Confirm Password is different from New Password");
+                return;
+            }
 
-     if (!confirmPassword) {
-         alert("Confirm Password is required");
-         return;
-     }
 
-     if (newPassword != confirmPassword) {
-         alert("Confirm Password is different from New Password");
-         return;
-     }
+            $(this).prop('disabled', true);
+            $(this).html('<i class="fa fa-spinner fa-spin"></i> Processing...');
 
-     var data = {
-         old_password: oldPassword,
-         new_password: newPassword,
-         confirm_password: confirmPassword
-     };
+            var data = {
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+                confirmPassword: confirmPassword
+            };
 
-     $.post("@Url.Action("ChangePassword", "Auth")", data, function (response) {
-         alert(response.message);
 
-         if (response.success) {
-             $("#ModalChangePassword").modal("hide");
-         }
-     });
+            $.ajax({
+                url: "@Url.Action("ChangePassword", "DataUser")",
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $("#ModalChangePassword").modal("hide");
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    toastr.error("An error occurred: " + error);
+                },
+                complete: function() {
 
- });
+                    $("#btnConfirmChangePassword").prop('disabled', false);
+                    $("#btnConfirmChangePassword").html('Change Password');
+                }
+            });
+        });
+    });
     </script>
 </body>
 </html>

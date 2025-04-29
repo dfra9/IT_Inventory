@@ -140,6 +140,56 @@ namespace IT_Inventory.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+        {
+            try
+            {
+
+                if (string.IsNullOrEmpty(oldPassword) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+                {
+                    return Json(new { success = false, message = "All fields are required" });
+                }
+
+                if (newPassword != confirmPassword)
+                {
+                    return Json(new { success = false, message = "New password and confirmation do not match" });
+                }
+
+                string currentUsername = Session["Username"]?.ToString();
+                if (string.IsNullOrEmpty(currentUsername))
+                {
+                    return Json(new { success = false, message = "You must be logged in to change your password" });
+                }
+
+                var user = db.Users.FirstOrDefault(u => u.Username == currentUsername && u.Is_Deleted != true);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "User not found" });
+                }
+
+                if (!userService.VerifyPassword(oldPassword, user.Password))
+                {
+                    return Json(new { success = false, message = "Current password is incorrect" });
+                }
+
+
+                user.Password = userService.HashPassword(newPassword);
+                user.Edit_Date = DateTime.Now;
+                user.Edit_By = currentUsername;
+
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Password changed successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
+
+
         [HttpGet]
         public JsonResult GetLocationByCity(string cityId)
         {
