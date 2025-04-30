@@ -1,5 +1,20 @@
 ﻿@{
     ViewBag.Title = "Asset List";
+    string GetStatusClass(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "";
+
+        switch (status)
+        {
+            case "Borrowing": return "status-borrowing";
+            case "Return": return "status-return";
+            case "Service": return "status-service";
+            case "Ready": return "status-ready";
+            case "Assign": return "status-assign";
+            case "Write Off": return "status-write-off";
+            default: return "";
+        }
+    }
 }
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -131,7 +146,7 @@
                         <div class="input-group-append">
                         </div>
                     </div>
-                    <div class="card-tools">    
+                    <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                             <i class="fas fa-minus"></i>
                         </button>
@@ -213,6 +228,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 
     $(document).ready(function () {
@@ -260,6 +276,9 @@
         assetTable.search($(this).val()).draw();
     });
 
+
+
+
     $(document).on('click', '.btn-view', function() {
         var assetNo = $(this).data('asset-no');
         $.ajax({
@@ -267,7 +286,7 @@
             type: 'GET',
             data: { assetId: assetNo },
             success: function(data) {
-                if (data.success) {     
+                if (data.success) {
                     renderAssetDetails(data);
                     $("#viewAssetModal").modal('show');
                 } else {
@@ -373,6 +392,7 @@
                 }
 
                 const assetData = data;
+                $('#editAssetModal').data('originalStatus', assetData.Status || '');
 
                 $("#editAssetId").val(assetData.No_asset || '');
                 $("#editCompanyCode").val(assetData.Company_Code || '').trigger('change');
@@ -507,7 +527,10 @@
             return;
         }
 
-
+        const saveBtn = $(this);
+        const originalText = saveBtn.html();
+        saveBtn.html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+        saveBtn.prop('disabled', true);
         $.ajax({
             url: '@Url.Action("UpdateAsset", "AssetManagement")',
             type: 'POST',
@@ -522,17 +545,27 @@
                     } else {
                         refreshDashboardData();
                     }
-                    refreshAssetTable();
+                    if (formData.Status !== originalData.status ||
+                        formData.PIC !== originalData.pic ||
+                        formData.Transaction_Date !== originalData.transactionDate) {
+                        refreshAssetTable();
+                        refreshAssetHistory(formData.No_asset);
+                    }
                 } else {
                     toastr.error(data.message || "Error updating asset");
                     console.error("Error from server:", data);
                 }
+                saveBtn.html(originalText);
+                saveBtn.prop('disabled', false);
             },
             error: function(xhr, status, error) {
                 console.error("AJAX error:", error);
                 console.error("Status:", status);
                 console.error("Response:", xhr.responseText);
                 toastr.error("Error updating asset");
+
+                saveBtn.html(originalText);
+                saveBtn.prop('disabled', false);
             }
         });
     });
@@ -579,51 +612,94 @@
     });
 
 
-        function updateDashboardCounts(dashboardCounts) {
-            if (!dashboardCounts) return;
+    function refreshAssetHistory(assetNo) {
+    $.ajax({
+        url: '@Url.Action("SearchAssetHistory", "AssetManagement")',
+        type: 'GET',
+        data: { search: assetNo },
+        success: function (data) {
+            var tbody = $("#assetHistoryTable");
+            tbody.empty();
+
+            if (data && data.length > 0) {
+                data.forEach(function (item) {
+
+                    var statusClass = getStatusClass(item.Status);
 
 
-            console.log("Received Dashboard Counts:", dashboardCounts);
+                    var row = $("<tr>").append(
+                        $("<td>").text(item.No_asset || ""),
+                        $("<td>").text(item.PIC || ""),
+                        $("<td>").text(formatDate(item.Transaction_Date)),
+                        $("<td>").html($("<span>").addClass(statusClass).text(item.Status || "")),
+                        $("<td>").text(formatDate(item.Submit_Date))
+                    );
+                    tbody.append(row);
+                });
+            } else {
 
-
-            if (dashboardCounts.TotalAssets !== undefined) {
-                $('#total-assets').text(dashboardCounts.TotalAssets);
+                tbody.append(
+                    $("<tr>").append(
+                        $("<td>").attr("colspan", "5").addClass("text-center").text("No data found")
+                    )
+                );
             }
 
-            if (dashboardCounts.AvailableAssets !== undefined) {
-                $('#available-assets').text(dashboardCounts.AvailableAssets);
-            }
+            console.log("Asset history refreshed successfully");
+        },
+        error: function (error) {
+            console.error("Error refreshing asset history:", error);
+            toastr.error("Error refreshing asset history");
+        }
+    });
+    }
 
-            if (dashboardCounts.AssetsInUse !== undefined) {
-                $('#assets-in-use').text(dashboardCounts.AssetsInUse);
-            }
 
-            if (dashboardCounts.AssetsInMaintenance !== undefined) {
-                $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
-            }
+    function updateDashboardCounts(dashboardCounts) {
+        if (!dashboardCounts) return;
+
+
+        console.log("Received Dashboard Counts:", dashboardCounts);
+
+
+        if (dashboardCounts.TotalAssets !== undefined) {
+            $('#total-assets').text(dashboardCounts.TotalAssets);
         }
 
-        $(document).ready(function () {
-            refreshDashboardData();
+        if (dashboardCounts.AvailableAssets !== undefined) {
+            $('#available-assets').text(dashboardCounts.AvailableAssets);
+        }
+
+        if (dashboardCounts.AssetsInUse !== undefined) {
+            $('#assets-in-use').text(dashboardCounts.AssetsInUse);
+        }
+
+        if (dashboardCounts.AssetsInMaintenance !== undefined) {
+            $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
+        }
+    }
+
+    $(document).ready(function () {
+        refreshDashboardData();
+    });
+
+    function refreshDashboardData() {
+        $.ajax({
+            url: '/AssetManagement/GetDashboardCountsJson',
+            type: 'GET',
+            dataType: 'json',
+            cache: false,
+            success: function (dashboardCounts) {
+                console.log("Dashboard data refreshed successfully:", dashboardCounts);
+                updateDashboardCounts(dashboardCounts);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error refreshing dashboard data:', error);
+                console.error('Status:', status);
+                console.error('Response:', xhr.responseText);
+            }
         });
-
-        function refreshDashboardData() {
-            $.ajax({
-                url: '/AssetManagement/GetDashboardCountsJson',
-                type: 'GET',
-                dataType: 'json',
-                cache: false,
-                success: function (dashboardCounts) {
-                    console.log("Dashboard data refreshed successfully:", dashboardCounts);
-                    updateDashboardCounts(dashboardCounts);
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error refreshing dashboard data:', error);
-                    console.error('Status:', status);
-                    console.error('Response:', xhr.responseText);
-                }
-            });
-        }
+    }
 
     function loadLocationsByCity(cityName, targetDropdown) {
         if (!cityName) {
@@ -656,12 +732,13 @@
             url: '@Url.Action("GetAssetData", "AssetManagement")',
             type: 'GET',
             success: function(refreshedData) {
-                assetTable.clear().draw();
+                assetTable.clear();  // Remove the extra parentheses here
 
                 if (refreshedData && refreshedData.length > 0) {
                     refreshedData.forEach(function(asset) {
                         var statusClass = getStatusClass(asset.Status);
 
+                        var statusHtml = '<span class="' + statusClass + '">' + (asset.Status || '') + '</span>';
                         assetTable.row.add([
                             asset.No_asset || '',
                             asset.Company_Name || '',
@@ -707,28 +784,21 @@
         });
     }
 
-    @functions {
-    string GetStatusClass(string status)
-    {
-        if (string.IsNullOrEmpty(status))
-            return "";
+    function getStatusClass(status) {
+        if (!status) return "";
 
-        Dictionary<string, string> statusClasses = new Dictionary<string, string>
-        {
-            {"Borrowing", "status-borrowing"},
-            {"Return", "status-return"},
-            {"Service", "status-service"},
-            {"Ready", "status-ready"},
-            {"Assign", "status-assign"},
-            {"Write Off", "status-write-off"}
+        const statusClasses = {
+            "Borrowing": "status-borrowing",
+            "Return": "status-return",
+            "Service": "status-service",
+            "Ready": "status-ready",
+            "Assign": "status-assign",
+            "Write Off": "status-write-off"
         };
 
-        if (statusClasses.ContainsKey(status))
-            return statusClasses[status];
-
-        return "";
+        return statusClasses[status] || "";
     }
-}
+
 
     function renderAssetDetails(asset) {
         var detailsHtml = `
@@ -797,90 +867,89 @@
         $('#assetDetailsTable').html(detailsHtml);
         $('#viewAssetModalLabel').text(`Asset Details: ${asset.No_asset}`);
     }
+        function formatDateForInput(dateString) {
+            if (!dateString) return '';
 
-    function formatDateForInput(dateString) {
-        if (!dateString) return '';
+            try {
+                if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                    var timeStamp = parseInt(dateString.substr(6));
+                    var date = new Date(timeStamp);
+                    return formatDateObject(date);
+                }
 
-        try {
-            if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
-                var timeStamp = parseInt(dateString.substr(6));
-                var date = new Date(timeStamp);
+                var date = new Date(dateString);
                 return formatDateObject(date);
+            } catch (e) {
+                console.error("Error parsing date:", e);
+                return '';
             }
-
-            var date = new Date(dateString);
-            return formatDateObject(date);
-        } catch (e) {
-            console.error("Error parsing date:", e);
-            return '';
         }
-    }
 
-    function formatDate(dateString) {
-        if (!dateString) return "";
+        function formatDate(dateString) {
+            if (!dateString) return "";
 
-        try {
-            if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
-                var timeStamp = parseInt(dateString.substr(6));
-                var date = new Date(timeStamp);
+            try {
+                if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                    var timeStamp = parseInt(dateString.substr(6));
+                    var date = new Date(timeStamp);
+                    return formatDateObject(date);
+                }
+
+                var date = new Date(dateString);
                 return formatDateObject(date);
+            } catch (e) {
+                console.error("Error parsing date:", e);
+                return "";
             }
-
-            var date = new Date(dateString);
-            return formatDateObject(date);
-        } catch (e) {
-            console.error("Error parsing date:", e);
-            return "";
         }
-    }
 
-    function formatDateObject(date) {
-        if (isNaN(date.getTime())) return "";
+        function formatDateObject(date) {
+            if (isNaN(date.getTime())) return "";
 
-        var year = date.getFullYear();
-        var month = (date.getMonth() + 1).toString().padStart(2, '0');
-        var day = date.getDate().toString().padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
+            var year = date.getFullYear();
+            var month = (date.getMonth() + 1).toString().padStart(2, '0');
+            var day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
 
 
 
-    $('#editAssetModal').on('shown.bs.modal', function () {
 
-        $('.select2').each(function () {
-            const val = $(this).val();
+        $('#editAssetModal').on('shown.bs.modal', function () {
 
-            if ($(this).hasClass('select2-hidden-accessible')) {
-                $(this).select2('destroy');
-            }
+            $('.select2').each(function () {
+                const val = $(this).val();
 
-            $(this).select2({
-                dropdownParent: $('#editAssetModal'),
-                width: '100%'
-            });
+                if ($(this).hasClass('select2-hidden-accessible')) {
+                    $(this).select2('destroy');
+                }
 
-            if (val) {
-                $(this).val(val).trigger('change');
-            }
-        });
-    });
+                $(this).select2({
+                    dropdownParent: $('#editAssetModal'),
+                    width: '100%'
+                });
 
-    $("#editCity").on('change', function () {
-        var selectedCity = $(this).val();
-        loadLocationsByCity(selectedCity, '#editLocation');
-    });
-
-    initializeLocationDropdowns();
-
-    function initializeLocationDropdowns() {
-        $("#editCity").each(function () {
-            var $cityDropdown = $(this);
-            $cityDropdown.on('change', function () {
-                var selectedCity = $cityDropdown.val();
-                loadLocationsByCity(selectedCity, '#editLocation');
+                if (val) {
+                    $(this).val(val).trigger('change');
+                }
             });
         });
-    }
-});
+
+        $("#editCity").on('change', function () {
+            var selectedCity = $(this).val();
+            loadLocationsByCity(selectedCity, '#editLocation');
+        });
+
+        initializeLocationDropdowns();
+
+        function initializeLocationDropdowns() {
+            $("#editCity").each(function () {
+                var $cityDropdown = $(this);
+                $cityDropdown.on('change', function () {
+                    var selectedCity = $cityDropdown.val();
+                    loadLocationsByCity(selectedCity, '#editLocation');
+                });
+            });
+        }
+    });
 </script>

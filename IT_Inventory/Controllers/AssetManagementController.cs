@@ -217,38 +217,17 @@ namespace IT_Inventory.Controllers
                          .OrderByDescending(a => a.Transaction_Date)
                          .FirstOrDefault();
 
-
-                    var assetHistory = new Asset
+                    bool newHistoryAsset = true;
+                    if (mode == "Edit" && existAsset != null)
                     {
-                        No_asset = viewModel.No_asset,
-                        Company_Code = viewModel.Company_Code,
-                        Company_Name = viewModel.Company_Name,
-                        Material_Group = viewModel.Material_Group,
-                        Material_Code = viewModel.Material_Code,
-                        Material_Description = viewModel.Material_Description,
-                        Quantity = viewModel.Quantity,
-                        UoM = viewModel.UoM,
-                        Serial_Number = viewModel.Serial_Number,
-                        Device_Id = viewModel.Device_Id,
-                        Acquisition_Date = viewModel.Acquisition_Date,
-                        Acquisition_value = viewModel.Acquisition_value,
-                        No_Asset_PGA = viewModel.No_Asset_PGA,
-                        No_Asset_Accounting = viewModel.No_Asset_Accounting,
-                        No_PO = viewModel.No_PO,
-                        Latest_User = viewModel.Latest_User,
-                        Departement = departmentName,
-                        Location = locationName,
-                        City = viewModel.City_Name,
-                        Last_Check_Date = viewModel.Last_Check_Date,
-                        Condition = viewModel.Condition,
-                        Status = viewModel.Status,
-                        PIC = viewModel.PIC,
-                        Transaction_Date = viewModel.Transaction_Date,
-                        Create_By = User.Identity.Name ?? "System",
-                        Create_Date = DateTime.Now,
-                        Is_Deleted = false
 
-                    };
+                        if (existAsset.Status == viewModel.Status &&
+                            existAsset.PIC == viewModel.PIC &&
+                            existAsset.Transaction_Date == viewModel.Transaction_Date)
+                        {
+                            newHistoryAsset = false;
+                        }
+                    }
 
                     if (existAsset != null)
                     {
@@ -262,7 +241,45 @@ namespace IT_Inventory.Controllers
                         existAsset.Departement = departmentName;
                         existAsset.Condition = viewModel.Condition;
                     }
-                    db.Asset.Add(assetHistory);
+
+                    if (newHistoryAsset)
+                    {
+
+
+                        var assetHistory = new Asset
+                        {
+                            No_asset = viewModel.No_asset,
+                            Company_Code = viewModel.Company_Code,
+                            Company_Name = viewModel.Company_Name,
+                            Material_Group = viewModel.Material_Group,
+                            Material_Code = viewModel.Material_Code,
+                            Material_Description = viewModel.Material_Description,
+                            Quantity = viewModel.Quantity,
+                            UoM = viewModel.UoM,
+                            Serial_Number = viewModel.Serial_Number,
+                            Device_Id = viewModel.Device_Id,
+                            Acquisition_Date = viewModel.Acquisition_Date,
+                            Acquisition_value = viewModel.Acquisition_value,
+                            No_Asset_PGA = viewModel.No_Asset_PGA,
+                            No_Asset_Accounting = viewModel.No_Asset_Accounting,
+                            No_PO = viewModel.No_PO,
+                            Latest_User = viewModel.Latest_User,
+                            Departement = departmentName,
+                            Location = locationName,
+                            City = viewModel.City_Name,
+                            Last_Check_Date = viewModel.Last_Check_Date,
+                            Condition = viewModel.Condition,
+                            Status = viewModel.Status,
+                            PIC = viewModel.PIC,
+                            Transaction_Date = viewModel.Transaction_Date,
+                            Create_By = User.Identity.Name ?? "System",
+                            Create_Date = DateTime.Now,
+                            Is_Deleted = false
+
+                        };
+
+                        db.Asset.Add(assetHistory);
+                    }
                     db.SaveChanges();
 
                     var dashboardCounts = GetDashboardCounts();
@@ -275,11 +292,11 @@ namespace IT_Inventory.Controllers
                             message = mode == "Create" ? "Asset created successfully" : "Asset updated successfully",
                             assetData = new
                             {
-                                assetHistory.No_asset,
-                                assetHistory.PIC,
-                                Transaction_Date = assetHistory.Transaction_Date.HasValue ? assetHistory.Transaction_Date.Value.ToString("yyyy-MM-dd") : "",
-                                assetHistory.Status,
-                                Submit_Date = assetHistory.Create_Date.HasValue ? assetHistory.Create_Date.Value.ToString("yyyy-MM-dd") : ""
+                                No_asset = viewModel.No_asset,
+                                PIC = viewModel.PIC,
+                                Transaction_Date = viewModel.Transaction_Date.HasValue ? viewModel.Transaction_Date.Value.ToString("yyyy-MM-dd") : "",
+                                Status = viewModel.Status,
+                                Submit_Date = DateTime.Now.ToString("yyyy-MM-dd")
                             },
                             dashboardCounts = dashboardCounts
                         });
@@ -487,38 +504,45 @@ namespace IT_Inventory.Controllers
                     return Json(new { success = false, message = $"Transaction Date for {Status} status is required" });
                 }
 
-                var newTransaction = new Asset
-                {
-                    No_asset = asset.No_asset,
-                    Company_Code = asset.Company_Code,
-                    Company_Name = asset.Company_Name,
-                    Material_Group = asset.Material_Group,
-                    Material_Code = asset.Material_Code,
-                    Material_Description = asset.Material_Description,
-                    Quantity = asset.Quantity,
-                    UoM = asset.UoM,
-                    Serial_Number = asset.Serial_Number,
-                    Device_Id = asset.Device_Id,
-                    Acquisition_Date = asset.Acquisition_Date,
-                    Acquisition_value = asset.Acquisition_value,
-                    No_Asset_PGA = asset.No_Asset_PGA,
-                    No_Asset_Accounting = asset.No_Asset_Accounting,
-                    No_PO = asset.No_PO,
-                    Latest_User = asset.Latest_User,
-                    Departement = asset.Departement,
-                    Location = asset.Location,
-                    City = asset.City,
-                    Last_Check_Date = asset.Last_Check_Date,
-                    Condition = asset.Condition,
+                bool statusChanged = asset.Status != Status;
+                bool picChanged = asset.PIC != PIC;
+                bool dateChanged = asset.Transaction_Date != Transaction_Date;
 
-                    Status = Status,
-                    PIC = PIC,
-                    Transaction_Date = Transaction_Date,
-                    Create_By = User.Identity.Name ?? "System",
-                    Create_Date = DateTime.Now,
-                    Is_Deleted = false
-                };
-                db.Asset.Add(newTransaction);
+                if (!statusChanged)
+                {
+                    var newTransaction = new Asset
+                    {
+                        No_asset = asset.No_asset,
+                        Company_Code = asset.Company_Code,
+                        Company_Name = asset.Company_Name,
+                        Material_Group = asset.Material_Group,
+                        Material_Code = asset.Material_Code,
+                        Material_Description = asset.Material_Description,
+                        Quantity = asset.Quantity,
+                        UoM = asset.UoM,
+                        Serial_Number = asset.Serial_Number,
+                        Device_Id = asset.Device_Id,
+                        Acquisition_Date = asset.Acquisition_Date,
+                        Acquisition_value = asset.Acquisition_value,
+                        No_Asset_PGA = asset.No_Asset_PGA,
+                        No_Asset_Accounting = asset.No_Asset_Accounting,
+                        No_PO = asset.No_PO,
+                        Latest_User = asset.Latest_User,
+                        Departement = asset.Departement,
+                        Location = asset.Location,
+                        City = asset.City,
+                        Last_Check_Date = asset.Last_Check_Date,
+                        Condition = asset.Condition,
+
+                        Status = Status,
+                        PIC = PIC,
+                        Transaction_Date = Transaction_Date,
+                        Create_By = User.Identity.Name ?? "System",
+                        Create_Date = DateTime.Now,
+                        Is_Deleted = false
+                    };
+                    db.Asset.Add(newTransaction);
+                }
                 asset.Status = Status;
                 asset.PIC = PIC;
                 asset.Transaction_Date = Transaction_Date;
@@ -528,31 +552,25 @@ namespace IT_Inventory.Controllers
 
                 var dashboardCounts = GetDashboardCounts();
 
+
+
                 return Json(new
                 {
                     success = true,
-                    message = "Asset updated successfully",
-                    assetData = new
-                    {
-                        No_asset = newTransaction.No_asset,
-                        PIC = newTransaction.PIC,
-                        Transaction_Date = newTransaction.Transaction_Date.HasValue ? newTransaction.Transaction_Date.Value.ToString("yyyy-MM-dd") : "",
-                        Status = newTransaction.Status,
-                        Submit_Date = newTransaction.Create_Date.HasValue ? newTransaction.Create_Date.Value.ToString("yyyy-MM-dd") : ""
-                    },
-                    dashboardCounts = dashboardCounts
+                    message = statusChanged ? "Asset status updated" : "Asset details updated",
+                    dashboardCounts = dashboardCounts,
+                    statusChanged = statusChanged
                 });
             }
+
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error updating asset: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
                 return Json(new
                 {
                     success = false,
                     message = "An error occurred while updating the asset",
                     errorDetails = ex.Message,
-                    stackTrace = ex.StackTrace
                 });
             }
         }
@@ -617,6 +635,57 @@ namespace IT_Inventory.Controllers
 
                 TempData["ErrorMassage"] = "An error occurred while deleting the asset: " + ex.Message;
                 return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetMaterialCodesByGroup(string materialGroup)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(materialGroup))
+                {
+                    return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+                }
+
+                var materialCodes = db.Material_Code
+                    .Where(c => c.Material_Group == materialGroup && c.Is_Deleted != true)
+                    .Select(c => new
+                    {
+                        materialCode = c.Material_Code1
+                    })
+                    .ToList();
+
+                return Json(materialCodes, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting material codes: {ex.Message}");
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetMaterialDescription(string materialCode)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(materialCode))
+                {
+                    return Json(string.Empty, JsonRequestBehavior.AllowGet);
+                }
+
+                var material = db.Material_Code
+                    .Where(c => c.Material_Code1 == materialCode && c.Is_Deleted != true)
+                    .Select(c => c.Material_Description)
+                    .FirstOrDefault();
+
+                return Json(material ?? string.Empty, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error getting material description: {ex.Message}");
+                return Json(string.Empty, JsonRequestBehavior.AllowGet);
             }
         }
 
