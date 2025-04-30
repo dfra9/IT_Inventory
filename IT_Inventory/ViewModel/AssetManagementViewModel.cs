@@ -9,6 +9,7 @@ namespace IT_Inventory.ViewModel
 {
     public class AssetManagementViewModel
     {
+        public long ID { get; set; }
         [Required(ErrorMessage = "No Asset is required")]
         public string No_asset { get; set; }
         [Required(ErrorMessage = "Company Code is required")]

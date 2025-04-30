@@ -99,9 +99,9 @@ namespace IT_Inventory.Controllers
                     viewModel.Departement_Name = asset.Departement;
                     viewModel.City_Name = asset.City;
                     var location = db.Location.FirstOrDefault(l =>
-                l.Location_Name == asset.Location &&
-                l.City_Name == asset.City &&
-                l.Is_Deleted != true);
+                    l.Location_Name == asset.Location &&
+                    l.City_Name == asset.City &&
+                    l.Is_Deleted != true);
                     viewModel.Locations = location?.Location_Code;
                     viewModel.Location_Name = asset.Location;
                     if (!string.IsNullOrEmpty(asset.City))
@@ -117,7 +117,7 @@ namespace IT_Inventory.Controllers
                     viewModel.Transaction_Date = asset.Transaction_Date.HasValue ? (DateTime)asset.Transaction_Date : DateTime.Now;
                     viewModel.AssetHistory = db.Asset
                    .Where(a => a.No_asset == id && a.Is_Deleted != true)
-                   .OrderByDescending(a => a.Transaction_Date)
+                   .OrderByDescending(a => a.ID)
                    .ToList();
 
                 }
@@ -213,7 +213,7 @@ namespace IT_Inventory.Controllers
                 if (ModelState.IsValid)
                 {
                     var existAsset = db.Asset
-                         .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
+                         .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true && a.ID == viewModel.ID)
                          .OrderByDescending(a => a.Transaction_Date)
                          .FirstOrDefault();
 
@@ -231,9 +231,10 @@ namespace IT_Inventory.Controllers
 
                     if (existAsset != null)
                     {
-                        existAsset.Status = viewModel.Status;
-                        existAsset.PIC = viewModel.PIC;
-                        existAsset.Transaction_Date = viewModel.Transaction_Date;
+                        //existAsset.Status = viewModel.Status;
+                        //existAsset.PIC = viewModel.PIC;
+                        //existAsset.Transaction_Date = viewModel.Transaction_Date;
+
                         existAsset.Edit_By = User.Identity.Name ?? "System";
                         existAsset.Edit_Date = DateTime.Now;
                         existAsset.Latest_User = viewModel.Latest_User;
@@ -244,8 +245,6 @@ namespace IT_Inventory.Controllers
 
                     if (newHistoryAsset)
                     {
-
-
                         var assetHistory = new Asset
                         {
                             No_asset = viewModel.No_asset,
@@ -322,9 +321,9 @@ namespace IT_Inventory.Controllers
                 if (mode != "Create" && !string.IsNullOrEmpty(viewModel.No_asset))
                 {
                     viewModel.AssetHistory = db.Asset
-               .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
-               .OrderByDescending(a => a.Transaction_Date)
-               .ToList();
+                   .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
+                   .OrderByDescending(a => a.Transaction_Date)
+                   .ToList();
                 }
                 else
                 {
