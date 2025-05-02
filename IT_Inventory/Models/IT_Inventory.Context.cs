@@ -37,5 +37,6 @@ namespace IT_Inventory
         public virtual DbSet<UoM> UoM { get; set; }
         public virtual DbSet<Material_Group> Material_Group { get; set; }
         public virtual DbSet<Log_Transaction> Log_Transaction { get; set; }
+        public virtual DbSet<Asset_History> Asset_History { get; set; }
     }
 }

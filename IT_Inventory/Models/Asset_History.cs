@@ -12,31 +12,15 @@ namespace IT_Inventory.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Asset
+    public partial class Asset_History
     {
         public int ID { get; set; }
         public string NO { get; set; }
         public string No_asset { get; set; }
-        public string Company_Code { get; set; }
-        public string Company_Name { get; set; }
-        public string Material_Group { get; set; }
-        public string Material_Description { get; set; }
-        public Nullable<int> Quantity { get; set; }
-        public Nullable<System.DateTime> Acquisition_Date { get; set; }
-        public string Acquisition_value { get; set; }
-        public string No_Asset_PGA { get; set; }
-        public string No_Asset_Accounting { get; set; }
-        public string No_PO { get; set; }
-        public string Latest_User { get; set; }
-        public string Departement { get; set; }
-        public string Location { get; set; }
-        public string City { get; set; }
-        public Nullable<System.DateTime> Last_Check_Date { get; set; }
-        public string Condition { get; set; }
         public string Status { get; set; }
         public string PIC { get; set; }
-        public string Vendor { get; set; }
         public Nullable<System.DateTime> Transaction_Date { get; set; }
+        public Nullable<System.DateTime> Submit_Date { get; set; }
         public string Create_By { get; set; }
         public Nullable<System.DateTime> Create_Date { get; set; }
         public string Edit_By { get; set; }
@@ -44,11 +28,6 @@ namespace IT_Inventory.Models
         public string Delete_By { get; set; }
         public Nullable<System.DateTime> Delete_Date { get; set; }
         public Nullable<bool> Is_Deleted { get; set; }
-        public string Material_Code { get; set; }
-        public string Serial_Number { get; set; }
-        public string Device_Id { get; set; }
-        public string UoM { get; set; }
-        public string City_Name { get; set; }
         public string Role { get; set; }
         public string Company_User { get; set; }
     }

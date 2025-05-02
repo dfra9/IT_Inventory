@@ -23,5 +23,6 @@ namespace IT_Inventory.Models
         public string Delete_By { get; set; }
         public Nullable<System.DateTime> Delete_Date { get; set; }
         public Nullable<bool> Is_Deleted { get; set; }
+        public string Role { get; set; }
     }
 }

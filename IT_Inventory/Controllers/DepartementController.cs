@@ -45,7 +45,7 @@ namespace IT_Inventory.Controllers
 
                         if (existDepartement != null && existDepartement.Is_Deleted == true)
                         {
-                            existDepartement.Departement_Name = departement.Departement_Name;
+                            existDepartement.Role = departement.Role;
                             existDepartement.Is_Deleted = false;
                             existDepartement.Create_By = departement.Create_By;
                             existDepartement.Create_Date = DateTime.Now;
@@ -72,7 +72,7 @@ namespace IT_Inventory.Controllers
                         var existDepartement = db.Departement.Find(departement.Departement_Code);
                         if (existDepartement != null)
                         {
-                            existDepartement.Departement_Name = departement.Departement_Name;
+                            existDepartement.Role = departement.Role;
                             existDepartement.Edit_By = User.Identity.Name;
                             existDepartement.Edit_Date = DateTime.Now;
                         }

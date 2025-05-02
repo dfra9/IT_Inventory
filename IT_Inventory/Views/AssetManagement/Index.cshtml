@@ -18,6 +18,10 @@
 }
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
 <style>
     .select2-dropdown {
         z-index: 9999;
@@ -170,15 +174,17 @@
                     <th>Departement</th>
                     <th>Location</th>
                     <th>PIC / Vendor</th>
+                    <th>Role</th>
+                    <th>Company User</th>
                     <th>Status</th>
                     <th>Transaction Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody id="assetListTable">
-                @if (Model.AssetHistory != null && Model.AssetHistory.Count > 0)
+                @if (Model.AssetList != null && Model.AssetList.Count > 0)
                 {
-                    foreach (var item in Model.AssetHistory)
+                    foreach (var item in Model.AssetList)
                     {
                         <tr>
                             <td>@item.No_asset</td>
@@ -189,6 +195,8 @@
                             <td>@item.Departement</td>
                             <td>@item.Location</td>
                             <td>@item.PIC</td>
+                            <td>@item.Role</td>
+                            <td>@item.Company_User</td>
                             <td>
                                 <span class="@GetStatusClass(item.Status)">@item.Status</span>
                             </td>
@@ -227,530 +235,211 @@
 
 
 
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-
-    $(document).ready(function () {
-
-        $('.select2').select2({
-            placeholder: "Select an option",
-            allowClear: true,
-            width: '100%',
-            dropdownParent: $('body')
-        });
-
-
-
-    var assetTable = $('#assetDataTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        dom: '<"top"f><"data-table-wrapper"rt><"bottom"ip>',
-        language: {
-            search: "",
-            lengthMenu: "Show _MENU_ entries",
-            info: "Showing _START_ to _END_ of _TOTAL_ entries",
-            infoEmpty: "No data available",
-            infoFiltered: "(filtered from _MAX_ total entries)",
-            paginate: {
-                first: "First",
-                last: "Last",
-                next: "Next",
-                previous: "Previous"
-            }
-        }
-    });
-
-
-
-
-    $('#tableSearch').on('keyup', function () {
-        assetTable.search($(this).val()).draw();
-    });
-
-    $("#editStatus").on('select2:select', function (e) {
-        $(this).trigger('change.select2');
-    });
-
-    $('#tableSearch').on('keyup', function () {
-        assetTable.search($(this).val()).draw();
-    });
-
-
-
-
-    $(document).on('click', '.btn-view', function() {
-        var assetNo = $(this).data('asset-no');
-        $.ajax({
-            url: '@Url.Action("GetAssetDetails", "AssetManagement")',
-            type: 'GET',
-            data: { assetId: assetNo },
-            success: function(data) {
-                if (data.success) {
-                    renderAssetDetails(data);
-                    $("#viewAssetModal").modal('show');
-                } else {
-                    toastr.error(data.message || "Error loading asset detail");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error:", error);
-                toastr.error("Error loading asset details");
-            }
-        });
-    });
-
-    function initializeEditModal() {
-        const statusForms = {
-            'Return': {
-                picLabel: 'PIC / Vendor',
-                dateLabel: 'Return Date'
-            },
-            'Borrowing': {
-                picLabel: 'PIC / Vendor',
-                dateLabel: 'Borrow Date'
-            },
-            'Service': {
-                picLabel: 'PIC / Vendor',
-                dateLabel: 'Service Date'
-            },
-            'Ready': {
-                picLabel: 'PIC / Vendor',
-                dateLabel: 'Available Date'
-            },
-            'Assign': {
-                picLabel: 'PIC',
-                dateLabel: 'Assign Date'
-            },
-            'Write Off': {
-                picLabel: 'Approved By',
-                dateLabel: 'Write Off Date'
-            }
-        };
-
-        $("#dynamicStatusForms").remove();
-
-        const dynamicForms = $('<div id="dynamicStatusForms"></div>');
-
-        Object.entries(statusForms).forEach(([status, { picLabel, dateLabel }]) => {
-            const sanitizedStatus = status.replace(/\s+/g, '');
-            const statusFormId = `edit${sanitizedStatus}Form`;
-            const picId = `edit${sanitizedStatus}PIC`;
-            const dateId = `edit${sanitizedStatus}Date`;
-
-            const statusForm = $(`
-                <div id="${statusFormId}" class="edit-status-form" style="display: none;">
-                    <div class="form-group">
-                        <label for="${picId}">${picLabel}</label>
-                        <input type="text" class="form-control" id="${picId}" name="PIC" placeholder="${picLabel}" />
-                    </div>
-                    <div class="form-group">
-                        <label for="${dateId}">${dateLabel}</label>
-                        <input type="date" class="form-control" id="${dateId}" name="Transaction_Date" />
-                    </div>
-                </div>
-            `);
-
-            dynamicForms.append(statusForm);
-        });
-
-        $("#editAssetModal .modal-body form").append(dynamicForms);
-
-        $("#editStatus").on('change', function () {
-            const status = $(this).val();
-            $(".edit-status-form").hide();
-            if (status) {
-                const sanitizedStatus = status.replace(/\s+/g, '');
-                console.log("Looking for form:", `#edit${sanitizedStatus}Form`);
-                $(`#edit${sanitizedStatus}Form`).show();
-                const formElement = $(`#edit${sanitizedStatus}Form`);
-                if (formElement.length) {
-                    formElement.show();
-                    console.log("Form displayed");
-                } else {
-                    console.error("Form not found:", `#edit${sanitizedStatus}Form`);
-                }
-                $(this).trigger('change.select2');
-            }
-        });
-    }
-
-
-    $(document).on('click', '.btn-edit', function() {
-        var assetNo = $(this).data('asset-no');
-
-        initializeEditModal();
-
-        $.ajax({
-            url: '@Url.Action("GetAssetDetails", "AssetManagement")',
-            type: 'GET',
-            data: { assetId: assetNo },
-            success: function(data) {
-                if (!data || data.success === false) {
-                    toastr.error(data?.message || "Error loading asset details");
-                    return;
-                }
-
-                const assetData = data;
-                $('#editAssetModal').data('originalStatus', assetData.Status || '');
-
-                $("#editAssetId").val(assetData.No_asset || '');
-                $("#editCompanyCode").val(assetData.Company_Code || '').trigger('change');
-                $("#editMaterialGroup").val(assetData.Material_Group || '').trigger('change');
-                $("#editMaterialCode").val(assetData.Material_Code || '').trigger('change');
-                $("#editMaterialDescription").val(assetData.Material_Description || '');
-                $("#editDepartment").val(assetData.Departement || '').trigger('change');
-
-                $("#editCity").val(assetData.City || '').trigger('change');
-
-                $("#editCity").off('change.populateLocation').on('change.populateLocation', function () {
-                    loadLocationsByCity(assetData.City, '#editLocation');
-
-                    setTimeout(function () {
-                        $("#editLocation").val(assetData.Location || '').trigger('change');
-                    }, 500);
-                }).trigger('change');
-
-                const status = assetData.Status || '';
-                setTimeout(function() {
-                    $("#editStatus").val(status).trigger('change');
-
-                    const sanitizedStatus = status.replace(/\s+/g, '');
-                    const picField = $(`#edit${sanitizedStatus}PIC`);
-                    const dateField = $(`#edit${sanitizedStatus}Date`);
-
-                    if (picField.length) {
-                        picField.val(assetData.PIC || '');
+    function initializeDataTable() {
+        $('#assetDataTable').DataTable({
+            responsive: true,
+            pageLength: 25,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                    title: 'Asset List_' + new Date().toISOString().slice(0, 25),
+                    className: 'btn btn-success btn-sm',
+                    exportOptions: {
+                        columns: ':visible:not(:last-child)'
                     }
-
-                    if (dateField.length) {
-                        dateField.val(formatDateForInput(assetData.Transaction_Date));
-                    }
-
-                    $('#editAssetModal').data('originalData', {
-                        status: status,
-                        pic: assetData.PIC || '',
-                        transactionDate: formatDateForInput(assetData.Transaction_Date)
-                    });
-
-                    $("#editAssetModal").modal('show');
-                }, 800);
-            },
-            error: function(xhr, status, error) {
-                console.error("Error:", error);
-                toastr.error("Error loading asset details");
+                }
+            ],
+            language: {
+                search: "",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "No data available",
+                infoFiltered: "(filtered from _MAX_ total entries)",
+                paginate: {
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous"
+                }
             }
         });
-    });
 
-        function validateAssetForm() {
-            const requiredFields = [
-                '#editCompanyCode',
-                '#editMaterialGroup',
-                '#editMaterialCode',
-                '#editStatus'
-            ];
-
-            let isValid = true;
-            requiredFields.forEach(field => {
-                if (!$(field).val()) {
-                    $(field).addClass('is-invalid');
-                    isValid = false;
-                } else {
-                    $(field).removeClass('is-invalid');
-                }
+            $('#tableSearch').on('keyup', function () {
+                assetTable.search($(this).val()).draw();
             });
 
-            return isValid;
-        }
-
-    $('#saveAssetChanges').click(function () {
-        var status = $("#editStatus").val();
-        if (!validateAssetForm()) return;
-
-        if (!$("#editAssetId").val()) {
-            toastr.error("No Asset is required");
-            return;
-        }
-
-        if (!status) {
-            toastr.error("Status is required");
-            return;
-        }
-
-        const sanitizedStatus = status.replace(/\s+/g, '');
-        const picSelector = `#edit${sanitizedStatus}PIC`;
-        const dateSelector = `#edit${sanitizedStatus}Date`;
-
-        if ($(picSelector).length === 0) {
-            console.error("PIC field not found:", picSelector);
-            toastr.error("PIC field not found for the selected status");
-            return;
-        }
-
-        if ($(dateSelector).length === 0) {
-            console.error("Date field not found:", dateSelector);
-            toastr.error("Date field not found for the selected status");
-            return;
-        }
-
-        const pic = $(picSelector).val();
-        const transactionDate = $(dateSelector).val();
-
-        console.log("PIC:", pic);
-        console.log("Transaction Date:", transactionDate);
-
-        if (!pic) {
-            toastr.error("PIC is required");
-            return;
-        }
-
-        if (!transactionDate) {
-            toastr.error("Transaction Date is required");
-            return;
-        }
-
-        var formData = {
-            No_asset: $("#editAssetId").val(),
-            Status: status,
-            PIC: pic,
-            Transaction_Date: transactionDate,
-            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-        };
-
-        var originalData = $('#editAssetModal').data('originalData');
-        if (formData.Status === originalData.status &&
-            formData.PIC === originalData.pic &&
-            formData.Transaction_Date === originalData.transactionDate) {
-            toastr.info("No changes were made");
-            $("#editAssetModal").modal('hide');
-            return;
-        }
-
-        const saveBtn = $(this);
-        const originalText = saveBtn.html();
-        saveBtn.html('<i class="fas fa-spinner fa-spin"></i> Saving...');
-        saveBtn.prop('disabled', true);
-        $.ajax({
-            url: '@Url.Action("UpdateAsset", "AssetManagement")',
-            type: 'POST',
-            data: formData,
-            success: function (data) {
-                console.log("Response received:", data);
-                if (data.success) {
-                    toastr.success(data.message || "Asset updated successfully");
-                    $("#editAssetModal").modal('hide');
-                    if (data.dashboardCounts) {
-                        updateDashboardCounts(data.dashboardCounts);
-                    } else {
-                        refreshDashboardData();
+            $(document).on('click', '.btn-view', function () {
+                var assetNo = $(this).data('asset-no');
+                $.ajax({
+                    url: '@Url.Action("GetAssetDetails", "AssetManagement")',
+                    type: 'GET',
+                    data: { assetId: assetNo },
+                    success: function (data) {
+                        if (data.success) {
+                            renderAssetDetails(data);
+                            $("#viewAssetModal").modal('show');
+                        } else {
+                            toastr.error(data.message || "Error loading asset detail");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                        toastr.error("Error loading asset details");
                     }
-                    if (formData.Status !== originalData.status ||
-                        formData.PIC !== originalData.pic ||
-                        formData.Transaction_Date !== originalData.transactionDate) {
-                        refreshAssetTable();
-                        refreshAssetHistory(formData.No_asset);
-                    }
-                } else {
-                    toastr.error(data.message || "Error updating asset");
-                    console.error("Error from server:", data);
-                }
-                saveBtn.html(originalText);
-                saveBtn.prop('disabled', false);
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX error:", error);
-                console.error("Status:", status);
-                console.error("Response:", xhr.responseText);
-                toastr.error("Error updating asset");
-
-                saveBtn.html(originalText);
-                saveBtn.prop('disabled', false);
-            }
-        });
-    });
-
-
-        $(document).on('click', '.btn-delete', function () {
-            var assetNo = $(this).data('asset-no');
-            var assetDesc = $(this).data('asset-desc');
-
-        $('#deleteAssetId').val(assetNo);
-        $('#deleteAssetNo').text(assetNo);
-        $('#deleteAssetDesc').text(assetDesc);
-
-        $("#deleteAssetModal").modal('show');
-    });
-
-    $('#confirmDeleteAsset').click(function() {
-        var assetNo = $('#deleteAssetId').val();
-
-        $.ajax({
-            url: '@Url.Action("DeleteAsset", "AssetManagement")',
-            type: 'POST',
-            data: {
-                No_asset: assetNo,
-                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function(response) {
-                if (response.success) {
-                    toastr.success("Asset successfully deleted");
-                    $("#deleteAssetModal").modal('hide');
-                    if (response.dashboardCounts) {
-                        updateDashboardCounts(response.dashboardCounts);
-                    }
-                    refreshAssetTable();
-                } else {
-                    toastr.error(response.message || "Failed to delete asset");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error:", error);
-                toastr.error("An error occurred while deleting the asset");
-            }
-        });
-    });
-
-
-    function refreshAssetHistory(assetNo) {
-    $.ajax({
-        url: '@Url.Action("SearchAssetHistory", "AssetManagement")',
-        type: 'GET',
-        data: { search: assetNo },
-        success: function (data) {
-            var tbody = $("#assetHistoryTable");
-            tbody.empty();
-
-            if (data && data.length > 0) {
-                data.forEach(function (item) {
-
-                    var statusClass = getStatusClass(item.Status);
-
-
-                    var row = $("<tr>").append(
-                        $("<td>").text(item.No_asset || ""),
-                        $("<td>").text(item.PIC || ""),
-                        $("<td>").text(formatDate(item.Transaction_Date)),
-                        $("<td>").html($("<span>").addClass(statusClass).text(item.Status || "")),
-                        $("<td>").text(formatDate(item.Submit_Date))
-                    );
-                    tbody.append(row);
                 });
-            } else {
-
-                tbody.append(
-                    $("<tr>").append(
-                        $("<td>").attr("colspan", "5").addClass("text-center").text("No data found")
-                    )
-                );
-            }
-
-            console.log("Asset history refreshed successfully");
-        },
-        error: function (error) {
-            console.error("Error refreshing asset history:", error);
-            toastr.error("Error refreshing asset history");
-        }
-    });
-    }
+            });
 
 
-    function updateDashboardCounts(dashboardCounts) {
-        if (!dashboardCounts) return;
+
+            $(document).on('click', '.btn-edit', function () {
+                var assetNo = $(this).data('asset-no');
+                $.ajax({
+                    url: '@Url.Action("GetAssetDetails", "AssetManagement")',
+                    type: 'GET',
+                    data: { assetId: assetNo },
+                    success: function (data) {
+                        if (!data || data.success === false) {
+                            toastr.error(data?.message || "Error loading asset details");
+                            return;
+                        }
+
+                        const assetData = data;
+
+                        $("#editAssetId").val(assetData.No_asset || '');
+                        $("#editCompanyCode").val(assetData.Company_Code || '').trigger('change');
+                        $("#editMaterialGroup").val(assetData.Material_Group || '').trigger('change');
+                        $("#editMaterialCode").val(assetData.Material_Code || '').trigger('change');
+                        $("#editMaterialDescription").val(assetData.Material_Description || '');
+                        $("#editDepartment").val(assetData.Departement || '').trigger('change');
+
+                        $("#editCity").val(assetData.City || '').trigger('change');
+
+                        $("#editCity").off('change.populateLocation').on('change.populateLocation', function () {
+                            loadLocationsByCity(assetData.City, '#editLocation');
+
+                            setTimeout(function () {
+                                $("#editLocation").val(assetData.Location || '').trigger('change');
+                            }, 500);
+                        }).trigger('change');
+
+                        const status = assetData.Status || '';
+                        setTimeout(function () {
+                            $("#editStatus").val(status).trigger('change');
+
+                            const sanitizedStatus = status.replace(/\s+/g, '');
+                            const picField = $(`#edit${sanitizedStatus}PIC`);
+                            const dateField = $(`#edit${sanitizedStatus}Date`);
+
+                            if (picField.length) {
+                                picField.val(assetData.PIC || '');
+                            }
+
+                            if (dateField.length) {
+                                dateField.val(formatDateForInput(assetData.Transaction_Date));
+                            }
+
+                            $('#editAssetModal').data('originalData', {
+                                status: status,
+                                pic: assetData.PIC || '',
+                                transactionDate: formatDateForInput(assetData.Transaction_Date)
+                            });
+
+                            $("#editAssetModal").modal('show');
+                        }, 800);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                        toastr.error("Error loading asset details");
+                    }
+                });
+            });
+
+            $(document).on('click', '.btn-delete', function () {
+                var assetNo = $(this).data('asset-no');
+                var assetDesc = $(this).data('asset-desc');
+
+                $('#deleteAssetId').val(assetNo);
+                $('#deleteAssetNo').text(assetNo);
+                $('#deleteAssetDesc').text(assetDesc);
+            });
 
 
-        console.log("Received Dashboard Counts:", dashboardCounts);
-
-
-        if (dashboardCounts.TotalAssets !== undefined) {
-            $('#total-assets').text(dashboardCounts.TotalAssets);
-        }
-
-        if (dashboardCounts.AvailableAssets !== undefined) {
-            $('#available-assets').text(dashboardCounts.AvailableAssets);
-        }
-
-        if (dashboardCounts.AssetsInUse !== undefined) {
-            $('#assets-in-use').text(dashboardCounts.AssetsInUse);
-        }
-
-        if (dashboardCounts.AssetsInMaintenance !== undefined) {
-            $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
-        }
-    }
-
-    $(document).ready(function () {
-        refreshDashboardData();
-    });
-
-    function refreshDashboardData() {
-        $.ajax({
-            url: '/AssetManagement/GetDashboardCountsJson',
-            type: 'GET',
-            dataType: 'json',
-            cache: false,
-            success: function (dashboardCounts) {
-                console.log("Dashboard data refreshed successfully:", dashboardCounts);
-                updateDashboardCounts(dashboardCounts);
-            },
-            error: function (xhr, status, error) {
-                console.error('Error refreshing dashboard data:', error);
-                console.error('Status:', status);
-                console.error('Response:', xhr.responseText);
-            }
-        });
-    }
-
-    function loadLocationsByCity(cityName, targetDropdown) {
-        if (!cityName) {
-            $(targetDropdown).empty().append('<option value="">Select Location</option>').trigger('change');
-            return;
-        }
-
-        $.ajax({
-            url: '@Url.Action("GetLocationByCity", "AssetManagement")',
-            type: 'GET',
-            data: { cityId: cityName },
-            success: function (locations) {
-                $(targetDropdown).empty().append('<option value="">Select Location</option>');
-                if (locations && locations.length > 0) {
-                    locations.forEach(function (location) {
-                        $(targetDropdown).append(`<option value="${location.locationName}">${location.locationName}</option>`);
-                    });
+            function updateDashboardCounts(dashboardCounts) {
+                if (!dashboardCounts) return;
+                if (dashboardCounts.TotalAssets !== undefined) {
+                    $('#total-assets').text(dashboardCounts.TotalAssets);
                 }
-                $(targetDropdown).trigger('change');
-            },
-            error: function (error) {
-                console.error("Error loading locations:", error);
-                toastr.error("Error loading locations");
+
+                if (dashboardCounts.AvailableAssets !== undefined) {
+                    $('#available-assets').text(dashboardCounts.AvailableAssets);
+                }
+
+                if (dashboardCounts.AssetsInUse !== undefined) {
+                    $('#assets-in-use').text(dashboardCounts.AssetsInUse);
+                }
+
+                if (dashboardCounts.AssetsInMaintenance !== undefined) {
+                    $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
+                }
             }
-        });
-    }
 
-    function refreshAssetTable() {
-        $.ajax({
-            url: '@Url.Action("GetAssetData", "AssetManagement")',
-            type: 'GET',
-            success: function(refreshedData) {
-                assetTable.clear();  // Remove the extra parentheses here
+            $(document).ready(function () {
+                refreshDashboardData();
+            });
 
-                if (refreshedData && refreshedData.length > 0) {
-                    refreshedData.forEach(function(asset) {
-                        var statusClass = getStatusClass(asset.Status);
+            function refreshDashboardData() {
+                $.ajax({
+                    url: '/AssetManagement/GetDashboardCountsJson',
+                    type: 'GET',
+                    dataType: 'json',
+                    cache: false,
+                    success: function (dashboardCounts) {
+                        console.log("Dashboard data refreshed successfully:", dashboardCounts);
+                        updateDashboardCounts(dashboardCounts);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error refreshing dashboard data:', error);
+                        console.error('Status:', status);
+                        console.error('Response:', xhr.responseText);
+                    }
+                });
+            }
 
-                        var statusHtml = '<span class="' + statusClass + '">' + (asset.Status || '') + '</span>';
-                        assetTable.row.add([
-                            asset.No_asset || '',
-                            asset.Company_Name || '',
-                            asset.Material_Group || '',
-                            asset.Material_Code || '',
-                            asset.Material_Description || '',
-                            asset.Departement || '',
-                            asset.Location || '',
-                            asset.PIC || '',
-                            `<span class="${statusClass}">${asset.Status || ''}</span>`,
-                            formatDate(asset.Transaction_Date),
-                            `
+
+            function refreshAssetTable() {
+                $.ajax({
+                    url: '/AssetManagement/GetAssetData',
+                    type: 'GET',
+                    success: function (data) {
+                        $("#assetListTable").empty();
+
+                        if (data && data.length > 0) {
+                            data.forEach(function (asset) {
+                                var statusClass = getStatusClass(asset.Status);
+
+                                var row = `<tr>
+                        <td>${asset.No_asset || ''}</td>
+                        <td>${asset.Company_Name || ''}</td>
+                        <td>${asset.Material_Group || ''}</td>
+                        <td>${asset.Material_Code || ''}</td>
+                        <td>${asset.Material_Description || ''}</td>
+                        <td>${asset.Departement || ''}</td>
+                        <td>${asset.Location || ''}</td>
+                        <td>${asset.PIC || ''}</td>
+                        <td>${asset.Role || ''}</td>
+                        <td>${asset.Company_User || ''}</td>
+                        <td><span class="${statusClass}">${asset.Status || ''}</span></td>
+                        <td>${formatDate(asset.Transaction_Date) || ''}</td>
+                        <td>
                             <div class="btn-group">
                                     <a href="@Url.Action("Editor", "AssetManagement")?id=${asset.No_asset}&mode=View"
                                        class="btn btn-info btn-sm">
@@ -765,191 +454,72 @@
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
-                            `
-                        ]);
-                    });
-                } else {
-                    assetTable.row.add([
-                        'No data', '', '', '', '', '', '', '', '', '',
-                        ''
-                    ]);
-                }
-
-                assetTable.draw();
-            },
-            error: function(error) {
-                console.error("Error refreshing asset table:", error);
-                toastr.error("Error refreshing asset table");
-            }
-        });
-    }
-
-    function getStatusClass(status) {
-        if (!status) return "";
-
-        const statusClasses = {
-            "Borrowing": "status-borrowing",
-            "Return": "status-return",
-            "Service": "status-service",
-            "Ready": "status-ready",
-            "Assign": "status-assign",
-            "Write Off": "status-write-off"
-        };
-
-        return statusClasses[status] || "";
-    }
-
-
-    function renderAssetDetails(asset) {
-        var detailsHtml = `
-            <tr>
-                <th style="width:20%">No Asset</th>
-                <td>${asset.No_asset || ''}</td>
-            </tr>
-            <tr>
-                <th>Company</th>
-                <td>${asset.Company_Name || ''} (${asset.Company_Code || ''})</td>
-            </tr>
-            <tr>
-                <th>Material Group</th>
-                <td>${asset.Material_Group || ''}</td>
-            </tr>
-            <tr>
-                <th>Material Code</th>
-                <td>${asset.Material_Code || ''}</td>
-            </tr>
-            <tr>
-                <th>Material Description</th>
-                <td>${asset.Material_Description || ''}</td>
-            </tr>
-            <tr>
-                <th>Quantity</th>
-                <td>${asset.Quantity || ''} ${asset.UoM || ''}</td>
-            </tr>
-            <tr>
-                <th>Serial Number</th>
-                <td>${asset.Serial_Number || ''}</td>
-            </tr>
-            <tr>
-                <th>Device ID</th>
-                <td>${asset.Device_Id || ''}</td>
-            </tr>
-            <tr>
-                <th>Acquisition Date</th>
-                <td>${formatDate(asset.Acquisition_Date)}</td>
-            </tr>
-            <tr>
-                <th>Department</th>
-                <td>${asset.Departement || ''}</td>
-            </tr>
-            <tr>
-                <th>Location</th>
-                <td>${asset.Location || ''} (${asset.City || ''})</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td><span class="badge status-${(asset.Status || '').toLowerCase().replace(/\s+/g, '-')}">${asset.Status || ''}</span></td>
-            </tr>
-            <tr>
-                <th>PIC / Vendor</th>
-                <td>${asset.PIC || ''}</td>
-            </tr>
-            <tr>
-                <th>Transaction Date</th>
-                <td>${formatDate(asset.Transaction_Date)}</td>
-            </tr>
-            <tr>
-                <th>Condition</th>
-                <td>${asset.Condition || ''}</td>
-            </tr>
-        `;
-
-        $('#assetDetailsTable').html(detailsHtml);
-        $('#viewAssetModalLabel').text(`Asset Details: ${asset.No_asset}`);
-    }
-        function formatDateForInput(dateString) {
-            if (!dateString) return '';
-
-            try {
-                if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
-                    var timeStamp = parseInt(dateString.substr(6));
-                    var date = new Date(timeStamp);
-                    return formatDateObject(date);
-                }
-
-                var date = new Date(dateString);
-                return formatDateObject(date);
-            } catch (e) {
-                console.error("Error parsing date:", e);
-                return '';
-            }
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return "";
-
-            try {
-                if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
-                    var timeStamp = parseInt(dateString.substr(6));
-                    var date = new Date(timeStamp);
-                    return formatDateObject(date);
-                }
-
-                var date = new Date(dateString);
-                return formatDateObject(date);
-            } catch (e) {
-                console.error("Error parsing date:", e);
-                return "";
-            }
-        }
-
-        function formatDateObject(date) {
-            if (isNaN(date.getTime())) return "";
-
-            var year = date.getFullYear();
-            var month = (date.getMonth() + 1).toString().padStart(2, '0');
-            var day = date.getDate().toString().padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-
-
-
-        $('#editAssetModal').on('shown.bs.modal', function () {
-
-            $('.select2').each(function () {
-                const val = $(this).val();
-
-                if ($(this).hasClass('select2-hidden-accessible')) {
-                    $(this).select2('destroy');
-                }
-
-                $(this).select2({
-                    dropdownParent: $('#editAssetModal'),
-                    width: '100%'
+                                  </td>
+                             </tr>`;
+                                $("#assetListTable").append(row);
+                            });
+                        } else {
+                            $("#assetListTable").append('<tr><td colspan="11" class="text-center">No Asset found</td></tr>');
+                        }
+                        if ($.fn.DataTable.isDataTable('#assetDataTable')) {
+                            $('#assetDataTable').DataTable().destroy();
+                            initializeDataTable();
+                        }
+                        console.log("Asset table refreshed successfully");
+                    },
+                    error: function (error) {
+                        console.error("Error refreshing asset table:", error);
+                        toastr.error("Error refreshing asset table");
+                    }
                 });
+            }
 
-                if (val) {
-                    $(this).val(val).trigger('change');
+
+      $(document).ready(function () {
+          refreshAssetTable();
+          refreshDashboardData();
+      });
+
+            function getStatusClass(status) {
+                if (!status) return "";
+
+                switch (status) {
+                    case "Borrowing": return "status-borrowing";
+                    case "Return": return "status-return";
+                    case "Service": return "status-service";
+                    case "Ready": return "status-ready";
+                    case "Assign": return "status-assign";
+                    case "Write Off": return "status-write-off";
+                    default: return "";
                 }
-            });
-        });
+            }
 
-        $("#editCity").on('change', function () {
-            var selectedCity = $(this).val();
-            loadLocationsByCity(selectedCity, '#editLocation');
-        });
+            function formatDate(dateString) {
+                if (!dateString) return "";
 
-        initializeLocationDropdowns();
+                try {
+                    if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                        const timestamp = parseInt(dateString.substr(6));
+                        const date = new Date(timestamp);
+                        if (isNaN(date.getTime())) return "";
 
-        function initializeLocationDropdowns() {
-            $("#editCity").each(function () {
-                var $cityDropdown = $(this);
-                $cityDropdown.on('change', function () {
-                    var selectedCity = $cityDropdown.val();
-                    loadLocationsByCity(selectedCity, '#editLocation');
-                });
-            });
+                        const year = date.getFullYear();
+                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        const day = date.getDate().toString().padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    } else {
+                        const date = new Date(dateString);
+                        if (isNaN(date.getTime())) return "";
+
+                        const year = date.getFullYear();
+                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        const day = date.getDate().toString().padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    }
+                } catch (e) {
+                    console.error("Error parsing date:", e);
+                    return "";
+                }
+            }
         }
-    });
 </script>

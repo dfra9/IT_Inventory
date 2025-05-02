@@ -454,7 +454,7 @@
                             <label>Departement </label>
                             @if (mode == "View" || mode == "Delete")
                             {
-                                @Html.TextBoxFor(m => m.Departement_Name, new { @class = "form-control", @readonly = "readonly" })
+                                @Html.TextBoxFor(m => m.Departement_Code, new { @class = "form-control", @readonly = "readonly" })
                             }
                             else
                             {
@@ -549,9 +549,13 @@
                     }
                     @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
                 </div>
+
                 @Html.HiddenFor(m => m.PIC, new { id = "hiddenPIC" })
                 @Html.ValidationMessageFor(m => m.PIC, "", new { @class = "text-danger" })
-
+                @Html.HiddenFor(m => m.Role, new { id = "hiddenRole" })
+                @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                @Html.HiddenFor(m => m.Company_User, new { id = "hiddenComp" })
+                @Html.ValidationMessageFor(m => m.Company_User, "", new { @class = "text-danger" })
                 @Html.HiddenFor(m => m.Transaction_Date, new { id = "hiddenTransactionDate" })
                 @Html.ValidationMessageFor(m => m.Transaction_Date, "", new { @class = "text-danger" })
                 @if (!readOnly)
@@ -560,6 +564,22 @@
                         <div class="form-group">
                             <label>PIC / Vendor</label>
                             <input type="text" class="form-control" placeholder="PIC / Vendor" id="returnPIC" />
+                        </div>
+                        <div class="form-group" id="returnRoleFormGroup" style="display: none;">
+                            <label>Role</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Role, new { @class = "form-control", @readonly = "readonly", id = "roleDropdown" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Role, Model.GetRoleListItem(), "Select Role", new { @class = "form-control select2", id = "returnRole" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Company User</label>
+                            <input type="text" class="form-control" placeholder="Company User" id="returnComp" />
                         </div>
                         <div class="form-group">
                             <label>Return Date</label>
@@ -571,6 +591,22 @@
                             <label>PIC / Vendor</label>
                             <input type="text" class="form-control" placeholder="PIC / Vendor" id="borrowPIC" />
                         </div>
+                        <div class="form-group" id="borrowRoleFormGroup" style="display: none;">
+                            <label>Role</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Role, new { @class = "form-control", @readonly = "readonly", id = "roleDropdown" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Role, Model.GetRoleListItem(), "Select Role", new { @class = "form-control select2", id = "borrowRole" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Company User</label>
+                            <input type="text" class="form-control" placeholder="Company User" id="borrowComp" />
+                        </div>
                         <div class="form-group">
                             <label>Borrow Date</label>
                             <input type="date" class="form-control" id="borrowDate" />
@@ -580,6 +616,22 @@
                         <div class="form-group">
                             <label>PIC / Vendor</label>
                             <input type="text" class="form-control" placeholder="PIC / Vendor" id="servicePIC" />
+                        </div>
+                        <div class="form-group" id="serviceRoleFormGroup" style="display: none;">
+                            <label>Role</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Role, new { @class = "form-control", @readonly = "readonly", id = "roleDropdown" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Role, Model.GetRoleListItem(), "Select Role", new { @class = "form-control select2", id = "serviceRole" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Company User</label>
+                            <input type="text" class="form-control" placeholder="Company User" id="serviceComp" />
                         </div>
                         <div class="form-group">
                             <label>Service Date</label>
@@ -591,6 +643,22 @@
                             <label>PIC / Vendor</label>
                             <input type="text" class="form-control" placeholder="PIC / Vendor" id="readyPIC" />
                         </div>
+                        <div class="form-group" id="readyRoleFormGroup" style="display: none;">
+                            <label>Role</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Role, new { @class = "form-control", @readonly = "readonly", id = "roleDropdown" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Role, Model.GetRoleListItem(), "Select Role", new { @class = "form-control select2", id = "readyRole" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Company User</label>
+                            <input type="text" class="form-control" placeholder="Company User" id="readyComp" />
+                        </div>
                         <div class="form-group">
                             <label>Available Date</label>
                             <input type="date" class="form-control" id="readyDate" />
@@ -601,6 +669,22 @@
                             <label>PIC</label>
                             <input type="text" class="form-control" placeholder="PIC / Vendor" id="assignPIC" />
                         </div>
+                        <div class="form-group" id="assignRoleFormGroup" style="display: none;">
+                            <label>Role</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Role, new { @class = "form-control", @readonly = "readonly", id = "roleDropdown" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Role, Model.GetRoleListItem(), "Select Role", new { @class = "form-control select2", id = "assignRole" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Company User</label>
+                            <input type="text" class="form-control" placeholder="Company User" id="assignComp" />
+                        </div>
                         <div class="form-group">
                             <label>Assign Date</label>
                             <input type="date" class="form-control" id="assignDate" />
@@ -610,6 +694,22 @@
                         <div class="form-group">
                             <label>Approved By</label>
                             <input type="text" class="form-control" placeholder="PIC / Vendor" id="writeOffPIC" />
+                        </div>
+                        <div class="form-group" id="writeOffRoleFormGroup" style="display: none;">
+                            <label>Role</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Role, new { @class = "form-control", @readonly = "readonly", id = "roleDropdown" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Role, Model.GetRoleListItem(), "Select Role", new { @class = "form-control select2", id = "writeOffRole" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Company User</label>
+                            <input type="text" class="form-control" placeholder="Company User" id="writeOffComp" />
                         </div>
                         <div class="form-group">
                             <label>Write Off Date</label>
@@ -656,6 +756,8 @@
                     <tr>
                         <th>No Assets</th>
                         <th>PIC / Vendor</th>
+                        <th>Role</th>
+                        <th>Company User</th>
                         <th>Transaction Date</th>
                         <th>Status</th>
                         <th>Submit Date</th>
@@ -670,6 +772,8 @@
                             <tr>
                                 <td>@item.No_asset</td>
                                 <td>@item.PIC</td>
+                                <td>@item.Role</td>
+                                <td>@item.Company_User</td>
                                 <td>@(item.Transaction_Date.HasValue ? item.Transaction_Date.Value.ToString("yyyy-MM-dd") : "")</td>
                                 <td>@item.Status</td>
                                 <td>@(item.Create_Date.HasValue ? item.Create_Date.Value.ToString("yyyy-MM-dd") : "")</td>
@@ -696,27 +800,28 @@
         var originalStatus = "@Model.Status";
 
 
-        console.log("Mode:", mode);
-        console.log("City Name:", "@Model.City_Name");
-        console.log("Location Code:", "@Model.Locations");
-        console.log("Location Name:", "@Model.Location_Name");
-
         if (mode == "Edit" || mode == "View" || mode == "Delete") {
             var statusValue = "@Model.Status";
             var cityValue = "@Model.City_Name";
             var locationValue = "@Model.Locations";
             var materialGroupValue = "@Model.Material_Group";
             var materialCodeValue = "@Model.Material_Code";
-
+            var departmentCodeValue = "@Model.Departement_Code";
+            var companyCodeValue = "@Model.Company_Code";
+            var uomValue = "@Model.UoM";
             var originalPIC = "@Model.PIC";
             var originalTransactionDate = "@(Model.Transaction_Date.HasValue ? Model.Transaction_Date.Value.ToString("yyyy-MM-dd") : "")";
+            var roleValue = "@Model.Role";
+            var compValue = "@Model.Company_User";
 
-            console.log("City Value:", cityValue);
-            console.log("Location Value:", locationValue);
-            console.log("Material Group Value:", materialGroupValue);
-            console.log("Material Code Value:", materialCodeValue);
-            console.log("Original PIC:", originalPIC);
-            console.log("Original Transaction Date:", originalTransactionDate);
+            $("#hiddenPIC").val(originalPIC);
+            $("#hiddenRole").val(roleValue);
+            $("#hiddenComp").val(compValue);
+            $("#hiddenTransactionDate").val(originalTransactionDate);
+
+            if (statusValue) {
+                $("#statusDropdown").val(statusValue).trigger('change');
+            }
 
             if (mode == "Edit" && cityValue) {
                 $("#cityDropdown").val(cityValue).trigger('change');
@@ -780,6 +885,7 @@
             dropdownParent: $('body')
         });
 
+
         function showErrorToast(message) {
             toastr.error(message, {
                 positionClass: 'toast-top-right',
@@ -829,7 +935,6 @@
                     .trigger('change');
                 return;
             }
-
             $.ajax({
                 url: '@Url.Action("GetMaterialCodesByGroup", "AssetManagement")',
                 type: 'GET',
@@ -838,7 +943,6 @@
                     $("#materialCodeDropdown")
                         .empty()
                         .append('<option value="">Select Material Code</option>');
-
                     if (materialCodes && materialCodes.length > 0) {
                         materialCodes.forEach(function (code) {
                             $("#materialCodeDropdown").append(
@@ -914,7 +1018,16 @@
                         width: '100%',
                         dropdownParent: $('body')
                     });
-                },
+                    if (mode == "Edit" || mode == "View" || mode == "Delete") {
+                    var locationValue = "@Model.Locations";
+                    if (locationValue) {
+
+                    setTimeout(function () {
+                        $("#locationDropdown").val(locationValue).trigger('change');
+                    }, 300);
+                }
+            }
+        },
                 error: function (error) {
                     console.error("Error loading locations:", error);
                     showErrorToast("Error loading locations.");
@@ -931,10 +1044,46 @@
             fetchCompanyName(initialCompanyCode);
         }
 
+        function storeOriginalValues() {
+            if (mode === "Edit") {
+                var originalStatus = "@Model.Status";
+                var originalPIC = "@Model.PIC";
+                var originalDate = "@(Model.Transaction_Date.HasValue ? Model.Transaction_Date.Value.ToString("yyyy-MM-dd") : "")";
+                var originalRole = "@Model.Role";
+                var originalComp = "@Model.Company_User";
+
+                $("#statusDropdown").data("original-status", originalStatus);
+                $("#hiddenPIC").data("original-pic", originalPIC);
+                $("#hiddenTransactionDate").data("original-date", originalDate);
+                $("#hiddenRole").data("original-role", originalRole);
+                $("#hiddenComp").data("original-comp", originalComp);
+
+                console.log("Original values stored:", {
+                    status: originalStatus,
+                    pic: originalPIC,
+                    date: originalDate,
+                    role: originalRole,
+
+                });
+            }
+        }
+
         function handleStatusFormDisplay() {
             if (readOnly) return;
 
             $(".status-form").hide();
+            var status = $("#statusDropdown").val();
+            if (!status) {
+                $("#roleFormGroup").hide();
+                $("#hiddenPIC").val("");
+                $("#hiddenRole").val("");
+                $("#hiddenTransactionDate").val("");
+                $("#hiddenComp").val("");
+                return;
+            } else {
+
+                $("#roleFormGroup").show();
+            }
 
             var status = $("#statusDropdown").val();
             if (!status) {
@@ -957,56 +1106,130 @@
                 $(".status-form").hide();
                 $(formSelector).show();
 
+                const roleFormGroup = formSelector.replace('Form', 'RoleFormGroup');
+                $(roleFormGroup).show();
+
                 const picSelector = formSelector.replace('Form', 'PIC');
                 const dateSelector = formSelector.replace('Form', "Date")
-
-                if ($("#hiddenPIC").val()) {
-                    $(picSelector).val($('#hiddenPIC').val());
-                }
-                if ($("#hiddenTransactionDate").val()) {
-                    $(dateSelector).val($('#hiddenTransactionDate').val());
+                const roleSelector = formSelector.replace('Form', "Role")
+                const compSelector = formSelector.replace('Form', "Comp")
+                if (mode === "Edit" && !$(picSelector).data('user-modified')) {
+                    if ($("#hiddenPIC").val()) {
+                        $(picSelector).val($('#hiddenPIC').val());
+                        $(picSelector).data('populated-from-db', true);
+                    }
+                    if ($("#hiddenTransactionDate").val()) {
+                        $(dateSelector).val($('#hiddenTransactionDate').val());
+                        $(dateSelector).data('populated-from-db', true);
+                    }
+                    if ($("#hiddenRole").val()) {
+                            $(roleSelector).val($('#hiddenRole').val()).trigger('change');
+                            $(roleSelector).data('populated-from-db', true);
+                    }
+                    if ($("#hiddenComp").val()) {
+                        $(compSelector).val($('#hiddenComp').val());
+                        $(compSelector).data('populated-from-db', true);
+                    }
                 }
             }
         }
         if (mode == "Create") {
-        $("#statusDropdown").prepend('<option value="" selected>Select Status</option>');
+            $("#statusDropdown").prepend('<option value="" selected>Select Status</option>');
+
         }
 
-        if (mode === "Edit") {
-            $("#statusDropdown").on('change', function () {
-                handleStatusFormDisplay();
-            });
-
-            handleStatusFormDisplay();
-        } else {
-            $("#statusDropdown").on('change', handleStatusFormDisplay);
-            if (!readOnly) {
-                handleStatusFormDisplay();
-            }
+        if (!$("#statusDropdown").val()) {
+            $("#roleFormGroup").hide();
         }
+
+        $(".status-form input[type='text'], .status-form input[type='date']").on('change', function () {
+            $(this).data('user-modified', true);
+        });
+
+
 
         $("#statusDropdown").on('change', handleStatusFormDisplay);
         if (!readOnly) {
             handleStatusFormDisplay();
         }
+
+        function updateHiddenFields() {
+            var status = $("#statusDropdown").val();
+            if (!status) return;
+
+            let picValue = "";
+            let dateValue = "";
+            let roleValue = "";
+            let companyValue = "";
+
+            switch (status) {
+                case 'Return':
+                    picValue = $("#returnPIC").val();
+                    dateValue = $("#returnDate").val();
+                    roleValue = $("#returnRole").val();
+                    companyValue = $("#returnComp").val();
+                    break;
+                case 'Borrowing':
+                    picValue = $("#borrowPIC").val();
+                    dateValue = $("#borrowDate").val();
+                    roleValue = $("#borrowRole").val();
+                    companyValue = $("#borrowComp").val();
+                    break;
+                case 'Service':
+                    picValue = $("#servicePIC").val();
+                    dateValue = $("#serviceDate").val();
+                    roleValue = $("#serviceRole").val();
+                    companyValue = $("#serviceComp").val();
+                    break;
+                case 'Ready':
+                    picValue = $("#readyPIC").val();
+                    dateValue = $("#readyDate").val();
+                    roleValue = $("#readyRole").val();
+                    companyValue = $("#readyComp").val();
+                    break;
+                case 'Assign':
+                    picValue = $("#assignPIC").val();
+                    dateValue = $("#assignDate").val();
+                    roleValue = $("#assignRole").val();
+                    companyValue = $("#assignComp").val();
+                    break;
+                case 'Write Off':
+                    picValue = $("#writeOffPIC").val();
+                    dateValue = $("#writeOffDate").val();
+                    roleValue = $("#writeOffRole").val();
+                    companyValue = $("#writeOffComp").val();
+                    break;
+            }
+
+
+            $("#hiddenPIC").val(picValue);
+            $("#hiddenTransactionDate").val(dateValue);
+            $("#hiddenRole").val(roleValue);
+            $("#hiddenComp").val(companyValue);
+        }
         function formatDate(dateString) {
             if (!dateString) return "";
 
             try {
-                let date;
                 if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
-                    const timeStamp = parseInt(dateString.substr(6));
-                    date = new Date(timeStamp);
+
+                    const timestamp = parseInt(dateString.substr(6));
+                    const date = new Date(timestamp);
+                    if (isNaN(date.getTime())) return "";
+
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}`;
                 } else {
-                    date = new Date(dateString);
+                    const date = new Date(dateString);
+                    if (isNaN(date.getTime())) return "";
+
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}`;
                 }
-
-                if (isNaN(date.getTime())) return "";
-
-                const year = date.getFullYear();
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const day = date.getDate().toString().padStart(2, '0');
-                return `${year}-${month}-${day}`;
             } catch (e) {
                 console.error("Error parsing date:", e);
                 return "";
@@ -1039,16 +1262,18 @@
                     var row = $("<tr>").append(
                         $("<td>").text(item.No_asset || ""),
                         $("<td>").text(item.PIC || ""),
+                        $("<td>").text(item.Role || ""),
+                        $("<td>").text(item.Company_User || ""),
                         $("<td>").text(formatDate(item.Transaction_Date)),
                         $("<td>").text(item.Status || ""),
-                        $("<td>").text(formatDate(item.Create_Date))
+                        $("<td>").text(formatDate(item.Submit_Date))
                     );
                     tbody.append(row);
                 });
             } else {
                 tbody.append(
                     $("<tr>").append(
-                        $("<td>").attr("colspan", "5").text("No data found")
+                        $("<td>").attr("colspan", "7").text("No data found")
                     )
                 );
             }
@@ -1057,6 +1282,8 @@
 
         $("#btnSave").click(function (e) {
             e.preventDefault();
+
+            updateHiddenFields();
 
             $(".is-invalid").removeClass("is-invalid");
             $(".validation-error").remove();
@@ -1107,7 +1334,6 @@
                 showErrorToast("Asset Description is required");
                 isValid = false;
             }
-
             const status = $("#statusDropdown").val();
             if (!status) {
                 $("#statusDropdown").next(".select2-container").addClass("is-invalid");
@@ -1117,44 +1343,66 @@
 
                 let picValue = "";
                 let dateValue = "";
+                let roleValue = "";
+                let compValue = "";
                 let picFieldId = "";
                 let dateFieldId = "";
+                let roleFieldId = "";
+
 
                 switch (status) {
                     case 'Return':
                         picValue = $("#returnPIC").val();
+                        roleValue = $("#returnRole").val();
+                        compValue = $("#returnComp").val();
                         dateValue = $("#returnDate").val();
                         picFieldId = "returnPIC";
+                        roleFieldId = "returnRole";
                         dateFieldId = "returnDate";
                         break;
                     case 'Borrowing':
                         picValue = $("#borrowPIC").val();
                         dateValue = $("#borrowDate").val();
+                        roleValue = $("#borrowRole").val();
+                        compValue = $("#borrowComp").val();
                         picFieldId = "borrowPIC";
+                        roleFieldId = "borrowRole";
                         dateFieldId = "borrowDate";
                         break;
                     case 'Service':
                         picValue = $("#servicePIC").val();
                         dateValue = $("#serviceDate").val();
+                        roleValue = $("#serviceRole").val();
+                        compValue = $("#serviceComp").val();
                         picFieldId = "servicePIC";
+                        roleFieldId = "serviceRole";
                         dateFieldId = "serviceDate";
                         break;
                     case 'Ready':
                         picValue = $("#readyPIC").val();
                         dateValue = $("#readyDate").val();
+                        roleValue = $("#readyRole").val();
+                        compValue = $("#readyComp").val();
                         picFieldId = "readyPIC";
+                        roleFieldId = "readyRole";
                         dateFieldId = "readyDate";
                         break;
                     case 'Assign':
                         picValue = $("#assignPIC").val();
                         dateValue = $("#assignDate").val();
+                        roleValue = $("#assignRole").val();
+                        compValue = $("#assignComp").val();
                         picFieldId = "assignPIC";
+                        roleFieldId = "assignRole";
                         dateFieldId = "assignDate";
                         break;
                     case 'Write Off':
                         picValue = $("#writeOffPIC").val();
                         dateValue = $("#writeOffDate").val();
+                        roleValue = $("#writeOffRole").val();
+                        compValue = $("#writeOffComp").val();
                         picFieldId = "writeOffPIC";
+                        roleFieldId = "writeOffRole";
                         dateFieldId = "writeOffDate";
                         break;
                 }
@@ -1171,8 +1419,16 @@
                     isValid = false;
                 }
 
+                if (!roleValue) {
+                    $(`#${roleFieldId}`).next(".select2-container").addClass("is-invalid");
+                    $(`#${roleFieldId}`).after(`<span class="text-danger validation-error">Role is required for ${status} status.</span>`);
+                    isValid = false;
+                }
+
                 $("#hiddenPIC").val(picValue);
                 $("#hiddenTransactionDate").val(dateValue);
+                $("#hiddenRole").val(roleValue);
+                $("#hiddenComp").val(compValue);
             }
 
             if (!isValid) {
@@ -1181,14 +1437,30 @@
 
             var statusChange = false;
             if (mode == "Edit") {
+                var originalStatus = $("#statusDropdown").data("original-status");
+                var originalPIC = $("#hiddenPIC").data("original-pic");
+                var originalRole = $("#hiddenRole").data("original-role");
+                var originalComp = $("#hiddenComp").data("original-comp");
+                var originalDate = $("#hiddenTransactionDate").data("original-date");
+
                 var currentStatus = $("#statusDropdown").val();
                 var currentPIC = $("#hiddenPIC").val();
+                var currentRole = $("#hiddenRole").val();
+                var currentComp = $("#hiddenComp").val();
                 var currentTransactionDate = $("#hiddenTransactionDate").val();
 
                 statusChange = (currentStatus !== originalStatus ||
                     currentPIC !== originalPIC ||
-                    currentTransactionDate !== originalTransactionDate);
-                $("#assetForm").append('<input type="hidden" name="statusChange" value="' + statusChange + '" />');
+                    currentRole !== originalRole ||
+                    currentComp !== originalComp ||
+                    currentTransactionDate !== originalDate);
+                $("#assetForm").append('<input type="hidden" name="statusChange" + value = "' + statusChange + '" />');
+            }
+
+            if ($("#statusChangeInput").length) {
+                $("#statusChangeInput").val(statusChange);
+            } else {
+                $("#assetForm").append('<input type="hidden" id="statusChangeInput" name="statusChange" value="' + statusChange + '" />');
             }
 
             const saveBtn = $(this);
@@ -1201,52 +1473,22 @@
                 type: 'POST',
                 data: $("#assetForm").serialize(),
                 success: function (data) {
+                    console.log("Server response:", data);
                     if (data && data.success) {
                         toastr.success(data.message || "Transaction successful");
-
-                        if (data.statusChange) {
-
-                            var tbody = $("#assetHistoryTable");
-                            var assetData = data.assetData;
-                            if (assetData) {
-                                var row = "<tr>" +
-                                    "<td>" + (assetData.No_asset || "") + "</td>" +
-                                    "<td>" + (assetData.PIC || "") + "</td>" +
-                                    "<td>" + (assetData.Transaction_Date || "") + "</td>" +
-                                    "<td>" + (assetData.Status || "") + "</td>" +
-                                    "<td>" + (assetData.Submit_Date || "") + "</td>" +
-                                    "</tr>";
-
-                                if (tbody.find("tr td[colspan='5']").length > 0) {
-                                    tbody.empty();
-                                }
-                                tbody.prepend(row);
-                            }
-                        }
-
-                        if (data.dashboardCounts) {
-                            updateDashboardCounts(data.dashboardCounts);
-                        } else {
-                            refreshDashboardData();
-                        }
-                        if (mode === "Create") {
-
-                            resetFormFields();
-                            window.location.href = '@Url.Action("Index", "AssetManagement")';
-                        } else if (mode === "Edit") {
-                            window.location.href = '@Url.Action("Index", "AssetManagement")';
-                        }
+                        window.location.href = '/AssetManagement/Index';
+                        refreshAssetTable();
+                        refreshDashboardData();
+                            updateDashboardCounts();
                     } else {
                         showErrorToast(data && data.message ? data.message : "Error saving asset");
-                        console.error("Error from server:", data ? data.message : "Unknown error");
+                        saveBtn.html(originalText);
+                        saveBtn.prop('disabled', false);
                     }
-                    saveBtn.html(originalText);
-                    saveBtn.prop('disabled', false);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error saving asset:", xhr.responseText);
                     try {
-
                         const response = JSON.parse(xhr.responseText);
                         showErrorToast(response.message || "Error saving asset, please try again");
                     } catch (e) {
@@ -1258,6 +1500,9 @@
             });
         });
 
+        $(document).ready(function () {
+            storeOriginalValues();
+        });
 
         $("#btnDelete").click(function(e) {
             e.preventDefault();
@@ -1347,6 +1592,8 @@
         $(".status-form input").val("");
         $("#hiddenPIC").val("");
         $("#hiddenTransactionDate").val("");
+        $("#hiddenRole").val("");
+        $("#hiddenComp").val("");
 
         $("#No_asset").val("");
         $("#companyCodeDropdown").val("").trigger("change");

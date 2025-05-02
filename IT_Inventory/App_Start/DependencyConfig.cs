@@ -13,8 +13,14 @@ namespace IT_Inventory.App_Start
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.RegisterType<IT_Inventory>().AsSelf().InstancePerRequest();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerRequest();
+            builder.RegisterType<IT_Inventory>().AsSelf().InstancePerRequest();
+            builder.RegisterType<AssetService>().As<IAssetService>().InstancePerRequest();
+            builder.RegisterControllers(typeof(MvcApplication).Assembly);
+
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
+
         }
 
     }

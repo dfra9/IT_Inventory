@@ -23,7 +23,6 @@ namespace IT_Inventory.ViewModel
         public string Material_Code { get; set; }
         [Required(ErrorMessage = "Material Description is required")]
         public string Material_Description { get; set; }
-        public string mode { get; set; }
         public int? Quantity { get; set; }
         public string UoM { get; set; }
         public DateTime? Acquisition_Date { get; set; }
@@ -37,6 +36,7 @@ namespace IT_Inventory.ViewModel
 
         public string Departement_Name { get; set; }
 
+        public string Company_User { get; set; }
         public string Locations { get; set; }
         public string Location_Name { get; set; }
         public string City_Name { get; set; }
@@ -50,6 +50,8 @@ namespace IT_Inventory.ViewModel
         [Required(ErrorMessage = "Transaction Date is required")]
         public DateTime? Transaction_Date { get; set; }
 
+        public string Role { get; set; }
+        public string mode { get; set; }
         public string Serial_Number { get; set; }
         public string Device_Id { get; set; }
         public string Create_By { get; set; }
@@ -70,12 +72,16 @@ namespace IT_Inventory.ViewModel
         public List<City> Cities { get; set; }
         public List<SelectListItem> StatusList { get; set; }
 
+        public List<Departement> Roles { get; set; }
+
         public List<UoM> UoMList { get; set; }
         public List<Material_Group> MaterialGroup { get; set; }
 
         public List<Material_Code> Material_Code1 { get; set; }
 
-        public List<Asset> AssetHistory { get; set; }
+        public List<Asset_History> AssetHistory { get; set; }
+
+        public List<Asset> AssetList { get; set; }
 
         public List<Asset> DashHistory { get; set; }
 
@@ -89,10 +95,12 @@ namespace IT_Inventory.ViewModel
             Dept = new List<Departement>();
             LocationsList = new List<Location>();
             Cities = new List<City>();
-            AssetHistory = new List<Asset>();
+            AssetHistory = new List<Asset_History>();
+            AssetList = new List<Asset>();
             MaterialGroup = new List<Material_Group>();
             Material_Code1 = new List<Material_Code>();
             UoMList = new List<UoM>();
+            Roles = new List<Departement>();
             StatusList = new List<SelectListItem>
             {
                 new SelectListItem { Value = "Return", Text = "Return" },
@@ -133,7 +141,7 @@ namespace IT_Inventory.ViewModel
         }
         public SelectList GetDepartementListItem()
         {
-            return new SelectList(Dept, "Departement_Code", "Departement_Name");
+            return new SelectList(Dept, "Departement_Code", "Departement_Code");
         }
         public IEnumerable<SelectListItem> GetCityListItem()
         {
@@ -188,6 +196,11 @@ namespace IT_Inventory.ViewModel
         public SelectList GetUoMListItem()
         {
             return new SelectList(UoMList, "UoM_Description", "UoM_Description");
+        }
+
+        public SelectList GetRoleListItem()
+        {
+            return new SelectList(Roles, "Role", "Role");
         }
 
     }

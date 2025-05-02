@@ -43,7 +43,7 @@
                             Departement Code
                         </th>
                         <th style="width: 20%">
-                            Departement Description
+                            Role
                         </th>
                         <th style="width: 15%; text-align: center">
                             Action
@@ -55,7 +55,7 @@
                     {
                         <tr>
                             <td>@item.Departement_Code</td>
-                            <td>@item.Departement_Name</td>
+                            <td>@item.Role</td>
                             <td>
                                 <div class="project-actions text-center">
                                     <a href="@Url.Action("Editor", "Departement", new { id = item.Departement_Code, mode = "View" })" class="btn btn-info btn-sm">
@@ -76,7 +76,7 @@
                 <tfoot>
                     <tr>
                         <th> Departement Code </th>
-                        <th> Departement Description </th>
+                        <th> Role </th>
                     </tr>
                 </tfoot>
             </table>

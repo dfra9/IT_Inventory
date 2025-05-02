@@ -176,6 +176,9 @@
     <Compile Include="Models\Asset.cs">
       <DependentUpon>IT_Inventory.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Asset_History.cs">
+      <DependentUpon>IT_Inventory.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\City.cs">
       <DependentUpon>IT_Inventory.tt</DependentUpon>
     </Compile>
@@ -222,10 +225,12 @@
       <DependentUpon>IT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AssetService.cs" />
     <Compile Include="Services\IUserService.cs" />
     <Compile Include="Services\MaterialCodeService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utilities\DropdownLoaderUtility.cs" />
     <Compile Include="ViewModel\AssetManagementViewModel.cs" />
     <Compile Include="ViewModel\DataUserViewModel.cs" />
     <Compile Include="ViewModel\LocationViewModel.cs" />

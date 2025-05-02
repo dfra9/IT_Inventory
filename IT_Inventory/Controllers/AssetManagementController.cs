@@ -3,14 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using IT_Inventory.Models;
+using IT_Inventory.Services;
+using IT_Inventory.Utilities;
 using IT_Inventory.ViewModel;
-using static IT_Inventory.ViewModel.AssetManagementViewModel;
 
 namespace IT_Inventory.Controllers
 {
     public class AssetManagementController : Controller
     {
+        private readonly IAssetService _assetService;
         private readonly IT_Inventory db = new IT_Inventory();
+
+        public AssetManagementController(IAssetService assetService)
+        {
+            _assetService = assetService;
+        }
+
+        private void LoadDropdownData()
+        {
+            DropdownLoaderUtility.LoadAllDropdownData(db, ViewBag);
+        }
+
+
         // GET: AssetManagement
         public ActionResult Index()
         {
@@ -22,14 +36,14 @@ namespace IT_Inventory.Controllers
                 MaterialGroup = db.Material_Group.Where(c => c.Is_Deleted != true).ToList(),
                 Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList(),
                 UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList(),
-                AssetHistory = db.Asset
+                AssetList = db.Asset
                     .Where(a => a.Is_Deleted != true)
                     .GroupBy(a => a.No_asset)
                     .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
                     .OrderByDescending(a => a.Transaction_Date)
                     .Take(100)
                     .ToList(),
-                DashboardCounts = GetDashboardCounts()
+                DashboardCounts = _assetService.GetDashboardCounts()
             };
 
             var defaultCity = viewModel.Cities.FirstOrDefault()?.City_Name;
@@ -43,7 +57,8 @@ namespace IT_Inventory.Controllers
             viewModel.MaterialGroup = viewModel.MaterialGroup ?? new List<Material_Group>();
             viewModel.Material_Code1 = viewModel.Material_Code1 ?? new List<Material_Code>();
             viewModel.UoMList = viewModel.UoMList ?? new List<UoM>();
-            viewModel.AssetHistory = viewModel.AssetHistory ?? new List<Asset>();
+            viewModel.AssetHistory = viewModel.AssetHistory ?? new List<Asset_History>();
+            viewModel.Roles = viewModel.Roles ?? new List<Departement>();
 
             LoadDropdownData();
             return View(viewModel);
@@ -65,6 +80,7 @@ namespace IT_Inventory.Controllers
             .ToList();
             viewModel.Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList();
             viewModel.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
+            viewModel.Roles = db.Departement.Where(c => c.Is_Deleted != true).ToList();
 
             if (id != null && (mode == "Edit" || mode == "View" || mode == "Delete"))
             {
@@ -114,8 +130,10 @@ namespace IT_Inventory.Controllers
                     viewModel.Condition = asset.Condition;
                     viewModel.Status = asset.Status;
                     viewModel.PIC = asset.PIC;
+                    viewModel.Role = asset.Role;
+                    viewModel.Company_User = asset.Company_User;
                     viewModel.Transaction_Date = asset.Transaction_Date.HasValue ? (DateTime)asset.Transaction_Date : DateTime.Now;
-                    viewModel.AssetHistory = db.Asset
+                    viewModel.AssetHistory = db.Asset_History
                    .Where(a => a.No_asset == id && a.Is_Deleted != true)
                    .OrderByDescending(a => a.ID)
                    .ToList();
@@ -129,7 +147,7 @@ namespace IT_Inventory.Controllers
             }
             else
             {
-                viewModel.AssetHistory = new List<Asset>();
+                viewModel.AssetHistory = new List<Asset_History>();
             }
 
             ViewBag.Mode = mode;
@@ -140,7 +158,7 @@ namespace IT_Inventory.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Editor(AssetManagementViewModel viewModel)
+        public ActionResult Editor(AssetManagementViewModel viewModel, bool statusChange = false)
         {
             try
             {
@@ -156,9 +174,6 @@ namespace IT_Inventory.Controllers
                     var location = db.Location.FirstOrDefault(l => l.Location_Code == viewModel.Locations && l.Is_Deleted != true);
                     locationName = location?.Location_Name;
                 }
-
-
-
                 string departmentName = null;
                 if (!string.IsNullOrEmpty(viewModel.Departement_Code))
                 {
@@ -212,76 +227,114 @@ namespace IT_Inventory.Controllers
                 }
                 if (ModelState.IsValid)
                 {
-                    var existAsset = db.Asset
-                         .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true && a.ID == viewModel.ID)
-                         .OrderByDescending(a => a.Transaction_Date)
-                         .FirstOrDefault();
+                    var assetData = new Asset
+                    {
+                        No_asset = viewModel.No_asset,
+                        Company_Code = viewModel.Company_Code,
+                        Company_Name = viewModel.Company_Name,
+                        Material_Group = viewModel.Material_Group,
+                        Material_Code = viewModel.Material_Code,
+                        Material_Description = viewModel.Material_Description,
+                        Quantity = viewModel.Quantity,
+                        UoM = viewModel.UoM,
+                        Serial_Number = viewModel.Serial_Number,
+                        Device_Id = viewModel.Device_Id,
+                        Acquisition_Date = viewModel.Acquisition_Date,
+                        Acquisition_value = viewModel.Acquisition_value,
+                        No_Asset_PGA = viewModel.No_Asset_PGA,
+                        No_Asset_Accounting = viewModel.No_Asset_Accounting,
+                        No_PO = viewModel.No_PO,
+                        Latest_User = viewModel.Latest_User,
+                        Departement = departmentName,
+                        Location = locationName,
+                        City = viewModel.City_Name,
+                        Last_Check_Date = viewModel.Last_Check_Date,
+                        Condition = viewModel.Condition,
+                        Status = viewModel.Status,
+                        PIC = viewModel.PIC,
+                        Role = viewModel.Role,
+                        Company_User = viewModel.Company_User,
+                        Transaction_Date = viewModel.Transaction_Date,
+                        Create_By = User.Identity.Name ?? "System",
+                        Create_Date = DateTime.Now,
+                        Is_Deleted = false
+                    };
 
-                    bool newHistoryAsset = true;
-                    if (mode == "Edit" && existAsset != null)
+
+                    var assetHistory = new Asset_History
+                    {
+                        No_asset = viewModel.No_asset,
+                        Status = viewModel.Status,
+                        PIC = viewModel.PIC,
+                        Role = viewModel.Role,
+                        Company_User = viewModel.Company_User,
+                        Transaction_Date = viewModel.Transaction_Date,
+                        Submit_Date = DateTime.Now,
+                        Create_By = User.Identity.Name ?? "System",
+                        Create_Date = DateTime.Now,
+                        Is_Deleted = false
+                    };
+
+
+                    if (mode == "Create")
+                    {
+                        db.Asset.Add(assetData);
+                        db.Asset_History.Add(assetHistory);
+                    }
+                    else if (mode == "Edit")
                     {
 
-                        if (existAsset.Status == viewModel.Status &&
-                            existAsset.PIC == viewModel.PIC &&
-                            existAsset.Transaction_Date == viewModel.Transaction_Date)
+                        var existAsset = db.Asset
+                    .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
+                    .OrderByDescending(a => a.Transaction_Date)
+                    .FirstOrDefault();
+
+                        if (existAsset != null)
                         {
-                            newHistoryAsset = false;
+
+                            existAsset.No_asset = viewModel.No_asset;
+                            existAsset.Company_Code = viewModel.Company_Code;
+                            existAsset.Company_Name = viewModel.Company_Name;
+                            existAsset.Material_Group = viewModel.Material_Group;
+                            existAsset.Material_Code = viewModel.Material_Code;
+                            existAsset.Material_Description = viewModel.Material_Description;
+                            existAsset.Quantity = viewModel.Quantity;
+                            existAsset.UoM = viewModel.UoM;
+                            existAsset.Serial_Number = viewModel.Serial_Number;
+                            existAsset.Device_Id = viewModel.Device_Id;
+                            existAsset.Acquisition_Date = viewModel.Acquisition_Date;
+                            existAsset.Acquisition_value = viewModel.Acquisition_value;
+                            existAsset.No_Asset_PGA = viewModel.No_Asset_PGA;
+                            existAsset.No_Asset_Accounting = viewModel.No_Asset_Accounting;
+                            existAsset.No_PO = viewModel.No_PO;
+                            existAsset.Latest_User = viewModel.Latest_User;
+                            existAsset.Departement = departmentName;
+                            existAsset.Location = locationName;
+                            existAsset.City = viewModel.City_Name;
+                            existAsset.Last_Check_Date = viewModel.Last_Check_Date;
+                            existAsset.Condition = viewModel.Condition;
+                            existAsset.Status = viewModel.Status;
+                            existAsset.PIC = viewModel.PIC;
+                            existAsset.Role = viewModel.Role;
+                            existAsset.Company_User = viewModel.Company_User;
+                            existAsset.Transaction_Date = viewModel.Transaction_Date;
+                            existAsset.Edit_By = User.Identity.Name ?? "System";
+                            existAsset.Edit_Date = DateTime.Now;
+                            existAsset.Is_Deleted = false;
+                            bool realStatusChange = statusChange ||
+                            existAsset.Status != viewModel.Status ||
+                            existAsset.PIC != viewModel.PIC ||
+                            existAsset.Transaction_Date != viewModel.Transaction_Date;
+
+                            if (realStatusChange)
+                            {
+                                db.Asset_History.Add(assetHistory);
+                            }
                         }
-                    }
-
-                    if (existAsset != null)
-                    {
-                        //existAsset.Status = viewModel.Status;
-                        //existAsset.PIC = viewModel.PIC;
-                        //existAsset.Transaction_Date = viewModel.Transaction_Date;
-
-                        existAsset.Edit_By = User.Identity.Name ?? "System";
-                        existAsset.Edit_Date = DateTime.Now;
-                        existAsset.Latest_User = viewModel.Latest_User;
-                        existAsset.Location = locationName;
-                        existAsset.Departement = departmentName;
-                        existAsset.Condition = viewModel.Condition;
-                    }
-
-                    if (newHistoryAsset)
-                    {
-                        var assetHistory = new Asset
-                        {
-                            No_asset = viewModel.No_asset,
-                            Company_Code = viewModel.Company_Code,
-                            Company_Name = viewModel.Company_Name,
-                            Material_Group = viewModel.Material_Group,
-                            Material_Code = viewModel.Material_Code,
-                            Material_Description = viewModel.Material_Description,
-                            Quantity = viewModel.Quantity,
-                            UoM = viewModel.UoM,
-                            Serial_Number = viewModel.Serial_Number,
-                            Device_Id = viewModel.Device_Id,
-                            Acquisition_Date = viewModel.Acquisition_Date,
-                            Acquisition_value = viewModel.Acquisition_value,
-                            No_Asset_PGA = viewModel.No_Asset_PGA,
-                            No_Asset_Accounting = viewModel.No_Asset_Accounting,
-                            No_PO = viewModel.No_PO,
-                            Latest_User = viewModel.Latest_User,
-                            Departement = departmentName,
-                            Location = locationName,
-                            City = viewModel.City_Name,
-                            Last_Check_Date = viewModel.Last_Check_Date,
-                            Condition = viewModel.Condition,
-                            Status = viewModel.Status,
-                            PIC = viewModel.PIC,
-                            Transaction_Date = viewModel.Transaction_Date,
-                            Create_By = User.Identity.Name ?? "System",
-                            Create_Date = DateTime.Now,
-                            Is_Deleted = false
-
-                        };
-
-                        db.Asset.Add(assetHistory);
                     }
                     db.SaveChanges();
 
-                    var dashboardCounts = GetDashboardCounts();
+                    var dashboardCounts = _assetService.GetDashboardCounts();
 
                     if (Request.IsAjaxRequest())
                     {
@@ -295,6 +348,8 @@ namespace IT_Inventory.Controllers
                                 PIC = viewModel.PIC,
                                 Transaction_Date = viewModel.Transaction_Date.HasValue ? viewModel.Transaction_Date.Value.ToString("yyyy-MM-dd") : "",
                                 Status = viewModel.Status,
+                                Role = viewModel.Role,
+                                Company_User = viewModel.Company_User,
                                 Submit_Date = DateTime.Now.ToString("yyyy-MM-dd")
                             },
                             dashboardCounts = dashboardCounts
@@ -307,30 +362,8 @@ namespace IT_Inventory.Controllers
                         return RedirectToAction("Index");
                     }
                 }
-
                 LoadDropdownData();
-
-                viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.LocationsList = db.Location.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.Cities = db.City.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.MaterialGroup = db.Material_Group.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
-
-                if (mode != "Create" && !string.IsNullOrEmpty(viewModel.No_asset))
-                {
-                    viewModel.AssetHistory = db.Asset
-                   .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
-                   .OrderByDescending(a => a.Transaction_Date)
-                   .ToList();
-                }
-                else
-                {
-                    viewModel.AssetHistory = new List<Asset>();
-                }
-
-                viewModel.DashboardCounts = GetDashboardCounts();
+                viewModel.DashboardCounts = _assetService.GetDashboardCounts();
                 ViewBag.Mode = mode;
                 if (Request.IsAjaxRequest())
                 {
@@ -339,17 +372,15 @@ namespace IT_Inventory.Controllers
                             kvp => kvp.Key,
                             kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
                         );
-
                     return Json(new { success = false, message = "Validation failed", errors = errors });
                 }
-
                 return View(viewModel);
             }
             catch (Exception ex)
             {
                 if (Request.IsAjaxRequest())
                 {
-
+                    LoadDropdownData();
                     return Json(new
                     {
                         success = false,
@@ -357,37 +388,9 @@ namespace IT_Inventory.Controllers
                         details = ex.ToString()
                     });
                 }
-
-                string mode = viewModel.mode ?? "Create";
-
-                if (mode != "Create" && !string.IsNullOrEmpty(viewModel.No_asset))
-                {
-                    viewModel.AssetHistory = db.Asset
-                        .Where(a => a.No_asset == viewModel.No_asset && a.Is_Deleted != true)
-                        .OrderByDescending(a => a.Transaction_Date)
-                        .ToList();
-                }
-                else
-                {
-                    viewModel.AssetHistory = new List<Asset>();
-                }
-                ModelState.AddModelError("", "An error occurred while processing your request: " + ex.Message);
-                viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.LocationsList = db.Location.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.Cities = db.City.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.MaterialGroup = db.Material_Group.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
-                viewModel.DashboardCounts = GetDashboardCounts();
-
-                ViewBag.Mode = mode;
-                LoadDropdownData();
                 return View(viewModel);
             }
         }
-
-
 
         public string GetCompanyName(string companyCode)
         {
@@ -428,32 +431,30 @@ namespace IT_Inventory.Controllers
                     .Where(a => a.No_asset == assetId && a.Is_Deleted != true)
                     .OrderByDescending(a => a.Transaction_Date)
                     .FirstOrDefault();
-                if (asset == null)
-                {
-                    return Json(new { success = false, message = "Asset not found." }, JsonRequestBehavior.AllowGet);
-                }
 
                 return Json(new
                 {
                     success = true,
-                    No_asset = asset.No_asset,
-                    Company_Code = asset.Company_Code,
-                    Company_Name = asset.Company_Name,
-                    Material_Group = asset.Material_Group,
-                    Material_Code = asset.Material_Code,
-                    Material_Description = asset.Material_Description,
-                    Quantity = asset.Quantity,
-                    UoM = asset.UoM,
-                    Serial_Number = asset.Serial_Number,
-                    Device_Id = asset.Device_Id,
-                    Acquisition_Date = asset.Acquisition_Date,
-                    Acquisition_value = asset.Acquisition_value,
-                    PIC = asset.PIC,
-                    Status = asset.Status,
-                    Transaction_Date = asset.Transaction_Date,
-                    Location = asset.Location,
-                    Departement = asset.Departement,
-                    Condition = asset.Condition
+                    asset.No_asset,
+                    asset.Company_Code,
+                    asset.Company_Name,
+                    asset.Material_Group,
+                    asset.Material_Code,
+                    asset.Material_Description,
+                    asset.Quantity,
+                    asset.UoM,
+                    asset.Serial_Number,
+                    asset.Device_Id,
+                    asset.Acquisition_Date,
+                    asset.Acquisition_value,
+                    asset.PIC,
+                    asset.Status,
+                    asset.Role,
+                    asset.Company_User,
+                    asset.Transaction_Date,
+                    asset.Location,
+                    asset.Departement,
+                    asset.Condition
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -464,104 +465,117 @@ namespace IT_Inventory.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UpdateAsset(string No_asset, string Status, string PIC, DateTime? Transaction_Date)
+        public ActionResult UpdateAsset(string No_asset, string Status, string PIC, DateTime? Transaction_Date, string Role, string Company_User)
         {
             try
             {
-
                 if (string.IsNullOrEmpty(No_asset))
                 {
                     return Json(new { success = false, message = "Asset number is required" });
                 }
 
-                var asset = db.Asset
-                    .Where(a => a.No_asset == No_asset && a.Is_Deleted != true)
-                    .OrderByDescending(a => a.Transaction_Date)
-                    .FirstOrDefault();
-                if (asset == null)
-                {
-                    return Json(new { success = false, message = "Asset not found" });
-                }
                 if (string.IsNullOrEmpty(Status))
                 {
                     return Json(new { success = false, message = "Status is required" });
                 }
-
-                var validStatus = new[] { "Return", "Borrowing", "Service", "Ready", "Assign", "Write Off" };
-                if (!validStatus.Contains(Status))
-                {
-                    return Json(new { success = false, message = "Invalid status selected" });
-                }
-
                 if (string.IsNullOrEmpty(PIC))
                 {
-                    return Json(new { success = false, message = $"PIC for {Status} status is required" });
+                    return Json(new { success = false, message = "PIC is required" });
                 }
-
                 if (!Transaction_Date.HasValue)
                 {
-                    return Json(new { success = false, message = $"Transaction Date for {Status} status is required" });
+                    return Json(new { success = false, message = "Transaction Date is required" });
                 }
 
-                bool statusChanged = asset.Status != Status;
-                bool picChanged = asset.PIC != PIC;
-                bool dateChanged = asset.Transaction_Date != Transaction_Date;
+                var existingAsset = db.Asset
+                .Where(a => a.No_asset == No_asset && a.Is_Deleted != true)
+                .OrderByDescending(a => a.Transaction_Date)
+                .FirstOrDefault();
 
-                if (!statusChanged)
+                bool statusChange = existingAsset.Status != Status;
+                bool picChanged = existingAsset.PIC != PIC;
+                bool dateChanged = existingAsset.Transaction_Date != Transaction_Date;
+                bool roleChanged = existingAsset.Role != Role;
+                bool companyChanged = existingAsset.Company_User != Company_User;
+                bool anyField = statusChange || picChanged || dateChanged;
+
+                if (anyField)
                 {
-                    var newTransaction = new Asset
+                    var newAsset = new Asset
                     {
-                        No_asset = asset.No_asset,
-                        Company_Code = asset.Company_Code,
-                        Company_Name = asset.Company_Name,
-                        Material_Group = asset.Material_Group,
-                        Material_Code = asset.Material_Code,
-                        Material_Description = asset.Material_Description,
-                        Quantity = asset.Quantity,
-                        UoM = asset.UoM,
-                        Serial_Number = asset.Serial_Number,
-                        Device_Id = asset.Device_Id,
-                        Acquisition_Date = asset.Acquisition_Date,
-                        Acquisition_value = asset.Acquisition_value,
-                        No_Asset_PGA = asset.No_Asset_PGA,
-                        No_Asset_Accounting = asset.No_Asset_Accounting,
-                        No_PO = asset.No_PO,
-                        Latest_User = asset.Latest_User,
-                        Departement = asset.Departement,
-                        Location = asset.Location,
-                        City = asset.City,
-                        Last_Check_Date = asset.Last_Check_Date,
-                        Condition = asset.Condition,
-
+                        No_asset = existingAsset.No_asset,
+                        Company_Code = existingAsset.Company_Code,
+                        Company_Name = existingAsset.Company_Name,
+                        Material_Group = existingAsset.Material_Group,
+                        Material_Code = existingAsset.Material_Code,
+                        Material_Description = existingAsset.Material_Description,
+                        Quantity = existingAsset.Quantity,
+                        UoM = existingAsset.UoM,
+                        Serial_Number = existingAsset.Serial_Number,
+                        Device_Id = existingAsset.Device_Id,
+                        Acquisition_Date = existingAsset.Acquisition_Date,
+                        Acquisition_value = existingAsset.Acquisition_value,
+                        No_Asset_PGA = existingAsset.No_Asset_PGA,
+                        No_Asset_Accounting = existingAsset.No_Asset_Accounting,
+                        No_PO = existingAsset.No_PO,
+                        Latest_User = existingAsset.Latest_User,
+                        Departement = existingAsset.Departement,
+                        Location = existingAsset.Location,
+                        City = existingAsset.City,
+                        Last_Check_Date = existingAsset.Last_Check_Date,
+                        Condition = existingAsset.Condition,
                         Status = Status,
                         PIC = PIC,
+                        Role = Role,
+                        Company_User = Company_User,
                         Transaction_Date = Transaction_Date,
+                        Create_By = User.Identity.Name ?? "System",
+                        Create_Date = DateTime.Now,
+                        Is_Deleted = false,
+
+                    };
+
+
+                    var assetHistory = new Asset_History
+                    {
+                        No_asset = No_asset,
+                        Status = Status,
+                        PIC = PIC,
+                        Role = Role,
+                        Company_User = Company_User,
+                        Transaction_Date = Transaction_Date,
+                        Submit_Date = DateTime.Now,
                         Create_By = User.Identity.Name ?? "System",
                         Create_Date = DateTime.Now,
                         Is_Deleted = false
                     };
-                    db.Asset.Add(newTransaction);
+
+                    db.Asset_History.Add(assetHistory);
+                    db.SaveChanges();
+                    var dashboardCounts = _assetService.GetDashboardCounts();
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Asset status updated successfully",
+                        statusChange = true,
+                        dashboardCounts = dashboardCounts,
+                        assetData = new
+                        {
+                            No_asset = No_asset,
+                            PIC = PIC,
+                            Role = Role,
+                            Company_User = Company_User,
+                            Transaction_Date = Transaction_Date.Value.ToString("yyyy-MM-dd"),
+                            Status = Status,
+                            Submit_Date = DateTime.Now.ToString("yyyy-MM-dd")
+                        }
+                    });
                 }
-                asset.Status = Status;
-                asset.PIC = PIC;
-                asset.Transaction_Date = Transaction_Date;
-                asset.Edit_By = User.Identity.Name ?? "System";
-                asset.Edit_Date = DateTime.Now;
-                db.SaveChanges();
-
-                var dashboardCounts = GetDashboardCounts();
-
-
-
-                return Json(new
+                else
                 {
-                    success = true,
-                    message = statusChanged ? "Asset status updated" : "Asset details updated",
-                    dashboardCounts = dashboardCounts,
-                    statusChanged = statusChanged
-                });
+                    return Json(new { success = false, message = "No changes detected" });
+                }
             }
-
             catch (Exception ex)
             {
 
@@ -607,8 +621,33 @@ namespace IT_Inventory.Controllers
                     asset.Delete_Date = DateTime.Now;
                 }
 
+                var historyRecords = db.Asset_History.Where(a => a.No_asset == No_asset && a.Is_Deleted != true).ToList();
+
+                foreach (var history in historyRecords)
+                {
+                    history.Is_Deleted = true;
+                    history.Delete_By = User.Identity.Name ?? "System";
+                    history.Delete_Date = DateTime.Now;
+                }
+
+                var deletedHistory = new Asset_History
+                {
+                    No_asset = No_asset,
+                    Status = "Deleted",
+                    PIC = User.Identity.Name ?? "System",
+                    Role = "Deleted",
+                    Company_User = "Deleted",
+                    Transaction_Date = DateTime.Now,
+                    Submit_Date = DateTime.Now,
+                    Create_By = User.Identity.Name ?? "System",
+                    Create_Date = DateTime.Now,
+                    Delete_By = User.Identity.Name ?? "System",
+                    Delete_Date = DateTime.Now,
+                    Is_Deleted = true
+                };
+
                 db.SaveChanges();
-                var dashboardCounts = GetDashboardCounts();
+                var dashboardCounts = _assetService.GetDashboardCounts();
 
                 if (Request.IsAjaxRequest())
                 {
@@ -709,6 +748,8 @@ namespace IT_Inventory.Controllers
                 a.Departement,
                 a.Location,
                 a.PIC,
+                a.Role,
+                a.Company_User,
                 a.Transaction_Date,
                 a.Status,
                 Submit_Date = a.Create_Date
@@ -717,12 +758,18 @@ namespace IT_Inventory.Controllers
             return Json(assets, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult SearchAssetHistory(string search)
+        public ActionResult SearchAssetHistory(string search, string noAsset)
         {
-            var assetData = db.Asset.Where(a => a.Is_Deleted != true);
+            var assetData = db.Asset_History.Where(a => a.No_asset == noAsset && a.Is_Deleted != true);
             if (!string.IsNullOrEmpty(search))
             {
-                assetData = assetData.Where(a => a.No_asset.Contains(search) || a.PIC.Contains(search) || a.Status.Contains(search) || (a.Transaction_Date.HasValue && a.Transaction_Date.Value.ToString().Contains(search)));
+                assetData = assetData.Where(a =>
+                a.PIC.Contains(search) ||
+                a.Status.Contains(search) ||
+               (a.Transaction_Date.HasValue && a.Transaction_Date.Value.ToString().Contains(search)) ||
+            (a.Role != null && a.Role.Contains(search)) ||
+            (a.Company_User != null && a.Company_User.Contains(search))
+            );
             }
             var assets = assetData.OrderByDescending(a => a.Transaction_Date).Select(a => new
             {
@@ -730,39 +777,12 @@ namespace IT_Inventory.Controllers
                 a.PIC,
                 a.Transaction_Date,
                 a.Status,
+                a.Role,
+                a.Company_User,
                 Submit_Date = a.Create_Date
             }).Take(100)
               .ToList();
             return Json(assets, JsonRequestBehavior.AllowGet);
-        }
-
-        private DashboardCountsModel GetDashboardCounts()
-        {
-
-            var latestAssets = db.Asset
-                .Where(a => a.Is_Deleted != true)
-                .GroupBy(a => a.No_asset)
-                .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-                .ToList();
-
-            return new DashboardCountsModel
-            {
-                TotalAssets = latestAssets
-                    .Where(a => a.Status != "Write Off")
-                    .Count(),
-
-                AvailableAssets = latestAssets
-                    .Where(a => a.Status == "Ready" || a.Status == "Return")
-                    .Count(),
-
-                AssetsInUse = latestAssets
-                    .Where(a => a.Status == "Borrowing" || a.Status == "Assign")
-                    .Count(),
-
-                AssetsInMaintenance = latestAssets
-                    .Where(a => a.Status == "Service")
-                    .Count()
-            };
         }
 
         [HttpGet]
@@ -779,27 +799,7 @@ namespace IT_Inventory.Controllers
             return Json(locations, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
-        private void LoadDropdownData()
-        {
-            ViewBag.Company = db.Company.Where(c => c.Is_Deleted != true).ToList();
-            ViewBag.Departement = db.Departement.Where(c => c.Is_Deleted != true).ToList();
-            ViewBag.Location = db.Location.Where(c => c.Is_Deleted != true).ToList();
-            ViewBag.City = db.City.Where(c => c.Is_Deleted != true).ToList();
-            ViewBag.MaterialGroup = db.Material_Group.Where(c => c.Is_Deleted != true).ToList();
-            ViewBag.Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList();
-            ViewBag.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
 
-            ViewBag.Status = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Select Status", Value = "" },
-                new SelectListItem { Text = "Return", Value = "Return" },
-                new SelectListItem { Text = "Borrowing", Value = "Borrowing" },
-                new SelectListItem { Text = "Service", Value = "Service" },
-                new SelectListItem { Text = "Ready", Value = "Ready" },
-                new SelectListItem { Text = "Assign", Value = "Assign" },
-                new SelectListItem { Text = "Write Off", Value = "Write Off" }
-            };
-        }
+
     }
 }
