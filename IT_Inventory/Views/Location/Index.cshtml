@@ -18,7 +18,7 @@
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                         </div>
                     </div>
-                    z2<div class="card-tools">
+                    <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                             <i class="fas fa-minus"></i>
                         </button>
@@ -33,16 +33,16 @@
             <table id="locationTable" class="table table-striped projects">
                 <thead>
                     <tr>
-                        <th style="width: 15%">
+                        <th>
                             Location Code
                         </th>
-                        <th style="width: 20%">
+                        <th>
                             Location Name
                         </th>
-                        <th style="width: 25%">
+                        <th style="display: none;">
                             Location Description
                         </th>
-                        <th style="width: 15%; text-align: center">
+                        <th style="text-align: center">
                             Action
                         </th>
                     </tr>
@@ -53,7 +53,7 @@
                         <tr>
                             <td>@item.Location_Code</td>
                             <td>@item.Location_Name</td>
-                            <td>@item.Location_Description</td>
+                            <td style="display: none;">@item.Location_Description</td>
 
                             <td>
                                 <div class="project-actions text-center">
@@ -76,8 +76,7 @@
                     <tr>
                         <th> Location Code </th>
                         <th> Location Name </th>
-                        <th> Location Description </th>
-                        
+                        <th style="display: none;"> Location Description </th>
                     </tr>
                 </tfoot>
             </table>
