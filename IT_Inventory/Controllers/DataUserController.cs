@@ -20,11 +20,7 @@ namespace IT_Inventory.Controllers
 
         public ActionResult Index()
         {
-            if (!(Session["IsAdmin"] is bool IsAdmin) || !IsAdmin)
-            {
-                TempData["Message"] = "You are not authorized to access this page";
-                return RedirectToAction("Index", "Home");
-            }
+
             var users = db.Users.Where(u => u.Is_Deleted != true).Select(u => new DataUserViewModel
             {
                 User_Id = u.User_Id,

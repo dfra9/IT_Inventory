@@ -17,8 +17,9 @@
     }
 }
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
@@ -236,12 +237,22 @@
 
 
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.flash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    $(document).ready(function () {
+        var assetTable = initializeDataTable();
+
+        $('#tableSearch').on('keyup', function () {
+            assetTable.search($(this).val()).draw();
+        });
+
+        refreshAssetTable();
+        refreshDashboardData();
+    });
+
+
     function initializeDataTable() {
         $('#assetDataTable').DataTable({
             responsive: true,
@@ -272,10 +283,7 @@
                 }
             }
         });
-
-            $('#tableSearch').on('keyup', function () {
-                assetTable.search($(this).val()).draw();
-            });
+    }
 
             $(document).on('click', '.btn-view', function () {
                 var assetNo = $(this).data('asset-no');
@@ -521,5 +529,5 @@
                     return "";
                 }
             }
-        }
+
 </script>
