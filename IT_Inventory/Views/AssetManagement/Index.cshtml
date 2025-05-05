@@ -241,20 +241,26 @@
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    var assetTable;
     $(document).ready(function () {
-        var assetTable = initializeDataTable();
+         initializeDataTable();
 
         $('#tableSearch').on('keyup', function () {
-            assetTable.search($(this).val()).draw();
+            if (assetTable) {
+                assetTable.search($(this).val()).draw();
+            }
         });
-
         refreshAssetTable();
         refreshDashboardData();
     });
 
 
     function initializeDataTable() {
-        $('#assetDataTable').DataTable({
+        if ($.fn.DataTable.isDataTable('#assetDataTable')) {
+            $('#assetDataTable').DataTable().destroy();
+        }
+
+        assetTable = $('#assetDataTable').DataTable({
             responsive: true,
             pageLength: 25,
             dom: 'Bfrtip',
@@ -283,6 +289,7 @@
                 }
             }
         });
+        return assetTable;
     }
 
             $(document).on('click', '.btn-view', function () {
@@ -400,10 +407,6 @@
                 }
             }
 
-            $(document).ready(function () {
-                refreshDashboardData();
-            });
-
             function refreshDashboardData() {
                 $.ajax({
                     url: '/AssetManagement/GetDashboardCountsJson',
@@ -469,10 +472,12 @@
                         } else {
                             $("#assetListTable").append('<tr><td colspan="11" class="text-center">No Asset found</td></tr>');
                         }
-                        if ($.fn.DataTable.isDataTable('#assetDataTable')) {
-                            $('#assetDataTable').DataTable().destroy();
-                            initializeDataTable();
-                        }
+                        initializeDataTable();
+                        $('#tableSearch').off('keyup').on('keyup', function () {
+                            if (assetTable) {
+                                assetTable.search($(this).val()).draw();
+                            }
+                        });
                         console.log("Asset table refreshed successfully");
                     },
                     error: function (error) {
@@ -481,12 +486,6 @@
                     }
                 });
             }
-
-
-      $(document).ready(function () {
-          refreshAssetTable();
-          refreshDashboardData();
-      });
 
             function getStatusClass(status) {
                 if (!status) return "";

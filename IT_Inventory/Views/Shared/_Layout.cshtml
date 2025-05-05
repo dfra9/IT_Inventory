@@ -77,7 +77,6 @@
                     <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                         <i class="fas fa-expand-arrows-alt"></i>
                     </a>
-                </li>
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -92,21 +91,22 @@
             <div class="sidebar">
                 <!-- SidebarSearch Form -->
                 @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "form-inline" }))
+                  
                 {
-                    <div class="input-group" data-widget="sidebar-search">
-                        @Html.TextBox("searchQuery", null, new
-                        {
-                            @class = "form-control form-control-sidebar",
-                            type = "search",
-                            placeholder = "Search",
-                            aria_label = "Search"
-                        })
-                        <div class="input-group-append">
-                            <button class="btn btn-sidebar" type="submit">
-                                <i class="fas fa-search fa-fw"></i>
-                            </button>
-                        </div>
+                <div class="input-group" data-widget="sidebar-search">
+                    @Html.TextBox("searchQuery", null, new
+                    {
+                        @class = "form-control form-control-sidebar",
+                        type = "search",
+                        placeholder = "Search",
+                        aria_label = "Search"
+                    })
+                    <div class="input-group-append">
+                        <button class="btn btn-sidebar" type="submit">
+                            <i class="fas fa-search fa-fw"></i>
+                        </button>
                     </div>
+                </div>
                 }
 
                 <!-- Sidebar Menu -->
@@ -194,6 +194,23 @@
                                     <a href="@Url.Action("Index", "AssetManagement")" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Asset Management</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item menu-is-opening menu-open">
+                            <a href="@Url.Action("Index", "Home")" class="nav-link">
+                                <i class="nav-icon fas fa-archive"></i>
+                                <p>
+                                    Report
+                                </p>
+                                <i class="right fas fa-angle-left"></i>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "ReportAsset")" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Asset Report</p>
                                     </a>
                                 </li>
                             </ul>

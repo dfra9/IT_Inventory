@@ -368,6 +368,38 @@
                             </div>
                             @Html.ValidationMessageFor(m => m.Acquisition_value, "", new { @class = "text-danger" })
                         </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Asset_Image, htmlAttributes: new { @class = "control-label col-sm-2" })
+                            <div class="col-sm-5">
+                                @if (mode == "View" || mode == "Delete")
+                                {
+                                    <input class="form-control" type="file" accept=".JPEG, .JPG, .PNG, .GIF, .JFIF" id="file" name="file" disabled style="background-color: #e9ecef;">
+                                    @Html.HiddenFor(m => m.Asset_Image)
+                                }
+                                else
+                                {
+                                    <input class="form-control" type="file" accept=".JPEG, .JPG, .PNG, .GIF, .JFIF" id="file" name="file" onchange="preview()">
+                                    @Html.HiddenFor(m => m.Asset_Image)
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label col-sm-2">Preview</label>
+                            <div class="col-sm-5">
+                                <div class="image-preview-wrapper" style="border: 1px solid #ddd; border-radius: 6px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                                    @if (!string.IsNullOrEmpty(Model.Asset_Image))
+                                    {
+                                        <img id="assetImagePreview" src="@Model.Asset_Image" class="img-fluid" style="max-height: 200px;" />
+                                    }
+                                    else
+                                    {
+                                        <img id="assetImagePreview" style="max-height: 200px; display: none;" class="img-fluid" />
+                                        <span id="noImageText" style="color: #6c757d; font-style: italic;">No image selected</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                         <!-- /.form-group -->
                     </div>
 
@@ -794,12 +826,61 @@
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    function preview() {
+        var inputFile = document.getElementById("file");
+        var preview = document.getElementById("assetImagePreview");
+        var noImageText = document.getElementById("noImageText");
+        var hiddenField = document.getElementById("Asset_Image");
+
+        if (inputFile && inputFile.files && inputFile.files[0]) {
+            var file = inputFile.files[0];
+
+            if (hiddenField) {
+                hiddenField.value = file.name;
+            }
+
+            var imageUrl = URL.createObjectURL(file);
+
+            if (preview) {
+                preview.src = imageUrl;
+                preview.style.display = "block";
+            }
+
+            if (noImageText) {
+                noImageText.style.display = "none";
+            }
+        } else {
+            if (preview) {
+                preview.src = "";
+                preview.style.display = "none";
+            }
+
+            if (noImageText) {
+                noImageText.style.display = "block";
+            }
+
+            if (hiddenField) {
+                hiddenField.value = "";
+            }
+        }
+    }
+
+
     $(function () {
         var mode = "@mode";
         var readOnly = mode === "View" || mode === "Delete";
         var originalStatus = "@Model.Status";
-   
+
         if (mode == "Edit" || mode == "View" || mode == "Delete") {
+            var assetImage = "@Model.Asset_Image";
+            if (assetImage && assetImage !== "") {
+                $("#assetImagePreview").attr("src", assetImage);
+                $("#assetImagePreview").show();
+                $("#noImageText").hide();
+            } else {
+                $("#assetImagePreview").hide();
+                $("#noImageText").show();
+            }
             var statusValue = "@Model.Status";
             var cityValue = "@Model.City_Name";
             var locationValue = "@Model.Locations";
@@ -812,6 +893,7 @@
             var originalTransactionDate = "@(Model.Transaction_Date.HasValue ? Model.Transaction_Date.Value.ToString("yyyy-MM-dd") : "")";
             var roleValue = "@Model.Role";
             var compValue = "@Model.Company_User";
+
 
             $("#hiddenPIC").val(originalPIC);
             $("#hiddenRole").val(roleValue);
@@ -874,8 +956,6 @@
                 $("#statusDropdown").val(statusValue).trigger('change');
             }
         }
-
-
 
         $('.select2').select2({
             placeholder: "Select an option",

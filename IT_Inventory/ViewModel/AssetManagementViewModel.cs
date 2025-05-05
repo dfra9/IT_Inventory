@@ -31,6 +31,7 @@ namespace IT_Inventory.ViewModel
         public string No_Asset_Accounting { get; set; }
         public string No_PO { get; set; }
         public string Latest_User { get; set; }
+        public string Asset_Image { get; set; }
 
         public string Departement_Code { get; set; }
 

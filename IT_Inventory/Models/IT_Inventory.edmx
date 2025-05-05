@@ -53,6 +53,7 @@
           <Property Name="City_Name" Type="varchar" MaxLength="100" />
           <Property Name="Role" Type="varchar" MaxLength="100" />
           <Property Name="Company_User" Type="varchar" MaxLength="100" />
+          <Property Name="Asset_Image" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Asset_History">
           <Key>
@@ -403,6 +404,7 @@
           <Property Name="City_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Role" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Company_User" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Asset_Image" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="UoM">
           <Key>
@@ -596,6 +598,7 @@
           <EntitySetMapping Name="Asset">
             <EntityTypeMapping TypeName="IT_InventoryModel.Asset">
               <MappingFragment StoreEntitySet="Asset">
+                <ScalarProperty Name="Asset_Image" ColumnName="Asset_Image" />
                 <ScalarProperty Name="Company_User" ColumnName="Company_User" />
                 <ScalarProperty Name="Role" ColumnName="Role" />
                 <ScalarProperty Name="City_Name" ColumnName="City_Name" />

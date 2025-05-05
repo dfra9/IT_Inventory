@@ -1,0 +1,204 @@
+﻿@model global::IT_Inventory.ViewModel.ReportAssetViewModel
+@{
+    ViewBag.title = "Asset Report";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="form-group row">
+                        <div class="card-body">
+                            @using (Html.BeginForm("GetReport", "ReportAsset", FormMethod.Post, new { @id = "reportForm" }))
+                            {
+                                if (!ViewData.ModelState.IsValid)
+                                {
+                                    <div class="alert alert-danger">
+                                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                                    </div>
+                                }
+                                <div class="form-group row">
+                                    <label for="No_Asset" class="col-sm-2 col-form-label form-control-label">No Asset</label>
+                                    <div class="col-sm-3">
+                                        @Html.DropDownListFor(m => m.No_asset, Model.AssetNoList, "Select Asset No", new { @class = "form-control select2" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="Company_Code" class="col-sm-2 col-form-label form-control-label">Company Code</label>
+                                    <div class="col-md-3">
+                                        @Html.DropDownListFor(m => m.Company_Code, Model.CompanyList, "Select Company", new { @class = "form-control select2" })
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="Material_Group" class="col-sm-2 col-form-label form-control-label">Material Group</label>
+                                    <div class="col-sm-3">
+                                        @Html.DropDownListFor(m => m.Material_Group, Model.MaterialGroupList, "Select Material Group", new { @class = "form-control select2" })
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="Material_Code" class="col-sm-2 col-form-label form-control-label">Material Code</label>
+                                    <div class="col-sm-3">
+                                        @Html.DropDownListFor(m => m.Material_Code, Model.MaterialCodeList, "Select Material Code", new { @class = "form-control select2" })
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="No_Asset" class="col-sm-2 col-form-label form-control-label">Acquisition Value</label>
+                                    <div class="col-sm-3">
+                                        @Html.DropDownListFor(m => m.Acquisition_Value, Model.AcquisitionValueList, "Select Acquisition Value", new { @class = "form-control select2" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group" style="margin-top: 30px;">
+                                        <button type="submit" class="btn btn-primary" id="btnGetReport">
+                                            <i class="fas fa-search"></i> Get Report
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @if (Model.ReportItems != null && Model.ReportItems.Any())
+                    {
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-12 text-right">
+                                    @using (Html.BeginForm("ExportToExcel", "ReportAsset", FormMethod.Post))
+                                    {
+
+                                        @Html.HiddenFor(m => m.No_asset)
+                                        @Html.HiddenFor(m => m.Company_Code)
+                                        @Html.HiddenFor(m => m.Material_Group)
+                                        @Html.HiddenFor(m => m.Material_Code)
+                                        @Html.HiddenFor(m => m.Acquisition_Value)
+
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-file-excel"></i> Export to Excel
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table id="reportTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Asset No</th>
+                                            <th>Company Code</th>
+                                            <th>Company Name</th>
+                                            <th>Material Group</th>
+                                            <th>Material Code</th>
+                                            <th>Asset Description</th>
+                                            <th>Quantity</th>
+                                            <th>UoM</th>
+                                            <th>Acquisition Date</th>
+                                            <th>Acquisition Value</th>
+                                            <th>No Asset PGA</th>
+                                            <th>No Asset Accounting</th>
+                                            <th>No PO</th>
+                                            <th>Serial Number</th>
+                                            <th>Device Id</th>
+                                            <th>Latest User</th>
+                                            <th>Departement</th>
+                                            <th>City</th>
+                                            <th>Location</th>
+                                            <th>Condition</th>
+                                            <th>Last Check Date</th>
+                                            <th>Status</th>
+                                            <th>PIC</th>
+                                            <th>Role</th>
+                                            <th>Company User</th>
+                                            <th>Submit Date </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ReportItems)
+                                        {
+                                            <tr>
+                                                <td>@item.No_asset</td>
+                                                <td>@item.Company_Code</td>
+                                                <td>@item.Company_Name</td>
+                                                <td>@item.Material_Group</td>
+                                                <td>@item.Material_Code</td>
+                                                <td>@item.Material_Description</td>
+                                                <td>@item.Quantity</td>
+                                                <td>@item.UoM</td>
+                                                <td>@(item.Acquisition_Date?.ToString("yyyy-MM-dd"))</td>
+                                                <td>@item.Acquisition_Value</td>
+                                                <td>@item.No_Asset_PGA</td>
+                                                <td>@item.No_Asset_Accounting</td>
+                                                <td>@item.No_PO</td>
+                                                <td>@item.Serial_Number</td>
+                                                <td>@item.Device_Id</td>
+                                                <td>@item.Latest_User</td>
+                                                <td>@item.Dept</td>
+                                                <td>@item.Cities</td>
+                                                <td>@item.Locations</td>
+                                                <td>@item.Condition</td>
+                                                <td>@(item.Last_Check_Date?.ToString("yyyy-MM-dd"))</td>
+                                                <td>@item.Status</td>
+                                                <td>@item.PIC</td>
+                                                <td>@item.Role</td>
+                                                <td>@item.Company_User</td>
+                                                <td>@(item.Create_Date?.ToString("yyyy-MM-dd"))</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.ReportItems != null)
+                    {
+                        <div class="alert alert-info">
+                            No records found matching your criteria.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.select2) {
+            $('.select2').select2({
+                placeholder: "Select an option",
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('body')
+            });
+        } else {
+            console.error("Select2 library is not loaded!");
+        }
+
+        $('#reportForm').on('submit', function (e) {
+            var noAsset = $('#No_asset').val();
+            var companyCode = $('#Company_Code').val();
+            var materialGroup = $('#Material_Group').val();
+            var materialCode = $('#Material_Code').val();
+            var acquisitionValue = $('#Acquisition_Value').val();
+            if (!noAsset && !companyCode && !materialGroup && !materialCode && !acquisitionValue) {
+        
+                var alertBox = $('<div class="alert alert-danger" role="alert">' +
+                    'Please select at least one filter option before generating the report.' +
+                    '</div>');
+
+                $('.alert-danger').remove();
+
+                $('.form-group').first().before(alertBox);
+
+                e.preventDefault();
+
+                $('html, body').animate({
+                    scrollTop: alertBox.offset().top - 100
+                }, 200);
+            }
+        });
+
+
+    });
+</script>

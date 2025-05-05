@@ -51,5 +51,6 @@ namespace IT_Inventory.Models
         public string City_Name { get; set; }
         public string Role { get; set; }
         public string Company_User { get; set; }
+        public string Asset_Image { get; set; }
     }
 }

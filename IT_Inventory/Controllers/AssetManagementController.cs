@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using IT_Inventory.Models;
 using IT_Inventory.Services;
@@ -107,7 +109,7 @@ namespace IT_Inventory.Controllers
                     viewModel.No_Asset_Accounting = asset.No_Asset_Accounting;
                     viewModel.No_PO = asset.No_PO;
                     viewModel.Latest_User = asset.Latest_User;
-
+                    viewModel.Asset_Image = asset.Asset_Image;
                     viewModel.Departement_Code = db.Departement
                         .Where(d => d.Departement_Name == asset.Departement && d.Is_Deleted != true)
                         .Select(d => d.Departement_Code)
@@ -158,7 +160,7 @@ namespace IT_Inventory.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Editor(AssetManagementViewModel viewModel, bool statusChange = false)
+        public ActionResult Editor(AssetManagementViewModel viewModel, HttpPostedFileBase file, bool statusChange = false)
         {
             try
             {
@@ -168,6 +170,25 @@ namespace IT_Inventory.Controllers
                 {
                     return DeleteAsset(viewModel.No_asset);
                 }
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    viewModel.Asset_Image = file.FileName;
+
+                    string uploadPath = Server.MapPath("~/UploadFile/");
+                    if (!Directory.Exists(uploadPath))
+                    {
+                        Directory.CreateDirectory(uploadPath);
+                    }
+
+                    string uniqFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    string filePath = Path.Combine(uploadPath, uniqFileName);
+
+                    file.SaveAs(filePath);
+
+                    viewModel.Asset_Image = "/UploadFile/" + uniqFileName;
+                }
+
                 string locationName = null;
                 if (!string.IsNullOrEmpty(viewModel.Locations))
                 {
@@ -253,6 +274,7 @@ namespace IT_Inventory.Controllers
                         Status = viewModel.Status,
                         PIC = viewModel.PIC,
                         Role = viewModel.Role,
+                        Asset_Image = viewModel.Asset_Image,
                         Company_User = viewModel.Company_User,
                         Transaction_Date = viewModel.Transaction_Date,
                         Create_By = User.Identity.Name ?? "System",
@@ -312,6 +334,7 @@ namespace IT_Inventory.Controllers
                             existAsset.Location = locationName;
                             existAsset.City = viewModel.City_Name;
                             existAsset.Last_Check_Date = viewModel.Last_Check_Date;
+                            existAsset.Asset_Image = viewModel.Asset_Image;
                             existAsset.Condition = viewModel.Condition;
                             existAsset.Status = viewModel.Status;
                             existAsset.PIC = viewModel.PIC;
@@ -454,7 +477,8 @@ namespace IT_Inventory.Controllers
                     asset.Transaction_Date,
                     asset.Location,
                     asset.Departement,
-                    asset.Condition
+                    asset.Condition,
+                    asset.Asset_Image
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -523,6 +547,7 @@ namespace IT_Inventory.Controllers
                         Location = existingAsset.Location,
                         City = existingAsset.City,
                         Last_Check_Date = existingAsset.Last_Check_Date,
+                        Asset_Image = existingAsset.Asset_Image,
                         Condition = existingAsset.Condition,
                         Status = Status,
                         PIC = PIC,
