@@ -160,7 +160,7 @@ namespace IT_Inventory.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Editor(AssetManagementViewModel viewModel, HttpPostedFileBase file, bool statusChange = false)
+        public ActionResult Editor(AssetManagementViewModel viewModel, List<HttpPostedFileBase> file, bool statusChange = false)
         {
             try
             {
@@ -171,23 +171,32 @@ namespace IT_Inventory.Controllers
                     return DeleteAsset(viewModel.No_asset);
                 }
 
-                if (file != null && file.ContentLength > 0)
-                {
-                    viewModel.Asset_Image = file.FileName;
+                List<string> imagePaths = new List<string>();
 
+                if (mode == "Edit" && !string.IsNullOrEmpty(viewModel.Asset_Image))
+                {
+                    imagePaths.AddRange(viewModel.Asset_Image.Split(';').Where(p => !string.IsNullOrWhiteSpace(p)));
+                }
+
+                if (file != null && file.Any(f => f != null && f.ContentLength > 0))
+                {
                     string uploadPath = Server.MapPath("~/UploadFile/");
                     if (!Directory.Exists(uploadPath))
                     {
                         Directory.CreateDirectory(uploadPath);
                     }
 
-                    string uniqFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                    string filePath = Path.Combine(uploadPath, uniqFileName);
+                    foreach (var uploadedFile in file.Where(f => f != null && f.ContentLength > 0))
+                    {
+                        string uniqFileName = Guid.NewGuid().ToString() + "_" + uploadedFile.FileName;
+                        string filePath = Path.Combine(uploadPath, uniqFileName);
 
-                    file.SaveAs(filePath);
-
-                    viewModel.Asset_Image = "/UploadFile/" + uniqFileName;
+                        uploadedFile.SaveAs(filePath);
+                        imagePaths.Add("/UploadFile/" + uniqFileName);
+                    }
                 }
+
+                viewModel.Asset_Image = string.Join(";", imagePaths);
 
                 string locationName = null;
                 if (!string.IsNullOrEmpty(viewModel.Locations))
@@ -282,7 +291,6 @@ namespace IT_Inventory.Controllers
                         Is_Deleted = false
                     };
 
-
                     var assetHistory = new Asset_History
                     {
                         No_asset = viewModel.No_asset,
@@ -355,8 +363,8 @@ namespace IT_Inventory.Controllers
                             }
                         }
                     }
+                    assetData.Asset_Image = viewModel.Asset_Image;
                     db.SaveChanges();
-
                     var dashboardCounts = _assetService.GetDashboardCounts();
 
                     if (Request.IsAjaxRequest())

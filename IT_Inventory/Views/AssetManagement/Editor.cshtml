@@ -234,7 +234,7 @@
 </style>
 
 <section class="content">
-    @using (Html.BeginForm("Editor", "AssetManagement", FormMethod.Post, new { id = "assetForm" }))
+    @using (Html.BeginForm("Editor", "AssetManagement", FormMethod.Post, new { id = "assetForm", enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
         <input type="hidden" name="mode" value="@mode" />
@@ -370,7 +370,7 @@
                         </div>
 
                         <div class="form-group">
-                            @Html.LabelFor(m => m.Asset_Image, htmlAttributes: new { @class = "control-label col-sm-2" })
+                            <label class="control-label col-sm-2">Asset Image</label>
                             <div class="col-sm-5">
                                 @if (mode == "View" || mode == "Delete")
                                 {
@@ -379,7 +379,7 @@
                                 }
                                 else
                                 {
-                                    <input class="form-control" type="file" accept=".JPEG, .JPG, .PNG, .GIF, .JFIF" id="file" name="file" onchange="preview()">
+                                    <input class="form-control" type="file" accept=".JPEG, .JPG, .PNG, .GIF, .JFIF" id="file" name="file" multiple onchange="previewMultiple()">
                                     @Html.HiddenFor(m => m.Asset_Image)
                                 }
                             </div>
@@ -387,168 +387,164 @@
                         <div class="form-group">
                             <label class="form-label col-sm-2">Preview</label>
                             <div class="col-sm-5">
-                                <div class="image-preview-wrapper" style="border: 1px solid #ddd; border-radius: 6px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
-                                    @if (!string.IsNullOrEmpty(Model.Asset_Image))
-                                    {
-                                        <img id="assetImagePreview" src="@Model.Asset_Image" class="img-fluid" style="max-height: 200px;" />
-                                    }
-                                    else
-                                    {
-                                        <img id="assetImagePreview" style="max-height: 200px; display: none;" class="img-fluid" />
-                                        <span id="noImageText" style="color: #6c757d; font-style: italic;">No image selected</span>
-                                    }
+                                <div id="imagePreviewContainer" class="image-preview-wrapper" style="border: 1px solid #ddd; border-radius: 6px; min-height: 200px; padding: 10px">
+                                    <div id="imageLinks" style="margin-bottom: 10px;"></div>
+                                    <div id="currentPreview" style="display: none; text-align: center; margin-top: 10px;">
+                                        <img id="assetImagePreview" style="max-height: 200px; max-width: 100%;" class="img-fluid" />
+                                    </div>
+                                    <span id="noImageText" style="color: #6c757d; font-style: italic; display: block; text-align: center; padding: 20px 0;">No images selected</span>
                                 </div>
                             </div>
                         </div>
-                        <!-- /.form-group -->
-                    </div>
+                <!-- /.form-group -->
+            </div>
 
-                    <!-- /.col -->
-                    <div class="col-md-6">
-                        <div class="form-group col-4">
-                            <label>No Asset PGA</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.No_Asset_PGA, new { @class = "form-control", placeholder = "Input No Asset PGA", @readonly = "readOnly" })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.No_Asset_PGA, new { @class = "form-control", placeholder = "Input No Asset PGA" })
-                            }
-                            @Html.ValidationMessageFor(m => m.No_Asset_PGA, "", new { @class = "text-danger" })
-                        </div>
-                        <!-- /.form-group -->
-                        <div class="form-group col-4">
-                            <label>No Asset Accounting</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
+            <!-- /.col -->
+            <div class="col-md-6">
+                <div class="form-group col-4">
+                    <label>No Asset PGA</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.No_Asset_PGA, new { @class = "form-control", placeholder = "Input No Asset PGA", @readonly = "readOnly" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.No_Asset_PGA, new { @class = "form-control", placeholder = "Input No Asset PGA" })
+                    }
+                    @Html.ValidationMessageFor(m => m.No_Asset_PGA, "", new { @class = "text-danger" })
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group col-4">
+                    <label>No Asset Accounting</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
 
-                                @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input No Asset Accounting", @readonly = "readOnly" })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input No Asset Accounting" })
-                            }
+                        @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input No Asset Accounting", @readonly = "readOnly" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.No_Asset_Accounting, new { @class = "form-control", placeholder = "Input No Asset Accounting" })
+                    }
 
-                            @Html.ValidationMessageFor(m => m.No_Asset_Accounting, "", new { @class = "text-danger" })
-                        </div>
-                        <!-- /.form-group -->
-                        <div class="form-group col-2">
-                            <label>No PO</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No PO", @readonly = "readOnly" })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No PO" })
-                            }
-                            @Html.ValidationMessageFor(m => m.No_PO, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-4">
-                            <label>Serial Number</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.Serial_Number, new { @class = "form-control", placeholder = "Input Serial Number", @readonly = "readOnly" })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.Serial_Number, new { @class = "form-control", placeholder = "Input Serial Number" })
-                            }
-                            @Html.ValidationMessageFor(m => m.Serial_Number, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-4">
-                            <label>Device Id</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.Device_Id, new { @class = "form-control", placeholder = "Input Device Id", @readonly = "readOnly" })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.Device_Id, new { @class = "form-control", placeholder = "Input Device Id" })
-                            }
-                            @Html.ValidationMessageFor(m => m.Device_Id, "", new { @class = "text-danger" })
-                        </div>
-                        <!-- /.form-group -->
-                        <div class="form-group col-8">
-                            <label>Latest User</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input Latest User", @readonly = "readOnly" })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input Latest User" })
-                            }
-                            @Html.ValidationMessageFor(m => m.Latest_User, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-4">
-                            <label>Departement </label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.Departement_Code, new { @class = "form-control", @readonly = "readonly" })
-                            }
-                            else
-                            {
-                                @Html.DropDownListFor(m => m.Departement_Code, Model.GetDepartementListItem(), "Select Departement", new { @class = "form-control select2", id = "departementDropdown" })
-                            }
-                            @Html.ValidationMessageFor(m => m.Departement_Code, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-4">
-                            <label>City</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.City_Name, new { @class = "form-control", @readonly = "readonly" })
-                            }
-                            else
-                            {
-                                @Html.DropDownListFor(m => m.City_Name, Model.GetCityListItem(), "Select City", new { @class = "form-control select2", id = "cityDropdown" })
-                            }
-                            @Html.ValidationMessageFor(m => m.City_Name, "", new { @class = "text-danger" })
-                        </div>
+                    @Html.ValidationMessageFor(m => m.No_Asset_Accounting, "", new { @class = "text-danger" })
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group col-2">
+                    <label>No PO</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No PO", @readonly = "readOnly" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.No_PO, new { @class = "form-control", placeholder = "Input No PO" })
+                    }
+                    @Html.ValidationMessageFor(m => m.No_PO, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-4">
+                    <label>Serial Number</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.Serial_Number, new { @class = "form-control", placeholder = "Input Serial Number", @readonly = "readOnly" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Serial_Number, new { @class = "form-control", placeholder = "Input Serial Number" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Serial_Number, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-4">
+                    <label>Device Id</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.Device_Id, new { @class = "form-control", placeholder = "Input Device Id", @readonly = "readOnly" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Device_Id, new { @class = "form-control", placeholder = "Input Device Id" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Device_Id, "", new { @class = "text-danger" })
+                </div>
+                <!-- /.form-group -->
+                <div class="form-group col-8">
+                    <label>Latest User</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input Latest User", @readonly = "readOnly" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Latest_User, new { @class = "form-control", placeholder = "Input Latest User" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Latest_User, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-4">
+                    <label>Departement </label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.Departement_Code, new { @class = "form-control", @readonly = "readonly" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.Departement_Code, Model.GetDepartementListItem(), "Select Departement", new { @class = "form-control select2", id = "departementDropdown" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Departement_Code, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-4">
+                    <label>City</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.City_Name, new { @class = "form-control", @readonly = "readonly" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.City_Name, Model.GetCityListItem(), "Select City", new { @class = "form-control select2", id = "cityDropdown" })
+                    }
+                    @Html.ValidationMessageFor(m => m.City_Name, "", new { @class = "text-danger" })
+                </div>
 
-                        <div class="form-group col-4">
-                            <label>Location</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.Location_Name, new { @class = "form-control", @readonly = "readonly" })
-                            }
-                            else
-                            {
-                                @Html.DropDownListFor(m => m.Locations, Model.GetLocationListItem(), "Select Location", new { @class = "form-control select2", id = "locationDropdown" })
-                            }
-                            @Html.ValidationMessageFor(m => m.Locations, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-3">
-                            <label>Last Check Date</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date", type = "date", @readonly = readOnly })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date", type = "date" })
-                            }
-                            @Html.ValidationMessageFor(m => m.Last_Check_Date, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-4">
-                            <label>Condition</label>
-                            @if (mode == "View" || mode == "Delete")
-                            {
-                                @Html.TextBoxFor(m => m.Condition, new { @class = "form-control", placeholder = "", @readonly = readOnly })
-                            }
-                            else
-                            {
-                                @Html.TextBoxFor(m => m.Condition, new { @class = "form-control", placeholder = "Input Condition" })
-                            }
-                            @Html.ValidationMessageFor(m => m.Condition, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
+                <div class="form-group col-4">
+                    <label>Location</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.Location_Name, new { @class = "form-control", @readonly = "readonly" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.Locations, Model.GetLocationListItem(), "Select Location", new { @class = "form-control select2", id = "locationDropdown" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Locations, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-3">
+                    <label>Last Check Date</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date", type = "date", @readonly = readOnly })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Last_Check_Date, new { @class = "form-control", placeholder = "Last Check Date", type = "date" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Last_Check_Date, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-4">
+                    <label>Condition</label>
+                    @if (mode == "View" || mode == "Delete")
+                    {
+                        @Html.TextBoxFor(m => m.Condition, new { @class = "form-control", placeholder = "", @readonly = readOnly })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Condition, new { @class = "form-control", placeholder = "Input Condition" })
+                    }
+                    @Html.ValidationMessageFor(m => m.Condition, "", new { @class = "text-danger" })
                 </div>
             </div>
-            <!-- /.col -->
-            <!-- /.row -->
-            <!-- /.card-body -->
+        </div>
+        </div>
+        <!-- /.col -->
+        <!-- /.row -->
+        <!-- /.card-body -->
         </div>
 
         <div class="card card-primary @(readOnly ?" collapse-card": "")">
@@ -826,44 +822,174 @@
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    function preview() {
+    function previewMultiple() {
         var inputFile = document.getElementById("file");
+        var imageLinksContainer = document.getElementById("imageLinks");
         var preview = document.getElementById("assetImagePreview");
         var noImageText = document.getElementById("noImageText");
         var hiddenField = document.getElementById("Asset_Image");
+        var currentPreview = document.getElementById("currentPreview");
+        var assetImagePreview = document.getElementById("assetImagePreview");
 
-        if (inputFile && inputFile.files && inputFile.files[0]) {
-            var file = inputFile.files[0];
+        var existImages = hiddenField.value ? hiddenField.value.split(';').filter(path => path.trim() !== "") : [];
 
-            if (hiddenField) {
-                hiddenField.value = file.name;
-            }
+        imageLinksContainer.innerHTML = "";
+        var totalImages = 0;
+        if (existImages.length > 0) {
+            for (var i = 0; i < existImages.length; i++) {
+                var imagePath = existImages[i];
+                if (imagePath.trim() !== "") {
+                    totalImages++;
+                    var link = document.createElement("a");
+                    link.href = "javascript:void(0);";
+                    link.textContent = "Image " + totalImages + ": " + (imagePath.split('/').pop() || imagePath);
+                    link.className = "image-link";
+                    link.setAttribute("data-index", i);
+                    link.style.display = "block";
+                    link.style.marginBottom = "5px";
+                    link.style.color = "#007bff";
+                    link.style.textDecoration = "underline";
 
-            var imageUrl = URL.createObjectURL(file);
+                    (function (path) {
+                        link.onclick = function (e) {
+                            e.preventDefault();
+                            assetImagePreview.src = path;
+                            assetImagePreview.style.display = "block";
 
-            if (preview) {
-                preview.src = imageUrl;
-                preview.style.display = "block";
-            }
+                            resetLinkStyles();
 
-            if (noImageText) {
-                noImageText.style.display = "none";
-            }
-        } else {
-            if (preview) {
-                preview.src = "";
-                preview.style.display = "none";
-            }
-
-            if (noImageText) {
-                noImageText.style.display = "block";
-            }
-
-            if (hiddenField) {
-                hiddenField.value = "";
+                            this.style.fontWeight = "bold";
+                            this.style.color = "#007bff";
+                        };
+                    })(imagePath);
+                    imageLinksContainer.appendChild(link);
+                }
             }
         }
+        if (inputFile && inputFile.files && inputFile.files.length > 0) {
+            for (var i = 0; i < inputFile.files.length; i++) {
+                var file = inputFile.files[i];
+                totalImages++;
+
+                var link = document.createElement("a");
+                link.href = "javascript:void(0);";
+                link.textContent = "Image " + totalImages + ": " + file.name;
+                link.className = "image-link new-image";
+                link.setAttribute("data-index", i);
+                link.style.display = "block";
+                link.style.marginBottom = "5px";
+                link.style.color = "#007bff";
+                link.style.textDecoration = "underline";
+
+                (function (index) {
+                    link.onclick = function (e) {
+                        e.preventDefault();
+                        var file = inputFile.files[index];
+                        var imageUrl = URL.createObjectURL(file);
+
+                        assetImagePreview.src = imageUrl;
+                        currentPreview.style.display = "block";
+
+                        resetLinkStyles();
+
+                        this.style.fontWeight = "bold";
+                        this.style.color = "#007bff";
+                    };
+                })(i);
+
+                imageLinksContainer.appendChild(link);
+            }
+        }
+        if (totalImages > 0) {
+            var firstLink = document.querySelector(".image-link");
+            if (firstLink) {
+                firstLink.click();
+            }
+            noImageText.style.display = "none";
+        } else {
+            noImageText.style.display = "block";
+            currentPreview.style.display = "none";
+            assetImagePreview.src = "";
+
+        }
     }
+
+    function resetLinkStyles() {
+        var links = document.getElementsByClassName("image-link");
+        for (var j = 0; j < links.length; j++) {
+            links[j].style.fontWeight = "normal";
+            links[j].style.color = "#007bff";
+        }
+    }
+
+    function displayExistImage() {
+        var hiddenField = document.getElementById("Asset_Image");
+        var imageLinksContainer = document.getElementById("imageLinks");
+        var noImageText = document.getElementById("noImageText");
+        var assetImagePreview = document.getElementById("assetImagePreview");
+
+        if (imageLinksContainer) {
+            imageLinksContainer.innerHTML = "";
+        }
+
+        if (hiddenField && hiddenField.value) {
+            var imagePaths = hiddenField.value.split(";").filter(img => img.trim() !== "");
+
+            if (imagePaths.length > 0) {
+                noImageText.style.display = "none";
+                currentPreview.style.display = "block";
+
+                for (var i = 0; i < imagePaths.length; i++) {
+                    var imagePath = imagePaths[i];
+
+                    if (imagePath.trim() !== "") {
+                        var link = document.createElement("a");
+                        link.href = "#";
+                        link.textContent = "Image " + (i + 1) + ": " + (imagePath.split('/').pop() || imagePath);
+                        link.className = "image-link";
+                        link.setAttribute("data-path", imagePath);
+                        link.style.display = "block";
+                        link.style.marginBottom = "8px";
+                        link.style.color = "#007bff";
+                        link.style.textDecoration = "underline";
+
+                        (function (path) {
+                        link.onclick = function (e) {
+                            e.preventDefault();
+                            var path = this.getAttribute("data-path");
+
+                            assetImagePreview.src = path;
+                            assetImagePreview.style.display = "block";
+                            currentPreview.style.display = "block";
+
+                            resetLinkStyles();
+
+                            this.style.fontWeight = "bold";
+                            this.style.color = "#007bff";
+                        };
+                        })(imagePath);
+                        imageLinksContainer.appendChild(link);
+                    }
+                }
+                if (imagePaths.length > 0 && imagePaths[0].trim() !== "") {
+                    assetImagePreview.src = imagePaths[0].trim();
+                    currentPreview.style.display = "block";
+                    var firstLink = document.querySelector(".image-link");
+                    if (firstLink) {
+                        firstLink.style.fontWeight = "bold";
+                        firstLink.style.color = "#0056b3";
+                    }
+                }
+            } else {
+                noImageText.style.display = "block";
+                assetImagePreview.style.display = "none";
+            }
+        } else {
+            noImageText.style.display = "block";
+            assetImagePreview.style.display = "none";
+        }
+    }
+
 
 
     $(function () {
@@ -872,15 +998,7 @@
         var originalStatus = "@Model.Status";
 
         if (mode == "Edit" || mode == "View" || mode == "Delete") {
-            var assetImage = "@Model.Asset_Image";
-            if (assetImage && assetImage !== "") {
-                $("#assetImagePreview").attr("src", assetImage);
-                $("#assetImagePreview").show();
-                $("#noImageText").hide();
-            } else {
-                $("#assetImagePreview").hide();
-                $("#noImageText").show();
-            }
+            displayExistImage();
             var statusValue = "@Model.Status";
             var cityValue = "@Model.City_Name";
             var locationValue = "@Model.Locations";
@@ -1536,6 +1654,8 @@
                 $("#assetForm").append('<input type="hidden" name="statusChange" + value = "' + statusChange + '" />');
             }
 
+            var formData = new FormData($("#assetForm")[0]);
+
             if ($("#statusChangeInput").length) {
                 $("#statusChangeInput").val(statusChange);
             } else {
@@ -1550,7 +1670,9 @@
             $.ajax({
                 url: $("#assetForm").attr("action"),
                 type: 'POST',
-                data: $("#assetForm").serialize(),
+                data: formData,
+                processData: false,  
+                contentType: false,
                 success: function (data) {
                     console.log("Server response:", data);
                     if (data && data.success) {
