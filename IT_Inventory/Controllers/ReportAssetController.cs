@@ -70,7 +70,7 @@ namespace IT_Inventory.Controllers
             model.AssetNoList = new SelectList(assetNumbers, model.No_asset);
 
             var companies = _assetService.GetActiveCompanies();
-            model.CompanyList = new SelectList(companies, model.Company_Code);
+            model.CompanyList = new SelectList(companies, "Company_Code", "Company_Name", model.Company_Code);
 
             var materialGroups = _assetService.GetDistinctMaterialGroups();
             model.MaterialGroupList = new SelectList(materialGroups, model.Material_Group);
@@ -87,9 +87,9 @@ namespace IT_Inventory.Controllers
         {
             var reportItems = _assetService.GetAssetReports(
                 model.No_asset,
+                model.Company_Code,
                 model.Material_Group,
                 model.Material_Code,
-                model.Company_Code,
                 model.Acquisition_Value
                 );
 

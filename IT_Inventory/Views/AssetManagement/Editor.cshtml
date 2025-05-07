@@ -1131,6 +1131,7 @@
 
         if (mode == "Edit" || mode == "View" || mode == "Delete") {
             displayExistImage();
+
             var statusValue = "@Model.Status";
             var cityValue = "@Model.City_Name";
             var locationValue = "@Model.Locations";
@@ -1540,73 +1541,160 @@
             if (!dateString) return "";
 
             try {
-                if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                if (typeof dateString === 'string') {
+                    if (dateString.indexOf('/Date(') === 0) {
+                        const timestamp = parseInt(dateString.substr(6));
+                        const date = new Date(timestamp);
+                        if (isNaN(date.getTime())) return "";
 
-                    const timestamp = parseInt(dateString.substr(6));
-                    const date = new Date(timestamp);
-                    if (isNaN(date.getTime())) return "";
+                        const year = date.getFullYear();
+                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        const day = date.getDate().toString().padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    }
+                    else if (dateString.includes('T')) {
+                        const date = new Date(dateString);
+                        if (isNaN(date.getTime())) return "";
 
-                    const year = date.getFullYear();
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const day = date.getDate().toString().padStart(2, '0');
-                    return `${year}-${month}-${day}`;
-                } else {
-                    const date = new Date(dateString);
-                    if (isNaN(date.getTime())) return "";
-
-                    const year = date.getFullYear();
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const day = date.getDate().toString().padStart(2, '0');
-                    return `${year}-${month}-${day}`;
+                        const year = date.getFullYear();
+                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        const day = date.getDate().toString().padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    }
+                    else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                        return dateString;
+                    }
                 }
+
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return "";
+
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                return `${year}-${month}-${day}`;
+
             } catch (e) {
                 console.error("Error parsing date:", e);
                 return "";
             }
         }
 
-        $("#btnSearch").click(function () {
-            var search = $("input[name='table_search']").val();
+
+        function searchAssetHistory() {
+            var search = $("input[name='table_search']").val().trim();
             var noAsset = $("#No_asset").val();
+
+            if (!noAsset) {
+                $("#assetHistoryTable").html('<tr><td colspan="7" class="text-center">No asset selected</td></tr>');
+                return;
+            }
+
+            $("#assetHistoryTable").html('<tr><td colspan="7" class="text-center"><i class="fas fa-spinner fa-spin"></i> Searching...</td></tr>');
+
+            console.log("Searching for asset history: Asset=" + noAsset + ", Search=" + search);
+
             $.ajax({
-                url: '@Url.Action("SearchAssetHistory", "AssetManagement")',
+                url: '/AssetManagement/SearchAssetHistory',
                 type: 'GET',
                 data: { search: search, noAsset: noAsset },
-                success: function (data) {
+                dataType: 'json',
+                cache: false,
+                success: function (response) {
+                    if (!response) {
+                        var message = response.message || "An error occurred while searching";
+                        $("#assetHistoryTable").html('<tr><td colspan="7" class="text-center">' + message + '</td></tr>');
+                        return;
+                    }
+
+                    if (response.success === false) {
+                        var message = response.message || "Error processing history data";
+                        $("#assetHistoryTable").html('<tr><td colspan="7" class="text-center">' + message + '</td></tr>');
+                        return;
+                    }
+
+                    var data = response.data;
+                    if (!data || !Array.isArray(data) || data.length === 0) {
+                        var message = search ?
+                            "No results found matching '" + search + "'" :
+                            "No history records found for this asset";
+                        $("#assetHistoryTable").html('<tr><td colspan="7" class="text-center">' + message + '</td></tr>');
+                        return;
+                    }
+
                     renderAssetHistory(data);
                 },
-                error: function (error) {
-                    console.log(error);
-                    showErrorToast("Error searching asset history");
+                error: function (xhr, status, error) {
+                    console.error("Error searching asset history:", error);
+                    console.error("Response:", xhr.responseText);
+                    $("#assetHistoryTable").html('<tr><td colspan="7" class="text-center text-danger">Error searching asset history</td></tr>');
                 }
             });
-        });
+        }
 
         function renderAssetHistory(data) {
             var tbody = $("#assetHistoryTable");
             tbody.empty();
 
             if (data && data.length > 0) {
-                data.forEach(function (item) {
-                    var row = $("<tr>").append(
-                        $("<td>").text(item.No_asset || ""),
-                        $("<td>").text(item.PIC || ""),
-                        $("<td>").text(item.Role || ""),
-                        $("<td>").text(item.Company_User || ""),
-                        $("<td>").text(formatDate(item.Transaction_Date)),
-                        $("<td>").text(item.Status || ""),
-                        $("<td>").text(formatDate(item.Submit_Date))
+                    data.forEach(function (item) {
+                        var statusClass = "";
+                        if (item.Status) {
+                            var status = item.Status.toLowerCase().replace(/\s+/g, "-");
+                            if (status === "borrowing") statusClass = "status-borrowing";
+                            else if (status === "return") statusClass = "status-return";
+                            else if (status === "service") statusClass = "status-service";
+                            else if (status === "ready") statusClass = "status-ready";
+                            else if (status === "assign") statusClass = "status-assign";
+                            else if (status === "write-off") statusClass = "status-write-off";
+                    }
+
+                        var row = $("<tr>").append(
+                            $("<td>").text(item.No_asset || ""),
+                            $("<td>").text(item.PIC || ""),
+                            $("<td>").text(item.Role || ""),
+                            $("<td>").text(item.Company_User || ""),
+                            $("<td>").text(item.Transaction_Date || ""),
+                            $("<td>").addClass(statusClass).text(item.Status || ""),
+                            $("<td>").text(item.Submit_Date || "")
                     );
                     tbody.append(row);
                 });
             } else {
                 tbody.append(
-                    $("<tr>").append(
+                    $("<tr>").append( 
                         $("<td>").attr("colspan", "7").text("No data found")
                     )
                 );
             }
         }
+
+        $(document).ready(function () {
+
+            if ($("#No_asset").val() && $("#No_asset").prop('readonly')) {
+                setTimeout(function () {
+                    searchAssetHistory();
+                }, 300);
+            }
+
+            $("#btnSearch").unbind('click').on('click', function (e) {
+                e.preventDefault();
+                console.log("Search button clicked");
+                searchAssetHistory();
+            });
+
+            $("input[name='table_search']").unbind('keypress').on('keypress', function (e) {
+                if (e.which === 13) {  
+                    e.preventDefault();
+                    console.log("Enter key pressed in search input");
+                    searchAssetHistory();
+                }
+            });
+
+            $("#No_asset").on('change', function() {
+            searchAssetHistory();
+            });
+        });
 
 
         $("#btnSave").click(function (e) {
@@ -1803,7 +1891,7 @@
                 url: $("#assetForm").attr("action"),
                 type: 'POST',
                 data: formData,
-                processData: false,  
+                processData: false,
                 contentType: false,
                 success: function (data) {
                     console.log("Server response:", data);

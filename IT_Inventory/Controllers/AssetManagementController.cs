@@ -793,29 +793,57 @@ namespace IT_Inventory.Controllers
 
         public ActionResult SearchAssetHistory(string search, string noAsset)
         {
-            var assetData = db.Asset_History.Where(a => a.No_asset == noAsset && a.Is_Deleted != true);
-            if (!string.IsNullOrEmpty(search))
+            try
             {
-                assetData = assetData.Where(a =>
-                a.PIC.Contains(search) ||
-                a.Status.Contains(search) ||
-               (a.Transaction_Date.HasValue && a.Transaction_Date.Value.ToString().Contains(search)) ||
-            (a.Role != null && a.Role.Contains(search)) ||
-            (a.Company_User != null && a.Company_User.Contains(search))
-            );
+                if (string.IsNullOrEmpty(noAsset))
+                {
+                    return Json(new { success = false, message = "No asset selected" }, JsonRequestBehavior.AllowGet);
+                }
+
+                var query = db.Asset_History
+                .Where(h => h.No_asset == noAsset && (h.Is_Deleted == false || h.Is_Deleted == null))
+                .ToList();
+
+                var filteredResults = query;
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    string lowercaseSearch = search.Trim().ToLower();
+
+                    filteredResults = query.Where(a =>
+                        (a.No_asset != null && a.No_asset.ToLower().Contains(lowercaseSearch)) ||
+                        (a.PIC != null && a.PIC.ToLower().Contains(lowercaseSearch)) ||
+                        (a.Status != null && a.Status.ToLower().Contains(lowercaseSearch)) ||
+                        (a.Role != null && a.Role.ToLower().Contains(lowercaseSearch)) ||
+                        (a.Company_User != null && a.Company_User.ToLower().Contains(lowercaseSearch)) ||
+                        (a.Create_Date != null && a.Create_Date.Value.ToString("yyyy-MM-dd").Contains(lowercaseSearch)) ||
+                        (a.Transaction_Date != null && a.Transaction_Date.Value.ToString("yyyy-MM-dd").Contains(lowercaseSearch))
+                    ).ToList();
+
+                    System.Diagnostics.Debug.WriteLine($"Filtered results count: {filteredResults.Count}");
+                }
+
+                var assets = filteredResults
+                    .OrderByDescending(a => a.Transaction_Date)
+                    .Select(a => new
+                    {
+                        a.No_asset,
+                        a.PIC,
+                        a.Role,
+                        a.Company_User,
+                        Transaction_Date = a.Transaction_Date.HasValue ? a.Transaction_Date.Value.ToString("yyyy-MM-dd") : "",
+                        a.Status,
+                        Submit_Date = a.Create_Date.HasValue ? a.Create_Date.Value.ToString("yyyy-MM-dd") : ""
+                    })
+                    .ToList();
+
+                return Json(new { success = true, data = assets }, JsonRequestBehavior.AllowGet);
             }
-            var assets = assetData.OrderByDescending(a => a.Transaction_Date).Select(a => new
+            catch (Exception ex)
             {
-                a.No_asset,
-                a.PIC,
-                a.Transaction_Date,
-                a.Status,
-                a.Role,
-                a.Company_User,
-                Submit_Date = a.Create_Date
-            }).Take(100)
-              .ToList();
-            return Json(assets, JsonRequestBehavior.AllowGet);
+                System.Diagnostics.Debug.WriteLine($"Error in SearchAssetHistory: {ex.Message}");
+                return Json(new { success = false, message = "An error occurred while searching asset history: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpGet]
