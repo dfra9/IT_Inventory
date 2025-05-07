@@ -188,11 +188,11 @@ namespace IT_Inventory.Controllers
 
                     foreach (var uploadedFile in file.Where(f => f != null && f.ContentLength > 0))
                     {
-                        string uniqFileName = Guid.NewGuid().ToString() + "_" + uploadedFile.FileName;
-                        string filePath = Path.Combine(uploadPath, uniqFileName);
+                        string originalFileName = uploadedFile.FileName;
+                        string filePath = Path.Combine(uploadPath, originalFileName);
 
                         uploadedFile.SaveAs(filePath);
-                        imagePaths.Add("/UploadFile/" + uniqFileName);
+                        imagePaths.Add(originalFileName);
                     }
                 }
 
