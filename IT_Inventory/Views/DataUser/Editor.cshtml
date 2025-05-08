@@ -121,7 +121,7 @@
                                                     {
                                                         foreach (var dept in ViewBag.Departement)
                                                         {
-                                                            <option value="@dept.Departement_Name" @(Model.Departement == dept.Departement_Name ? "selected" : "")>@dept.Departement_Name</option>
+                                                            <option value="@dept.Departement_Code" @(Model.Departement == dept.Departement_Code ? "selected" : "")>@dept.Departement_Code</option>
                                                         }
                                                     }
                                                 </select>
