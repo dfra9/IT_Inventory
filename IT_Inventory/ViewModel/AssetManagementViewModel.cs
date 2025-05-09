@@ -53,6 +53,7 @@ namespace IT_Inventory.ViewModel
 
         public string Role { get; set; }
         public string mode { get; set; }
+
         public string Serial_Number { get; set; }
         public string Device_Id { get; set; }
         public string Create_By { get; set; }
@@ -196,7 +197,7 @@ namespace IT_Inventory.ViewModel
 
         public SelectList GetUoMListItem()
         {
-            return new SelectList(UoMList, "UoM_Description", "UoM_Description");
+            return new SelectList(UoMList, "UoM_Code", "UoM_Code");
         }
 
         public SelectList GetRoleListItem()

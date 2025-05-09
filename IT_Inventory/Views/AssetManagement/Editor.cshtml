@@ -1200,6 +1200,10 @@
                 $("#materialGroupDropdown").val(materialGroupValue).trigger('change');
             }
 
+            if ((mode == "Edit" || mode == "View" || mode == "Delete") && departmentCodeValue) {
+                $("#departementDropdown").val(departmentCodeValue).trigger('change');
+            }
+
             $("#hiddenPIC").val(originalPIC);
             $("#hiddenTransactionDate").val(originalTransactionDate);
 
@@ -1663,7 +1667,7 @@
                 });
             } else {
                 tbody.append(
-                    $("<tr>").append( 
+                    $("<tr>").append(
                         $("<td>").attr("colspan", "7").text("No data found")
                     )
                 );
@@ -1685,7 +1689,7 @@
             });
 
             $("input[name='table_search']").unbind('keypress').on('keypress', function (e) {
-                if (e.which === 13) {  
+                if (e.which === 13) {
                     e.preventDefault();
                     console.log("Enter key pressed in search input");
                     searchAssetHistory();
@@ -1849,9 +1853,31 @@
                 $("#hiddenComp").val(compValue);
             }
 
+            if ($("#Serial_Number").val().trim() !== "") {
+              
+                var serialNumber = $("#Serial_Number").val();
+                var assetNo = $("#No_asset").val();
+
+                $.ajax({
+                    url: '/AssetManagement/CheckSerialNumberUnique',
+                    type: 'GET',
+                    async: false, 
+                    data: { serialNumber: serialNumber, assetNo: assetNo },
+                    success: function (response) {
+                        if (!response.isUnique) {
+                            $("#Serial_Number").addClass("is-invalid");
+                            $("#Serial_Number").after('<span class="text-danger validation-error">This Serial Number is already used by another asset</span>');
+                            isValid = false;
+                            showErrorToast("Serial Number must be unique");
+                        }
+                    }
+                });
+            }
+
             if (!isValid) {
                 return;
             }
+
 
             var statusChange = false;
             if (mode == "Edit") {

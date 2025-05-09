@@ -1,589 +1,589 @@
-﻿@{
-    ViewBag.Title = "Asset List";
-    string GetStatusClass(string status)
-    {
-        if (string.IsNullOrEmpty(status)) return "";
-
-        switch (status)
+﻿    @{
+        ViewBag.Title = "Asset List";
+        string GetStatusClass(string status)
         {
-            case "Borrowing": return "status-borrowing";
-            case "Return": return "status-return";
-            case "Service": return "status-service";
-            case "Ready": return "status-ready";
-            case "Assign": return "status-assign";
-            case "Write Off": return "status-write-off";
-            default: return "";
+            if (string.IsNullOrEmpty(status)) return "";
+
+            switch (status)
+            {
+                case "Borrowing": return "status-borrowing";
+                case "Return": return "status-return";
+                case "Service": return "status-service";
+                case "Ready": return "status-ready";
+                case "Assign": return "status-assign";
+                case "Write Off": return "status-write-off";
+                default: return "";
+            }
         }
     }
-}
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<style>
-    .select2-dropdown {
-        z-index: 9999;
-    }
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <style>
+        .select2-dropdown {
+            z-index: 9999;
+        }
 
-    .select2-container--default .select2-selection--single {
-        height: calc(2.25rem + 2px);
-        padding: .375rem .75rem;
-    }
+        .select2-container--default .select2-selection--single {
+            height: calc(2.25rem + 2px);
+            padding: .375rem .75rem;
+        }
 
-    .btn-view, .btn-edit, .btn-delete {
-        margin-right: 5px;
-    }
+        .btn-view, .btn-edit, .btn-delete {
+            margin-right: 5px;
+        }
 
-    .modal-header {
-        background-color: #007bff;
-        color: white;
-    }
-
-        .modal-header .close {
+        .modal-header {
+            background-color: #007bff;
             color: white;
         }
 
-    #assetTable tr:hover {
-        background-color: #f1f7ff;
-        cursor: pointer;
-    }
+            .modal-header .close {
+                color: white;
+            }
 
-    .status-borrowing {
-        color: #28a745;
-        font-weight: bold;
-    }
-
-    .status-return {
-        color: #007bff;
-    }
-
-    .status-service {
-        color: #ffc107;
-        font-weight: bold;
-    }
-
-    .status-ready {
-        color: #17a2b8;
-    }
-
-    .status-assign {
-        color: #6610f2;
-    }
-
-    .status-write-off {
-        color: #dc3545;
-    }
-
-    .select2-container--default .select2-selection--single {
-        height: calc(2.25rem + 2px);
-        padding: 0.275rem 0.75rem;
-        line-height: 1.5;
-    }
-
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 1.5;
-            padding-left: 0;
-            color: #495057;
+        #assetTable tr:hover {
+            background-color: #f1f7ff;
+            cursor: pointer;
         }
 
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
+        .status-borrowing {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-return {
+            color: #007bff;
+        }
+
+        .status-service {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .status-ready {
+            color: #17a2b8;
+        }
+
+        .status-assign {
+            color: #6610f2;
+        }
+
+        .status-write-off {
+            color: #dc3545;
+        }
+
+        .select2-container--default .select2-selection--single {
             height: calc(2.25rem + 2px);
+            padding: 0.275rem 0.75rem;
+            line-height: 1.5;
         }
 
-    .input-group-sm {
-        position: relative;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: stretch;
-        width: 100%;
-    }
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 1.5;
+                padding-left: 0;
+                color: #495057;
+            }
 
-    #tableSearch {
-        border-radius: 4px;
-        border: 1px solid #ced4da;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        line-height: 1.5;
-        background-color: #fff;
-        background-clip: padding-box;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        width: 100%;
-    }
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: calc(2.25rem + 2px);
+            }
+
+        .input-group-sm {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        #tableSearch {
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            background-color: #fff;
+            background-clip: padding-box;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            width: 100%;
+        }
 
 
-    .dataTables_filter,
-    .dataTables_length {
-        display: none !important;
-    }
+        .dataTables_filter,
+        .dataTables_length {
+            display: none !important;
+        }
 
-    .select2-results__option {
-        padding: 8px 12px;
-    }
+        .select2-results__option {
+            padding: 8px 12px;
+        }
 
-    .select2-container--default .select2-results__option--highlighted[aria-selected] {
-        background-color: #007bff;
-    }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #007bff;
+        }
 
-    .select2-results__option[aria-selected=true] {
-        background-color: #e9ecef;
-    }
+        .select2-results__option[aria-selected=true] {
+            background-color: #e9ecef;
+        }
 
-    .select2-container--default.select2-container--focus .select2-selection--single {
-        border-color: #80bdff;
-        outline: 0;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-</style>
-<section class="content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex align-item-center">
-                <a class="btn btn-primary btn-sm" href="@Url.Action("Editor", "AssetManagement", new { mode = "Create" })">
-                    <i class="fa fa-plus"></i>
-                    Create
-                </a>
-                <div class="ml-auto d-flex align-item-center">
-                    <div class="input-group input-group-sm mr-2" style="width: 150px;">
-                        <input type="text" id="tableSearch" class="form-control" placeholder="Search..." />
-                        <div class="input-group-append">
+        .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+    </style>
+    <section class="content">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-item-center">
+                    <a class="btn btn-primary btn-sm" href="@Url.Action("Editor", "AssetManagement", new { mode = "Create" })">
+                        <i class="fa fa-plus"></i>
+                        Create
+                    </a>
+                    <div class="ml-auto d-flex align-item-center">
+                        <div class="input-group input-group-sm mr-2" style="width: 150px;">
+                            <input type="text" id="tableSearch" class="form-control" placeholder="Search..." />
+                            <div class="input-group-append">
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card-body table-responsive p-0">
-            <table id="assetDataTable" class="table table-hover text-nowrap">
-                <thead>
-                    <tr>
-                        <th>No Assets</th>
-                        <th>Company Name</th>
-                        <th>Material Group</th>
-                        <th>Material Code</th>
-                        <th>Asset Description</th>
-                        <th>Departement</th>
-                        <th>Location</th>
-                        <th>PIC / Vendor</th>
-                        <th>Role</th>
-                        <th>Company User</th>
-                        <th>Status</th>
-                        <th>Transaction Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="assetListTable">
-                    @if (Model.AssetList != null && Model.AssetList.Count > 0)
-                    {
-                        foreach (var item in Model.AssetList)
+            <div class="card-body table-responsive p-0">
+                <table id="assetDataTable" class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>No Assets</th>
+                            <th>Company Name</th>
+                            <th>Material Group</th>
+                            <th>Material Code</th>
+                            <th>Asset Description</th>
+                            <th>Departement</th>
+                            <th>Location</th>
+                            <th>PIC / Vendor</th>
+                            <th>Role</th>
+                            <th>Company User</th>
+                            <th>Status</th>
+                            <th>Transaction Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assetListTable">
+                        @if (Model.AssetList != null && Model.AssetList.Count > 0)
+                        {
+                            foreach (var item in Model.AssetList)
+                            {
+                                <tr>
+                                    <td>@item.No_asset</td>
+                                    <td>@item.Company_Name</td>
+                                    <td>@item.Material_Group</td>
+                                    <td>@item.Material_Code</td>
+                                    <td>@item.Material_Description</td>
+                                    <td>@item.Departement</td>
+                                    <td>@item.Location</td>
+                                    <td>@item.PIC</td>
+                                    <td>@item.Role</td>
+                                    <td>@item.Company_User</td>
+                                    <td>
+                                        <span class="@GetStatusClass(item.Status)">@item.Status</span>
+                                    </td>
+                                    <td>@(item.Transaction_Date != null ? ((DateTime)item.Transaction_Date).ToString("yyyy-MM-dd"): "")</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=View"
+                                               class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=Edit"
+                                               class="btn btn-primary btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=Delete"
+                                               class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>@item.No_asset</td>
-                                <td>@item.Company_Name</td>
-                                <td>@item.Material_Group</td>
-                                <td>@item.Material_Code</td>
-                                <td>@item.Material_Description</td>
-                                <td>@item.Departement</td>
-                                <td>@item.Location</td>
-                                <td>@item.PIC</td>
-                                <td>@item.Role</td>
-                                <td>@item.Company_User</td>
-                                <td>
-                                    <span class="@GetStatusClass(item.Status)">@item.Status</span>
-                                </td>
-                                <td>@(item.Transaction_Date != null ? ((DateTime)item.Transaction_Date).ToString("yyyy-MM-dd"): "")</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=View"
+                                <td colspan="5" class="text-center">No Asset found</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        var assetTable;
+        $(document).ready(function () {
+             initializeDataTable();
+
+            $('#tableSearch').on('keyup', function () {
+                if (assetTable) {
+                    assetTable.search($(this).val()).draw();
+                }
+            });
+            refreshAssetTable();
+            refreshDashboardData();
+        });
+
+
+        function initializeDataTable() {
+            if ($.fn.DataTable.isDataTable('#assetDataTable')) {
+                $('#assetDataTable').DataTable().destroy();
+            }
+
+            var columnCount = $('#assetDataTable thead tr th').length;
+            $('#assetDataTable tbody tr').each(function () {
+                var actualColumns = $(this).find('td').length;
+                if (actualColumns < columnCount) {
+                    for (var i = actualColumns; i < columnCount; i++) {
+                        $(this).append('<td></td>');
+                    }
+                }
+            });
+
+            if ($('#assetListTable tr').length === 0 ||
+                ($('#assetListTable tr').length === 1 && $('#assetListTable tr td').attr('colspan'))) {
+
+                if ($('#assetListTable tr').length === 0) {
+                    $('#assetListTable').html('<tr><td colspan="' + columnCount + '" class="text-center">No Asset found</td></tr>');
+                } else {
+                    $('#assetListTable tr td').attr('colspan', columnCount);
+                }
+
+                assetTable = $('#assetDataTable').DataTable({
+                    responsive: true,
+                    "pageLength": -1, 
+                    "lengthChange": true,
+                    "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+                    "pageLength": 25,
+                    "dom": 'lBrtip',
+                    "processing": true, 
+                    "serverSide": false,
+                    autoWidth: true,
+                    scrollX: true,
+                    scrollCollapse: true,
+                    "deferRender": true,
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                            title: 'Asset List_' + new Date().toISOString().slice(0, 25),
+                            className: 'btn btn-success btn-sm',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)'
+                            }
+                        }
+                    ]
+                });
+            } else {
+                assetTable = $('#assetDataTable').DataTable({
+                    responsive: true,
+                    "pageLength": -1, 
+                    "lengthChange": true,
+                    "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+                    "pageLength": 25,
+                    "dom": 'lBrtip',
+                    "processing": true,
+                    "serverSide": false,
+                    autoWidth: true,
+                    scrollX: true,
+                    scrollCollapse: true,
+                    "deferRender": true,
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                            title: 'Asset List_' + new Date().toISOString().slice(0, 25),
+                            className: 'btn btn-success btn-sm',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)'
+                            }
+                        }
+                    ],
+                    language: {
+                        search: "",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                        infoEmpty: "No data available",
+                        infoFiltered: "(filtered from _MAX_ total entries)",
+                        paginate: {
+                            first: "First",
+                            last: "Last",
+                            next: "Next",
+                            previous: "Previous"
+                        }
+                    }
+                });
+            }
+
+            return assetTable;
+        }
+
+                $(document).on('click', '.btn-view', function () {
+                    var assetNo = $(this).data('asset-no');
+                    $.ajax({
+                        url: '@Url.Action("GetAssetDetails", "AssetManagement")',
+                        type: 'GET',
+                        data: { assetId: assetNo },
+                        success: function (data) {
+                            if (data.success) {
+                                renderAssetDetails(data);
+                                $("#viewAssetModal").modal('show');
+                            } else {
+                                toastr.error(data.message || "Error loading asset detail");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error:", error);
+                            toastr.error("Error loading asset details");
+                        }
+                    });
+                });
+
+
+
+                $(document).on('click', '.btn-edit', function () {
+                    var assetNo = $(this).data('asset-no');
+                    $.ajax({
+                        url: '@Url.Action("GetAssetDetails", "AssetManagement")',
+                        type: 'GET',
+                        data: { assetId: assetNo },
+                        success: function (data) {
+                            if (!data || data.success === false) {
+                                toastr.error(data?.message || "Error loading asset details");
+                                return;
+                            }
+
+                            const assetData = data;
+
+                            $("#editAssetId").val(assetData.No_asset || '');
+                            $("#editCompanyCode").val(assetData.Company_Code || '').trigger('change');
+                            $("#editMaterialGroup").val(assetData.Material_Group || '').trigger('change');
+                            $("#editMaterialCode").val(assetData.Material_Code || '').trigger('change');
+                            $("#editMaterialDescription").val(assetData.Material_Description || '');
+                            $("#editDepartment").val(assetData.Departement || '').trigger('change');
+
+                            $("#editCity").val(assetData.City || '').trigger('change');
+
+                            $("#editCity").off('change.populateLocation').on('change.populateLocation', function () {
+                                loadLocationsByCity(assetData.City, '#editLocation');
+
+                                setTimeout(function () {
+                                    $("#editLocation").val(assetData.Location || '').trigger('change');
+                                }, 500);
+                            }).trigger('change');
+
+                            const status = assetData.Status || '';
+                            setTimeout(function () {
+                                $("#editStatus").val(status).trigger('change');
+
+                                const sanitizedStatus = status.replace(/\s+/g, '');
+                                const picField = $(`#edit${sanitizedStatus}PIC`);
+                                const dateField = $(`#edit${sanitizedStatus}Date`);
+
+                                if (picField.length) {
+                                    picField.val(assetData.PIC || '');
+                                }
+
+                                if (dateField.length) {
+                                    dateField.val(formatDateForInput(assetData.Transaction_Date));
+                                }
+
+                                $('#editAssetModal').data('originalData', {
+                                    status: status,
+                                    pic: assetData.PIC || '',
+                                    transactionDate: formatDateForInput(assetData.Transaction_Date)
+                                });
+
+                                $("#editAssetModal").modal('show');
+                            }, 800);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error:", error);
+                            toastr.error("Error loading asset details");
+                        }
+                    });
+                });
+
+                $(document).on('click', '.btn-delete', function () {
+                    var assetNo = $(this).data('asset-no');
+                    var assetDesc = $(this).data('asset-desc');
+
+                    $('#deleteAssetId').val(assetNo);
+                    $('#deleteAssetNo').text(assetNo);
+                    $('#deleteAssetDesc').text(assetDesc);
+                });
+
+
+                function updateDashboardCounts(dashboardCounts) {
+                    if (!dashboardCounts) return;
+                    if (dashboardCounts.TotalAssets !== undefined) {
+                        $('#total-assets').text(dashboardCounts.TotalAssets);
+                    }
+
+                    if (dashboardCounts.AvailableAssets !== undefined) {
+                        $('#available-assets').text(dashboardCounts.AvailableAssets);
+                    }
+
+                    if (dashboardCounts.AssetsInUse !== undefined) {
+                        $('#assets-in-use').text(dashboardCounts.AssetsInUse);
+                    }
+
+                    if (dashboardCounts.AssetsInMaintenance !== undefined) {
+                        $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
+                    }
+                }
+
+                function refreshDashboardData() {
+                    $.ajax({
+                        url: '/AssetManagement/GetDashboardCountsJson',
+                        type: 'GET',
+                        dataType: 'json',
+                        cache: false,
+                        success: function (dashboardCounts) {
+                            console.log("Dashboard data refreshed successfully:", dashboardCounts);
+                            updateDashboardCounts(dashboardCounts);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error refreshing dashboard data:', error);
+                            console.error('Status:', status);
+                            console.error('Response:', xhr.responseText);
+                        }
+                    });
+                }
+
+
+                function refreshAssetTable() {
+                    $.ajax({
+                        url: '/AssetManagement/GetAssetData',
+                        type: 'GET',
+                        data: { pageSize: -1 },
+                        success: function (data) {
+                            $("#assetListTable").empty();
+                            var columnCount = $('#assetDataTable thead tr th').length;
+                            if (data && data.length > 0) {
+                                data.forEach(function (asset) {
+                                    var statusClass = getStatusClass(asset.Status);
+
+                                    var row = `<tr>
+                            <td>${asset.No_asset || ''}</td>
+                            <td>${asset.Company_Name || ''}</td>
+                            <td>${asset.Material_Group || ''}</td>
+                            <td>${asset.Material_Code || ''}</td>
+                            <td>${asset.Material_Description || ''}</td>
+                            <td>${asset.Departement || ''}</td>
+                            <td>${asset.Location || ''}</td>
+                            <td>${asset.PIC || ''}</td>
+                            <td>${asset.Role || ''}</td>
+                            <td>${asset.Company_User || ''}</td>
+                            <td><span class="${statusClass}">${asset.Status || ''}</span></td>
+                            <td>${formatDate(asset.Transaction_Date) || ''}</td>
+                            <td>
+                                <div class="btn-group">
+                                        <a href="@Url.Action("Editor", "AssetManagement")?id=${asset.No_asset}&mode=View"
                                            class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=Edit"
+                                        <a href="@Url.Action("Editor", "AssetManagement")?id=${asset.No_asset}&mode=Edit"
                                            class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=Delete"
+                                        <a href="@Url.Action("Editor", "AssetManagement")?id=${asset.No_asset}&mode=Delete"
                                            class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="5" class="text-center">No Asset found</td>
-                        </tr>
-                    }
-
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</section>
-
-
-
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
-    var assetTable;
-    $(document).ready(function () {
-         initializeDataTable();
-
-        $('#tableSearch').on('keyup', function () {
-            if (assetTable) {
-                assetTable.search($(this).val()).draw();
-            }
-        });
-        refreshAssetTable();
-        refreshDashboardData();
-    });
-
-
-    function initializeDataTable() {
-        if ($.fn.DataTable.isDataTable('#assetDataTable')) {
-            $('#assetDataTable').DataTable().destroy();
-        }
-
-        var columnCount = $('#assetDataTable thead tr th').length;
-        $('#assetDataTable tbody tr').each(function () {
-            var actualColumns = $(this).find('td').length;
-            if (actualColumns < columnCount) {
-                for (var i = actualColumns; i < columnCount; i++) {
-                    $(this).append('<td></td>');
-                }
-            }
-        });
-
-        if ($('#assetListTable tr').length === 0 ||
-            ($('#assetListTable tr').length === 1 && $('#assetListTable tr td').attr('colspan'))) {
-
-            if ($('#assetListTable tr').length === 0) {
-                $('#assetListTable').html('<tr><td colspan="' + columnCount + '" class="text-center">No Asset found</td></tr>');
-            } else {
-                $('#assetListTable tr td').attr('colspan', columnCount);
-            }
-
-            assetTable = $('#assetDataTable').DataTable({
-                responsive: true,
-                "pageLength": -1, 
-                "lengthChange": true,
-                "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
-                "pageLength": 50,
-                "dom": 'lBrtip',
-                "processing": true, 
-                "serverSide": false,
-                autoWidth: true,
-                scrollX: true,
-                scrollCollapse: true,
-                "deferRender": true,
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        text: '<i class="fas fa-file-excel"></i> Export to Excel',
-                        title: 'Asset List_' + new Date().toISOString().slice(0, 25),
-                        className: 'btn btn-success btn-sm',
-                        exportOptions: {
-                            columns: ':visible:not(:last-child)'
-                        }
-                    }
-                ]
-            });
-        } else {
-            assetTable = $('#assetDataTable').DataTable({
-                responsive: true,
-                "pageLength": -1, 
-                "lengthChange": true,
-                "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
-                "pageLength": 50,
-                "dom": 'lBrtip',
-                "processing": true,
-                "serverSide": false,
-                autoWidth: true,
-                scrollX: true,
-                scrollCollapse: true,
-                "deferRender": true,
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        text: '<i class="fas fa-file-excel"></i> Export to Excel',
-                        title: 'Asset List_' + new Date().toISOString().slice(0, 25),
-                        className: 'btn btn-success btn-sm',
-                        exportOptions: {
-                            columns: ':visible:not(:last-child)'
-                        }
-                    }
-                ],
-                language: {
-                    search: "",
-                    lengthMenu: "Show _MENU_ entries",
-                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                    infoEmpty: "No data available",
-                    infoFiltered: "(filtered from _MAX_ total entries)",
-                    paginate: {
-                        first: "First",
-                        last: "Last",
-                        next: "Next",
-                        previous: "Previous"
-                    }
-                }
-            });
-        }
-
-        return assetTable;
-    }
-
-            $(document).on('click', '.btn-view', function () {
-                var assetNo = $(this).data('asset-no');
-                $.ajax({
-                    url: '@Url.Action("GetAssetDetails", "AssetManagement")',
-                    type: 'GET',
-                    data: { assetId: assetNo },
-                    success: function (data) {
-                        if (data.success) {
-                            renderAssetDetails(data);
-                            $("#viewAssetModal").modal('show');
-                        } else {
-                            toastr.error(data.message || "Error loading asset detail");
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error:", error);
-                        toastr.error("Error loading asset details");
-                    }
-                });
-            });
-
-
-
-            $(document).on('click', '.btn-edit', function () {
-                var assetNo = $(this).data('asset-no');
-                $.ajax({
-                    url: '@Url.Action("GetAssetDetails", "AssetManagement")',
-                    type: 'GET',
-                    data: { assetId: assetNo },
-                    success: function (data) {
-                        if (!data || data.success === false) {
-                            toastr.error(data?.message || "Error loading asset details");
-                            return;
-                        }
-
-                        const assetData = data;
-
-                        $("#editAssetId").val(assetData.No_asset || '');
-                        $("#editCompanyCode").val(assetData.Company_Code || '').trigger('change');
-                        $("#editMaterialGroup").val(assetData.Material_Group || '').trigger('change');
-                        $("#editMaterialCode").val(assetData.Material_Code || '').trigger('change');
-                        $("#editMaterialDescription").val(assetData.Material_Description || '');
-                        $("#editDepartment").val(assetData.Departement || '').trigger('change');
-
-                        $("#editCity").val(assetData.City || '').trigger('change');
-
-                        $("#editCity").off('change.populateLocation').on('change.populateLocation', function () {
-                            loadLocationsByCity(assetData.City, '#editLocation');
-
-                            setTimeout(function () {
-                                $("#editLocation").val(assetData.Location || '').trigger('change');
-                            }, 500);
-                        }).trigger('change');
-
-                        const status = assetData.Status || '';
-                        setTimeout(function () {
-                            $("#editStatus").val(status).trigger('change');
-
-                            const sanitizedStatus = status.replace(/\s+/g, '');
-                            const picField = $(`#edit${sanitizedStatus}PIC`);
-                            const dateField = $(`#edit${sanitizedStatus}Date`);
-
-                            if (picField.length) {
-                                picField.val(assetData.PIC || '');
+                                      </td>
+                                 </tr>`;
+                                    $("#assetListTable").append(row);
+                                });
+                            } else {
+                                $("#assetListTable").append('<tr><td colspan="' + columnCount + '" class="text-center">No Asset found</td></tr>');
                             }
-
-                            if (dateField.length) {
-                                dateField.val(formatDateForInput(assetData.Transaction_Date));
-                            }
-
-                            $('#editAssetModal').data('originalData', {
-                                status: status,
-                                pic: assetData.PIC || '',
-                                transactionDate: formatDateForInput(assetData.Transaction_Date)
+                            initializeDataTable();
+                            $('#tableSearch').off('keyup').on('keyup', function () {
+                                if (assetTable) {
+                                    assetTable.search($(this).val()).draw();
+                                }
                             });
-
-                            $("#editAssetModal").modal('show');
-                        }, 800);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error:", error);
-                        toastr.error("Error loading asset details");
-                    }
-                });
-            });
-
-            $(document).on('click', '.btn-delete', function () {
-                var assetNo = $(this).data('asset-no');
-                var assetDesc = $(this).data('asset-desc');
-
-                $('#deleteAssetId').val(assetNo);
-                $('#deleteAssetNo').text(assetNo);
-                $('#deleteAssetDesc').text(assetDesc);
-            });
-
-
-            function updateDashboardCounts(dashboardCounts) {
-                if (!dashboardCounts) return;
-                if (dashboardCounts.TotalAssets !== undefined) {
-                    $('#total-assets').text(dashboardCounts.TotalAssets);
-                }
-
-                if (dashboardCounts.AvailableAssets !== undefined) {
-                    $('#available-assets').text(dashboardCounts.AvailableAssets);
-                }
-
-                if (dashboardCounts.AssetsInUse !== undefined) {
-                    $('#assets-in-use').text(dashboardCounts.AssetsInUse);
-                }
-
-                if (dashboardCounts.AssetsInMaintenance !== undefined) {
-                    $('#assets-in-maintenance').text(dashboardCounts.AssetsInMaintenance);
-                }
-            }
-
-            function refreshDashboardData() {
-                $.ajax({
-                    url: '/AssetManagement/GetDashboardCountsJson',
-                    type: 'GET',
-                    dataType: 'json',
-                    cache: false,
-                    success: function (dashboardCounts) {
-                        console.log("Dashboard data refreshed successfully:", dashboardCounts);
-                        updateDashboardCounts(dashboardCounts);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error refreshing dashboard data:', error);
-                        console.error('Status:', status);
-                        console.error('Response:', xhr.responseText);
-                    }
-                });
-            }
-
-
-            function refreshAssetTable() {
-                $.ajax({
-                    url: '/AssetManagement/GetAssetData',
-                    type: 'GET',
-                    data: { pageSize: -1 },
-                    success: function (data) {
-                        $("#assetListTable").empty();
-                        var columnCount = $('#assetDataTable thead tr th').length;
-                        if (data && data.length > 0) {
-                            data.forEach(function (asset) {
-                                var statusClass = getStatusClass(asset.Status);
-
-                                var row = `<tr>
-                        <td>${asset.No_asset || ''}</td>
-                        <td>${asset.Company_Name || ''}</td>
-                        <td>${asset.Material_Group || ''}</td>
-                        <td>${asset.Material_Code || ''}</td>
-                        <td>${asset.Material_Description || ''}</td>
-                        <td>${asset.Departement || ''}</td>
-                        <td>${asset.Location || ''}</td>
-                        <td>${asset.PIC || ''}</td>
-                        <td>${asset.Role || ''}</td>
-                        <td>${asset.Company_User || ''}</td>
-                        <td><span class="${statusClass}">${asset.Status || ''}</span></td>
-                        <td>${formatDate(asset.Transaction_Date) || ''}</td>
-                        <td>
-                            <div class="btn-group">
-                                    <a href="@Url.Action("Editor", "AssetManagement")?id=${asset.No_asset}&mode=View"
-                                       class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="@Url.Action("Editor", "AssetManagement")?id=${asset.No_asset}&mode=Edit"
-                                       class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="@Url.Action("Editor", "AssetManagement")?id=${asset.No_asset}&mode=Delete"
-                                       class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                                  </td>
-                             </tr>`;
-                                $("#assetListTable").append(row);
-                            });
-                        } else {
-                            $("#assetListTable").append('<tr><td colspan="' + columnCount + '" class="text-center">No Asset found</td></tr>');
+                            console.log("Asset table refreshed successfully");
+                        },
+                        error: function (error) {
+                            console.error("Error refreshing asset table:", error);
+                            toastr.error("Error refreshing asset table");
                         }
-                        initializeDataTable();
-                        $('#tableSearch').off('keyup').on('keyup', function () {
-                            if (assetTable) {
-                                assetTable.search($(this).val()).draw();
-                            }
-                        });
-                        console.log("Asset table refreshed successfully");
-                    },
-                    error: function (error) {
-                        console.error("Error refreshing asset table:", error);
-                        toastr.error("Error refreshing asset table");
-                    }
-                });
-            }
-
-            function getStatusClass(status) {
-                if (!status) return "";
-
-                switch (status) {
-                    case "Borrowing": return "status-borrowing";
-                    case "Return": return "status-return";
-                    case "Service": return "status-service";
-                    case "Ready": return "status-ready";
-                    case "Assign": return "status-assign";
-                    case "Write Off": return "status-write-off";
-                    default: return "";
+                    });
                 }
-            }
 
-            function formatDate(dateString) {
-                if (!dateString) return "";
+                function getStatusClass(status) {
+                    if (!status) return "";
 
-                try {
-                    if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
-                        const timestamp = parseInt(dateString.substr(6));
-                        const date = new Date(timestamp);
-                        if (isNaN(date.getTime())) return "";
-
-                        const year = date.getFullYear();
-                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                        const day = date.getDate().toString().padStart(2, '0');
-                        return `${year}-${month}-${day}`;
-                    } else {
-                        const date = new Date(dateString);
-                        if (isNaN(date.getTime())) return "";
-
-                        const year = date.getFullYear();
-                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                        const day = date.getDate().toString().padStart(2, '0');
-                        return `${year}-${month}-${day}`;
+                    switch (status) {
+                        case "Borrowing": return "status-borrowing";
+                        case "Return": return "status-return";
+                        case "Service": return "status-service";
+                        case "Ready": return "status-ready";
+                        case "Assign": return "status-assign";
+                        case "Write Off": return "status-write-off";
+                        default: return "";
                     }
-                } catch (e) {
-                    console.error("Error parsing date:", e);
-                    return "";
                 }
-            }
 
-</script>
+                function formatDate(dateString) {
+                    if (!dateString) return "";
+
+                    try {
+                        if (typeof dateString === 'string' && dateString.indexOf('/Date(') === 0) {
+                            const timestamp = parseInt(dateString.substr(6));
+                            const date = new Date(timestamp);
+                            if (isNaN(date.getTime())) return "";
+
+                            const year = date.getFullYear();
+                            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                            const day = date.getDate().toString().padStart(2, '0');
+                            return `${year}-${month}-${day}`;
+                        } else {
+                            const date = new Date(dateString);
+                            if (isNaN(date.getTime())) return "";
+
+                            const year = date.getFullYear();
+                            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                            const day = date.getDate().toString().padStart(2, '0');
+                            return `${year}-${month}-${day}`;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing date:", e);
+                        return "";
+                    }
+                }
+
+    </script>

@@ -43,7 +43,6 @@ namespace IT_Inventory.Controllers
                     .GroupBy(a => a.No_asset)
                     .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
                     .OrderByDescending(a => a.Transaction_Date)
-                    .Take(100)
                     .ToList(),
                 DashboardCounts = _assetService.GetDashboardCounts()
             };
@@ -111,7 +110,7 @@ namespace IT_Inventory.Controllers
                     viewModel.Latest_User = asset.Latest_User;
                     viewModel.Asset_Image = asset.Asset_Image;
                     viewModel.Departement_Code = db.Departement
-                        .Where(d => d.Departement_Name == asset.Departement && d.Is_Deleted != true)
+                        .Where(d => d.Departement_Code == asset.Departement && d.Is_Deleted != true)
                         .Select(d => d.Departement_Code)
                         .FirstOrDefault();
                     viewModel.Departement_Name = asset.Departement;
@@ -171,6 +170,28 @@ namespace IT_Inventory.Controllers
                     return DeleteAsset(viewModel.No_asset);
                 }
 
+                if (!string.IsNullOrEmpty(viewModel.Serial_Number))
+                {
+                    var existSerial = db.Asset.Where(a => a.Serial_Number == viewModel.Serial_Number && a.Is_Deleted != true && a.No_asset != viewModel.No_asset).FirstOrDefault();
+
+                    if (existSerial != null)
+                    {
+                        ModelState.AddModelError("Serial_Number", "This Serial Number is already used by another asset");
+
+                        if (Request.IsAjaxRequest())
+                        {
+                            var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
+                                .ToDictionary(
+                                    kvp => kvp.Key,
+                                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                                );
+                            return Json(new { success = false, message = "Serial Number already exists", errors = errors });
+                        }
+                    }
+                }
+
+
+
                 List<string> imagePaths = new List<string>();
 
                 if (mode == "Edit" && !string.IsNullOrEmpty(viewModel.Asset_Image))
@@ -208,7 +229,7 @@ namespace IT_Inventory.Controllers
                 if (!string.IsNullOrEmpty(viewModel.Departement_Code))
                 {
                     var department = db.Departement.FirstOrDefault(d => d.Departement_Code == viewModel.Departement_Code && d.Is_Deleted != true);
-                    departmentName = department?.Departement_Name;
+                    departmentName = department?.Departement_Code;
                 }
 
                 if (string.IsNullOrEmpty(viewModel.No_asset))
@@ -760,6 +781,32 @@ namespace IT_Inventory.Controllers
             }
         }
 
+        [HttpGet]
+        public JsonResult CheckSerialNumberUnique(string serialNumber, string assetNo)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(serialNumber))
+                {
+                    return Json(new { isUnique = true }, JsonRequestBehavior.AllowGet);
+                }
+
+                var existingAsset = db.Asset
+                    .Where(a => a.Serial_Number == serialNumber &&
+                               a.Is_Deleted != true &&
+                               a.No_asset != assetNo)
+                    .FirstOrDefault();
+
+                return Json(new { isUnique = (existingAsset == null) }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error checking serial number uniqueness: {ex.Message}");
+                return Json(new { isUnique = false, error = "Error checking serial number uniqueness" }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
         public ActionResult GetAssetData(string search)
         {
             var assetData = db.Asset.Where(a => a.Is_Deleted != true);
@@ -786,8 +833,7 @@ namespace IT_Inventory.Controllers
                 a.Transaction_Date,
                 a.Status,
                 Submit_Date = a.Create_Date
-            }).Take(100)
-              .ToList();
+            }).ToList();
             return Json(assets, JsonRequestBehavior.AllowGet);
         }
 
