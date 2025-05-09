@@ -162,74 +162,74 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="card-body table-responsive p-0">
-        <table id="assetDataTable" class="table table-hover text-nowrap">
-            <thead>
-                <tr>
-                    <th>No Assets</th>
-                    <th>Company Name</th>
-                    <th>Material Group</th>
-                    <th>Material Code</th>
-                    <th>Asset Description</th>
-                    <th>Departement</th>
-                    <th>Location</th>
-                    <th>PIC / Vendor</th>
-                    <th>Role</th>
-                    <th>Company User</th>
-                    <th>Status</th>
-                    <th>Transaction Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="assetListTable">
-                @if (Model.AssetList != null && Model.AssetList.Count > 0)
-                {
-                    foreach (var item in Model.AssetList)
+        <div class="card-body table-responsive p-0">
+            <table id="assetDataTable" class="table table-hover text-nowrap">
+                <thead>
+                    <tr>
+                        <th>No Assets</th>
+                        <th>Company Name</th>
+                        <th>Material Group</th>
+                        <th>Material Code</th>
+                        <th>Asset Description</th>
+                        <th>Departement</th>
+                        <th>Location</th>
+                        <th>PIC / Vendor</th>
+                        <th>Role</th>
+                        <th>Company User</th>
+                        <th>Status</th>
+                        <th>Transaction Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="assetListTable">
+                    @if (Model.AssetList != null && Model.AssetList.Count > 0)
+                    {
+                        foreach (var item in Model.AssetList)
+                        {
+                            <tr>
+                                <td>@item.No_asset</td>
+                                <td>@item.Company_Name</td>
+                                <td>@item.Material_Group</td>
+                                <td>@item.Material_Code</td>
+                                <td>@item.Material_Description</td>
+                                <td>@item.Departement</td>
+                                <td>@item.Location</td>
+                                <td>@item.PIC</td>
+                                <td>@item.Role</td>
+                                <td>@item.Company_User</td>
+                                <td>
+                                    <span class="@GetStatusClass(item.Status)">@item.Status</span>
+                                </td>
+                                <td>@(item.Transaction_Date != null ? ((DateTime)item.Transaction_Date).ToString("yyyy-MM-dd"): "")</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=View"
+                                           class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=Edit"
+                                           class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=Delete"
+                                           class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td>@item.No_asset</td>
-                            <td>@item.Company_Name</td>
-                            <td>@item.Material_Group</td>
-                            <td>@item.Material_Code</td>
-                            <td>@item.Material_Description</td>
-                            <td>@item.Departement</td>
-                            <td>@item.Location</td>
-                            <td>@item.PIC</td>
-                            <td>@item.Role</td>
-                            <td>@item.Company_User</td>
-                            <td>
-                                <span class="@GetStatusClass(item.Status)">@item.Status</span>
-                            </td>
-                            <td>@(item.Transaction_Date != null ? ((DateTime)item.Transaction_Date).ToString("yyyy-MM-dd"): "")</td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=View"
-                                       class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=Edit"
-                                       class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="@Url.Action("Editor", "AssetManagement")?id=@Html.Raw(item.No_asset)&mode=Delete"
-                                       class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
+                            <td colspan="5" class="text-center">No Asset found</td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="5" class="text-center">No Asset found</td>
-                    </tr>
-                }
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </section>
@@ -260,35 +260,91 @@
             $('#assetDataTable').DataTable().destroy();
         }
 
-        assetTable = $('#assetDataTable').DataTable({
-            responsive: true,
-            pageLength: 25,
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'excelHtml5',
-                    text: '<i class="fas fa-file-excel"></i> Export to Excel',
-                    title: 'Asset List_' + new Date().toISOString().slice(0, 25),
-                    className: 'btn btn-success btn-sm',
-                    exportOptions: {
-                        columns: ':visible:not(:last-child)'
-                    }
-                }
-            ],
-            language: {
-                search: "",
-                lengthMenu: "Show _MENU_ entries",
-                info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                infoEmpty: "No data available",
-                infoFiltered: "(filtered from _MAX_ total entries)",
-                paginate: {
-                    first: "First",
-                    last: "Last",
-                    next: "Next",
-                    previous: "Previous"
+        var columnCount = $('#assetDataTable thead tr th').length;
+        $('#assetDataTable tbody tr').each(function () {
+            var actualColumns = $(this).find('td').length;
+            if (actualColumns < columnCount) {
+                for (var i = actualColumns; i < columnCount; i++) {
+                    $(this).append('<td></td>');
                 }
             }
         });
+
+        if ($('#assetListTable tr').length === 0 ||
+            ($('#assetListTable tr').length === 1 && $('#assetListTable tr td').attr('colspan'))) {
+
+            if ($('#assetListTable tr').length === 0) {
+                $('#assetListTable').html('<tr><td colspan="' + columnCount + '" class="text-center">No Asset found</td></tr>');
+            } else {
+                $('#assetListTable tr td').attr('colspan', columnCount);
+            }
+
+            assetTable = $('#assetDataTable').DataTable({
+                responsive: true,
+                "pageLength": -1, 
+                "lengthChange": true,
+                "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+                "pageLength": 50,
+                "dom": 'lBrtip',
+                "processing": true, 
+                "serverSide": false,
+                autoWidth: true,
+                scrollX: true,
+                scrollCollapse: true,
+                "deferRender": true,
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                        title: 'Asset List_' + new Date().toISOString().slice(0, 25),
+                        className: 'btn btn-success btn-sm',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)'
+                        }
+                    }
+                ]
+            });
+        } else {
+            assetTable = $('#assetDataTable').DataTable({
+                responsive: true,
+                "pageLength": -1, 
+                "lengthChange": true,
+                "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+                "pageLength": 50,
+                "dom": 'lBrtip',
+                "processing": true,
+                "serverSide": false,
+                autoWidth: true,
+                scrollX: true,
+                scrollCollapse: true,
+                "deferRender": true,
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                        title: 'Asset List_' + new Date().toISOString().slice(0, 25),
+                        className: 'btn btn-success btn-sm',
+                        exportOptions: {
+                            columns: ':visible:not(:last-child)'
+                        }
+                    }
+                ],
+                language: {
+                    search: "",
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "No data available",
+                    infoFiltered: "(filtered from _MAX_ total entries)",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        }
+
         return assetTable;
     }
 
@@ -430,9 +486,10 @@
                 $.ajax({
                     url: '/AssetManagement/GetAssetData',
                     type: 'GET',
+                    data: { pageSize: -1 },
                     success: function (data) {
                         $("#assetListTable").empty();
-
+                        var columnCount = $('#assetDataTable thead tr th').length;
                         if (data && data.length > 0) {
                             data.forEach(function (asset) {
                                 var statusClass = getStatusClass(asset.Status);
@@ -470,7 +527,7 @@
                                 $("#assetListTable").append(row);
                             });
                         } else {
-                            $("#assetListTable").append('<tr><td colspan="11" class="text-center">No Asset found</td></tr>');
+                            $("#assetListTable").append('<tr><td colspan="' + columnCount + '" class="text-center">No Asset found</td></tr>');
                         }
                         initializeDataTable();
                         $('#tableSearch').off('keyup').on('keyup', function () {

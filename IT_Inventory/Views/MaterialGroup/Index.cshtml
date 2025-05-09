@@ -118,24 +118,24 @@
 
             var table = $('#materialGroupTable').DataTable({
                 "responsive": true,
-                "lengthChange": false,
+                "lengthChange": true,
+                "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+                "pageLength": 10,
                 "autoWidth": false,
                 "paging": true,
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "dom": "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
-                "stateSave": true,
+                "dom": 'lBrtip',
+                "stateSave": false
             });
+
         table.columns().every(function (i) {
             var that = this;
-
             if (i < 6) {
                 $('input', this.footer()).on('keyup change', function () {
                     if (that.search() !== this.value) {
-                        that
-                            .search(this.value)
-                            .draw();
+                        that.search(this.value).draw();
                     }
                 });
             }
@@ -144,6 +144,7 @@
         $("#tableSearch").on("keyup", function () {
             table.search(this.value).draw();
         });
+
 
                                        @if (TempData["SuccessMassage"]!= null)
 {

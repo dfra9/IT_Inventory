@@ -26,17 +26,17 @@
                                         <div class="col-sm-3">
                                             @if (mode == "Edit" || mode == "View" || mode == "Delete")
                                             {
-                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" readonly>
+                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ?? "")" readonly>
                                             }
                                             else
                                             {
-                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ??"")" required>
+                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ?? "")" required>
                                             }
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
-                                        <div class="col-sm-9">
+                                        <div class="col-sm-5">
                                             @if (mode == "View")
                                             {
                                                 <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
@@ -67,13 +67,17 @@
                                                             monthValue = parts[1].Trim();
                                                         }
                                                     }
-                                                    else
+                                                    else if (ageAsset.Contains("Years"))
                                                     {
-                                                        yearValue = ageAsset.Trim();
+                                                        string[] parts = ageAsset.Split(new string[] { "Years" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        if (parts.Length >= 1)
+                                                        {
+                                                            yearValue = parts[0].Trim();
+                                                            monthValue = string.Empty;
+                                                        }
                                                     }
                                                 }
                                             }
-
                                             @if (mode == "View")
                                             {
                                                 <input type="text" id="Year_Value" name="Year_Value" class="form-control" value="@yearValue" readonly>
@@ -91,7 +95,7 @@
                                             }
                                             else
                                             {
-                                                <input type="text" id="Month_Value" name="Month_Value" class="form-control" value="@monthValue" required>
+                                                <input type="text" id="Month_Value" name="Month_Value" class="form-control" value="@monthValue" >
                                             }
                                         </div>
                                     </div>
@@ -202,22 +206,25 @@
                     return false;
                 }
 
-                if (yearValue === "" || monthValue === "") {
-                    alert("Please provide Useful Life (Years and Months)");
+                if (yearValue === "") {
+                    alert("Please provide Useful Life (Years)");
                     e.preventDefault();
                     return false;
                 }
 
 
-                if (isNaN(yearValue) || isNaN(monthValue)) {
+                if (isNaN(yearValue) || (monthValue !== "" && isNaN(monthValue))) {
                     alert("Years and Months must be numeric values");
                     e.preventDefault();
                     return false;
                 }
 
-                var combinedValue = yearValue + " Years, " + monthValue + " Month";
-                console.log("Combined Value: " + combinedValue);
-
+                var combinedValue;
+                if (monthValue === "") {
+                    combinedValue = yearValue + " Years";
+                } else {
+                    combinedValue = yearValue + " Years, " + monthValue + " Month";
+                }
                 $("input[name='Age_Accounting_Asset']").remove();
 
                 $("<input>").attr({

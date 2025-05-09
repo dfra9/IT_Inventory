@@ -474,7 +474,7 @@
                     @Html.ValidationMessageFor(m => m.No_Asset_Accounting, "", new { @class = "text-danger" })
                 </div>
                 <!-- /.form-group -->
-                <div class="form-group col-2">
+                <div class="form-group col-4">
                     <label>No PO</label>
                     @if (mode == "View" || mode == "Delete")
                     {
@@ -1582,7 +1582,8 @@
 
 
         function searchAssetHistory() {
-            var search = $("input[name='table_search']").val().trim();
+            var search = $("input[name='table_search']").val();
+            search = search ? search.trim() : "";
             var noAsset = $("#No_asset").val();
 
             if (!noAsset) {

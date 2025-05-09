@@ -54,7 +54,7 @@ namespace IT_Inventory.Controllers
                     MaterialGroup = u.Material_Group1,
 
                     MaterialDescription = u.Material_Description,
-                    AgeAccountingAsset = u.Age_Accounting_Asset,
+                    AgeAccountingAsset = FormatAgeAccountingAsset(u.Age_Accounting_Asset),
                     Quantity = u.Quantity ?? 0,
                     LastCheckDate = u.Last_Check_Date.HasValue ? u.Last_Check_Date.Value.Date.ToString("yyyy-MM-dd") : null,
                     MaxWarrantyDate = u.Max_Warranty_Date.HasValue ? u.Max_Warranty_Date.Value.Date.ToString("yyyy-MM-dd") : null
@@ -121,9 +121,16 @@ namespace IT_Inventory.Controllers
                     return View(material_Group);
                 }
 
-                if (!string.IsNullOrEmpty(Year_Value) || !string.IsNullOrEmpty(Month_Value))
+                if (!string.IsNullOrEmpty(Year_Value))
                 {
-                    material_Group.Age_Accounting_Asset = $"{Year_Value ?? "0"} Years, {Month_Value ?? "0"} Month";
+                    if (string.IsNullOrEmpty(Month_Value) || Month_Value == "0")
+                    {
+                        material_Group.Age_Accounting_Asset = $"{Year_Value} Years";
+                    }
+                    else
+                    {
+                        material_Group.Age_Accounting_Asset = $"{Year_Value} Years, {Month_Value} Month";
+                    }
                 }
 
                 material_Group.Is_Deleted = false;
@@ -269,6 +276,19 @@ namespace IT_Inventory.Controllers
                 return RedirectToAction("Index");
             }
             return View(materialGroup);
+        }
+
+        private string FormatAgeAccountingAsset(string ageAsset)
+        {
+            if (string.IsNullOrEmpty(ageAsset))
+                return string.Empty;
+
+            if (ageAsset.EndsWith("Years, 0 Month") || ageAsset.EndsWith("Years,  Month"))
+            {
+                return ageAsset.Split(new string[] { ", " }, StringSplitOptions.None)[0];
+            }
+
+            return ageAsset;
         }
     }
 }

@@ -36,7 +36,7 @@
           <Property Name="Location" Type="varchar" MaxLength="255" />
           <Property Name="City" Type="varchar" MaxLength="255" />
           <Property Name="Last_Check_Date" Type="date" />
-          <Property Name="Condition" Type="varchar" MaxLength="100" />
+          <Property Name="Condition" Type="varchar" MaxLength="255" />
           <Property Name="Status" Type="varchar" MaxLength="100" />
           <Property Name="PIC" Type="varchar" MaxLength="255" />
           <Property Name="Vendor" Type="varchar" MaxLength="255" />
@@ -385,7 +385,7 @@
           <Property Name="Location" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="City" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Last_Check_Date" Type="DateTime" Precision="0" />
-          <Property Name="Condition" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Condition" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="PIC" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Vendor" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
