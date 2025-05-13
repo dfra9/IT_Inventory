@@ -37,7 +37,7 @@
                                     <div class="form-group row">
                                         <label for="Material_Description" class="col-sm-3 col-form-label form-control-label">Material Description</label>
                                         <div class="col-sm-5">
-                                            @if (mode == "View")
+                                            @if (mode == "View" || mode == "Delete")
                                             {
                                                 <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
                                             }
@@ -78,7 +78,7 @@
                                                     }
                                                 }
                                             }
-                                            @if (mode == "View")
+                                            @if (mode == "View" || mode == "Delete")
                                             {
                                                 <input type="text" id="Year_Value" name="Year_Value" class="form-control" value="@yearValue" readonly>
                                             }
@@ -89,7 +89,7 @@
                                         </div>
                                         <label for="Month_Value" class="col-sm-1 col-form-label form-control-label">Month</label>
                                         <div class="col-sm-2">
-                                            @if (mode == "View")
+                                            @if (mode == "View" || mode == "Delete")
                                             {
                                                 <input type="text" id="Month_Value" name="Month_Value" class="form-control" value="@monthValue" readonly>
                                             }
@@ -102,7 +102,7 @@
                                     <div class="form-group row" style="display: none;">
                                         <label for="Quantity" class="col-sm-3 col-form-label form-control-label">Quantity</label>
                                         <div class="col-sm-1">
-                                            @if (mode == "View")
+                                            @if (mode == "View" || mode == "Delete")
                                             {
 
                                                 <input type="number" id="Quantity" name="Quantity" class="form-control" value="@(Model?.Quantity ?? 0)" readonly>
@@ -116,7 +116,7 @@
                                     <div class="form-group row" style="display: none;">
                                         <label for="Last_Check_Date" class="col-sm-3 col-form-label form-control-label">Last Check Date</label>
                                         <div class="col-sm-2">
-                                            @if (mode == "View")
+                                            @if (mode == "View" || mode == "Delete")
                                             {
                                                 <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control " value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
                                             }
@@ -129,7 +129,7 @@
                                     <div class="form-group row" style="display: none;">
                                         <label for="Max_Warranty_Date" class="col-sm-3 col-form-label form-control-label">Max Warranty Date</label>
                                         <div class="col-sm-2">
-                                            @if (mode == "View")
+                                            @if (mode == "View" || mode == "Delete")
                                             {
                                                 <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
                                             }
