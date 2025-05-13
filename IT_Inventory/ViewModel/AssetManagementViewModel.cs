@@ -50,7 +50,6 @@ namespace IT_Inventory.ViewModel
         public string Vendor { get; set; }
         [Required(ErrorMessage = "Transaction Date is required")]
         public DateTime? Transaction_Date { get; set; }
-
         public string Role { get; set; }
         public string mode { get; set; }
 
