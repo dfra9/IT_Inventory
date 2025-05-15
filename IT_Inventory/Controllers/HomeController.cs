@@ -16,6 +16,7 @@ namespace IT_Inventory.Controllers
         [Authorize]
         public ActionResult Index()
         {
+            ViewBag.City = db.City.Where(c => c.Is_Deleted != true).ToList();
 
             var latestAssets = db.Asset
        .Where(a => a.Is_Deleted != true)
@@ -42,18 +43,29 @@ namespace IT_Inventory.Controllers
         }
 
 
-        private List<Asset> GetDashboardHistory()
+        [HttpGet]
+        public ActionResult GetDashboardCountsJson(string cityName = "")
         {
-            return db.Asset
-                .Where(a => a.Is_Deleted != true)
+            var assetQuery = db.Asset.Where(a => a.Is_Deleted != true);
+            if (!string.IsNullOrEmpty(cityName))
+            {
+                assetQuery = assetQuery.Where(a => a.City == cityName);
+            }
+
+            var latestAsset = assetQuery
                 .GroupBy(a => a.No_asset)
                 .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-                .OrderByDescending(a => a.Transaction_Date)
-                .Take(10)
                 .ToList();
+
+            var dashboardCounts = new DashboardCountsModel
+            {
+                TotalAssets = latestAsset.Count(a => a.Status != "Write Off"),
+                AvailableAssets = latestAsset.Count(a => a.Status == "Ready" || a.Status == "Return"),
+                AssetsInUse = latestAsset.Count(a => a.Status == "Borrowing" || a.Status == "Assign"),
+                AssetsInMaintenance = latestAsset.Count(a => a.Status == "Service")
+            };
+            return Json(dashboardCounts, JsonRequestBehavior.AllowGet);
         }
-
-
         [HttpPost]
         public ActionResult GetDashboardData(DataTablesParameters param)
         {
@@ -62,7 +74,6 @@ namespace IT_Inventory.Controllers
                 int totalCount;
                 int filteredCount;
                 var assets = GetFilteredAssets(param, out totalCount, out filteredCount);
-
                 return Json(new
                 {
                     draw = param.Draw,
@@ -87,14 +98,30 @@ namespace IT_Inventory.Controllers
             }
         }
 
+        private List<Asset> GetDashboardHistory()
+        {
+            return db.Asset
+                .Where(a => a.Is_Deleted != true)
+                .GroupBy(a => a.No_asset)
+                .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                .OrderByDescending(a => a.Transaction_Date)
+                .Take(10)
+                .ToList();
+        }
+
         private List<Asset> GetFilteredAssets(DataTablesParameters param, out int totalCount, out int filteredCount)
         {
+
             var assetQuery = db.Asset
                 .Where(a => a.Is_Deleted != true)
                 .GroupBy(a => a.No_asset)
                 .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
                 .AsQueryable();
 
+            if (!string.IsNullOrEmpty(param.cityName))
+            {
+                assetQuery = assetQuery.Where(a => a.City == param.cityName);
+            }
             totalCount = assetQuery.Count();
 
             if (!string.IsNullOrEmpty(param.globalSearch))
@@ -229,6 +256,7 @@ namespace IT_Inventory.Controllers
             public ColumnParameters[] Columns { get; set; }
 
             public string globalSearch { get; set; }
+            public string cityName { get; set; }
         }
 
         public class SearchParameters

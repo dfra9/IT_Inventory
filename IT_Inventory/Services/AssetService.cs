@@ -9,7 +9,7 @@ namespace IT_Inventory.Services
 
     public interface IAssetService
     {
-        DashboardCountsModel GetDashboardCounts();
+        DashboardCountsModel GetDashboardCounts(string cityName = "");
     }
     public class AssetService : IAssetService
     {
@@ -20,9 +20,14 @@ namespace IT_Inventory.Services
             _db = db;
         }
 
-
-        public DashboardCountsModel GetDashboardCounts()
+        public DashboardCountsModel GetDashboardCounts(string cityName = "")
         {
+            var assetQuery = _db.City.Where(a => a.Is_Deleted != true);
+
+            if (!string.IsNullOrEmpty(cityName))
+            {
+                assetQuery = assetQuery.Where(a => a.City_Name == cityName);
+            }
 
             var latestAssets = _db.Asset
                 .Where(a => a.Is_Deleted != true)

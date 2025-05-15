@@ -1,4 +1,4 @@
-﻿@using IT_Inventory.Models
+﻿﻿@using IT_Inventory.Models
 @model global::IT_Inventory.Models.Users
 
 @{
@@ -52,7 +52,7 @@
                                     <div class="form-group row">
                                         <label for="Username" class="col-sm-3 col-form-label form-control-label">Username</label>
                                         <div class="col-sm-5">
-                                            @if (mode == "View" || mode == "Delete" )
+                                            @if (mode == "View" || mode == "Delete")
                                             {
                                                 <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" readonly>
                                             }

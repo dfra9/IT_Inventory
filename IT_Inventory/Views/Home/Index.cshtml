@@ -4,7 +4,20 @@
     ViewData["Title"] = "Dashboard";
 }
 
-
+<div class="form-group row">
+    <div class="col-sm-2">
+        <select id="cityAsset" name="Asset City" class="form-control select2">
+            <option value="">Select City</option>
+            @if (ViewBag.City != null)
+            {
+                foreach (var city in ViewBag.City)
+                {
+                    <option value="@city.City_Name" @(Model.City_Name == city.City_Name ? "selected" : "")>@city.City_Name</option>
+                }
+            }
+        </select>
+    </div>
+</div>
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
@@ -129,7 +142,7 @@
                             </tr>
                         }
                     </tbody>
-                   
+
                 </table>
             </div>
             <!-- /.card-body -->
@@ -153,6 +166,7 @@
         margin-bottom: 0 !important;
         table-layout: auto;
     }
+
         #dashboardTable tfoot input {
             width: 100%;
             padding: 3px;
@@ -254,7 +268,7 @@ $(document).ready(function () {
         }
 
         if (dashboardCounts.AssetsInUse !== undefined) {
-            $('#assets-in-use').text(dashboardCounts.AssetsInUse);
+            $('#assets-in-use-assets').text(dashboardCounts.AssetsInUse);
         }
 
         if (dashboardCounts.AssetsInMaintenance !== undefined) {
@@ -264,10 +278,12 @@ $(document).ready(function () {
 
 
     function refreshDashboardData() {
+        var cityName = $('#cityAsset').val();
         $.ajax({
-            url: '/AssetManagement/GetDashboardCountsJson',
+            url: '/Home/GetDashboardCountsJson',
             type: 'GET',
             dataType: 'json',
+            data: { cityName: cityName},
             cache: false,
             success: function (dashboardCounts) {
                 console.log("Dashboard data refreshed successfully:", dashboardCounts);
@@ -293,6 +309,13 @@ $(document).ready(function () {
         'Departement': 'Departement'
     };
 
+    $('#cityAsset').on('change', function () {
+        refreshDashboardData();
+        if (table) {
+            table.ajax.reload();
+        }
+    });
+
     var table = $("#dashboardTable").DataTable({
         "processing": true,
         "serverSide": true,
@@ -310,7 +333,7 @@ $(document).ready(function () {
             "type": "POST",
             "dataType": "json",
             "data": function (d) {
-
+                d.cityName = $('#cityAsset').val();
                 if (d.order && d.order.length > 0) {
                     var columnIndex = d.order[0].column;
                     var columnHeader = $("#dashboardTable thead th").eq(columnIndex).text().trim();
@@ -320,7 +343,7 @@ $(document).ready(function () {
                 }
                 d.globalSearch = $('#tableSearch').val();
 
-                
+
                 return d;
             }
         },
@@ -331,7 +354,7 @@ $(document).ready(function () {
             { "data": "Transaction_Date", "name": "Transaction_Date", "orderable": true, render: function (data) { return formatDate(data); } },
             { "data": "Status", "name": "Status","orderable": true },
             { "data": "Location", "name": "Location", "orderable": true },
-            { "data": "Departement", "name": "Departement", "orderable": true }   
+            { "data": "Departement", "name": "Departement", "orderable": true }
         ],
         "order": [[3, "desc"]],
         "createdRow": function (row, data, index) {

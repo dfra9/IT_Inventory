@@ -144,7 +144,7 @@ namespace IT_Inventory.Controllers
                     item.Material_Description,
                     item.Quantity,
                     item.UoM,
-                    item.Acquisition_Date,
+                    item.Acquisition_Date?.ToString("yyyy-MM-dd"),
                     item.Acquisition_Value,
                     item.No_Asset_PGA,
                     item.No_Asset_Accounting,
@@ -156,12 +156,12 @@ namespace IT_Inventory.Controllers
                     item.Cities,
                     item.Locations,
                     item.Condition,
-                    item.Last_Check_Date,
+                    item.Last_Check_Date?.ToString("yyyy-MM-dd"),
                     item.Status,
                     item.PIC,
                     item.Role,
                     item.Company_User,
-                    item.Create_Date
+                    item.Create_Date?.ToString("yyyy-MM-dd")
                     );
             }
             using (XLWorkbook wb = new XLWorkbook())
