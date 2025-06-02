@@ -7,17 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IT_Inventory
+namespace IT_Inventory.Models
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    using global::IT_Inventory.Models;
-
-    public partial class IT_Inventory : DbContext
+    
+    public partial class DBIT_Inventory : DbContext
     {
-        public IT_Inventory()
-            : base("name=IT_Inventory")
+        public DBIT_Inventory()
+            : base("name=DBIT_Inventory")
         {
         }
     
@@ -27,16 +26,16 @@ namespace IT_Inventory
         }
     
         public virtual DbSet<C__EFMigrationsHistory> C__EFMigrationsHistory { get; set; }
+        public virtual DbSet<Asset> Asset { get; set; }
+        public virtual DbSet<Asset_History> Asset_History { get; set; }
+        public virtual DbSet<City> City { get; set; }
         public virtual DbSet<Company> Company { get; set; }
         public virtual DbSet<Departement> Departement { get; set; }
         public virtual DbSet<Location> Location { get; set; }
-        public virtual DbSet<Users> Users { get; set; }
-        public virtual DbSet<City> City { get; set; }
-        public virtual DbSet<Material_Code> Material_Code { get; set; }
-        public virtual DbSet<Asset> Asset { get; set; }
-        public virtual DbSet<UoM> UoM { get; set; }
-        public virtual DbSet<Material_Group> Material_Group { get; set; }
         public virtual DbSet<Log_Transaction> Log_Transaction { get; set; }
-        public virtual DbSet<Asset_History> Asset_History { get; set; }
+        public virtual DbSet<Material_Code> Material_Code { get; set; }
+        public virtual DbSet<Material_Group> Material_Group { get; set; }
+        public virtual DbSet<UoM> UoM { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
     }
 }

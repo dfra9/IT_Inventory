@@ -11,10 +11,10 @@ namespace IT_Inventory.Controllers
 {
     public class MaterialGroupController : Controller
     {
-        private readonly IT_Inventory db;
+        private readonly DBIT_Inventory db;
 
 
-        public MaterialGroupController(IT_Inventory db, IUserService userService)
+        public MaterialGroupController(DBIT_Inventory db, IUserService userService)
         {
             this.db = db ?? throw new ArgumentNullException(nameof(db));
 

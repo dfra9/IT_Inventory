@@ -16,6 +16,10 @@ namespace IT_Inventory.App_Start
             builder.RegisterType<IT_Inventory>().AsSelf().InstancePerRequest();
             builder.RegisterType<AssetService>().As<IAssetService>().InstancePerRequest();
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
+            builder.RegisterType<FileService>().As<IFileService>().InstancePerRequest();
+            builder.RegisterType<DropdownService>().As<IDropdownService>().InstancePerRequest();
+
+
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

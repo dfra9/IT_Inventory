@@ -9,12 +9,12 @@ namespace IT_Inventory.Controllers
 {
     public class DataUserController : Controller
     {
-        private readonly IT_Inventory db;
+        private readonly DBIT_Inventory db;
         private readonly IUserService userService;
 
-        public DataUserController(IT_Inventory db, IUserService userService)
+        public DataUserController(DBIT_Inventory db, IUserService userService)
         {
-            this.db = new IT_Inventory();
+            this.db = new DBIT_Inventory();
             this.userService = userService;
         }
 

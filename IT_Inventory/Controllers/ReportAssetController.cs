@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using ClosedXML.Excel;
+using IT_Inventory.Models;
 using IT_Inventory.Services;
 using IT_Inventory.Utilities;
 using IT_Inventory.ViewModel;
@@ -13,11 +14,11 @@ namespace IT_Inventory.Controllers
 {
     public class ReportAssetController : Controller
     {
-        private readonly IT_Inventory _db;
+        private readonly DBIT_Inventory _db;
         private readonly AssetService _assetService;
-        public ReportAssetController(IT_Inventory db, IAssetService assetService)
+        public ReportAssetController(DBIT_Inventory db, IAssetService assetService)
         {
-            _db = new IT_Inventory();
+            _db = new DBIT_Inventory();
             _assetService = new AssetService(_db);
         }
 

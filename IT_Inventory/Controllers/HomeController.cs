@@ -11,7 +11,7 @@ namespace IT_Inventory.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IT_Inventory db = new IT_Inventory();
+        private readonly DBIT_Inventory db = new DBIT_Inventory();
 
         [Authorize]
         public ActionResult Index()

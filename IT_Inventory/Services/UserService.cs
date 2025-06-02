@@ -6,10 +6,10 @@ namespace IT_Inventory.Services
 {
     public class UserService : IUserService
     {
-        private readonly IT_Inventory _dbContext;
+        private readonly DBIT_Inventory _dbContext;
         private readonly Users db;
 
-        public UserService(IT_Inventory dbContext)
+        public UserService(DBIT_Inventory dbContext)
         {
             _dbContext = dbContext;
         }

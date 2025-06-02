@@ -14,11 +14,18 @@ namespace IT_Inventory.Controllers
     public class AssetManagementController : Controller
     {
         private readonly IAssetService _assetService;
-        private readonly IT_Inventory db = new IT_Inventory();
+        private readonly IFileService _fileService;
+        private readonly IDropdownService _dropdownService;
+        private readonly DBIT_Inventory db = new DBIT_Inventory();
 
-        public AssetManagementController(IAssetService assetService)
+        public AssetManagementController(
+             IAssetService assetService,
+             IFileService fileService,
+             IDropdownService dropdownService)
         {
             _assetService = assetService;
+            _fileService = fileService;
+            _dropdownService = dropdownService;
         }
 
         private void LoadDropdownData()
@@ -26,134 +33,21 @@ namespace IT_Inventory.Controllers
             DropdownLoaderUtility.LoadAllDropdownData(db, ViewBag);
         }
 
-
-        // GET: AssetManagement
         public ActionResult Index()
         {
-            var viewModel = new AssetManagementViewModel
-            {
-                Companies = db.Company.Where(c => c.Is_Deleted != true).ToList(),
-                Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList(),
-                Cities = db.City.Where(c => c.Is_Deleted != true).ToList(),
-                MaterialGroup = db.Material_Group.Where(c => c.Is_Deleted != true).ToList(),
-                Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList(),
-                UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList(),
-                AssetList = db.Asset
-                    .Where(a => a.Is_Deleted != true)
-                    .GroupBy(a => a.No_asset)
-                    .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
-                    .OrderByDescending(a => a.Transaction_Date)
-                    .ToList(),
-                DashboardCounts = _assetService.GetDashboardCounts()
-            };
-
-            var defaultCity = viewModel.Cities.FirstOrDefault()?.City_Name;
-            viewModel.LocationsList = db.Location
-                .Where(l => l.Is_Deleted != true && l.City_Name == defaultCity)
-                .ToList();
-            viewModel.Companies = viewModel.Companies ?? new List<Company>();
-            viewModel.Dept = viewModel.Dept ?? new List<Departement>();
-            viewModel.LocationsList = viewModel.LocationsList ?? new List<Location>();
-            viewModel.Cities = viewModel.Cities ?? new List<City>();
-            viewModel.MaterialGroup = viewModel.MaterialGroup ?? new List<Material_Group>();
-            viewModel.Material_Code1 = viewModel.Material_Code1 ?? new List<Material_Code>();
-            viewModel.UoMList = viewModel.UoMList ?? new List<UoM>();
-            viewModel.AssetHistory = viewModel.AssetHistory ?? new List<Asset_History>();
-            viewModel.Roles = viewModel.Roles ?? new List<Departement>();
-
-            LoadDropdownData();
+            var viewModel = _assetService.GetAssetManagementViewModel();
+            _dropdownService.LoadAllDropdownData(ViewBag);
             return View(viewModel);
         }
 
         public ActionResult Editor(string id = null, string mode = "Create")
         {
-            AssetManagementViewModel viewModel = new AssetManagementViewModel();
+            var viewModel = _assetService.GetAssetForEditing(id, mode);
             viewModel.mode = mode;
 
-            LoadDropdownData();
-
-
-            viewModel.Companies = db.Company.Where(c => c.Is_Deleted != true).ToList();
-            viewModel.Dept = db.Departement.Where(c => c.Is_Deleted != true).ToList();
-            viewModel.Cities = db.City.Where(c => c.Is_Deleted != true).ToList();
-            viewModel.MaterialGroup = db.Material_Group
-            .Where(c => c.Is_Deleted != true || c.Is_Deleted == null)
-            .ToList();
-            viewModel.Material_Code1 = db.Material_Code.Where(c => c.Is_Deleted != true).ToList();
-            viewModel.UoMList = db.UoM.Where(c => c.Is_Deleted != true).ToList();
-            viewModel.Roles = db.Departement.Where(c => c.Is_Deleted != true).ToList();
-
-            if (id != null && (mode == "Edit" || mode == "View" || mode == "Delete"))
-            {
-                var asset = db.Asset
-                .Where(a => a.No_asset == id && a.Is_Deleted != true)
-                .OrderByDescending(a => a.Transaction_Date)
-                .FirstOrDefault();
-
-                if (asset != null)
-                {
-                    viewModel.No_asset = asset.No_asset;
-                    viewModel.Company_Code = asset.Company_Code;
-                    viewModel.Company_Name = asset.Company_Name;
-                    viewModel.Material_Group = asset.Material_Group;
-                    viewModel.Material_Code = asset.Material_Code;
-                    viewModel.Material_Description = asset.Material_Description;
-                    viewModel.Quantity = asset.Quantity;
-                    viewModel.UoM = asset.UoM;
-                    viewModel.Serial_Number = asset.Serial_Number;
-                    viewModel.Device_Id = asset.Device_Id;
-                    viewModel.Acquisition_Date = asset.Acquisition_Date;
-                    viewModel.Acquisition_value = asset.Acquisition_value;
-                    viewModel.No_Asset_PGA = asset.No_Asset_PGA;
-                    viewModel.No_Asset_Accounting = asset.No_Asset_Accounting;
-                    viewModel.No_PO = asset.No_PO;
-                    viewModel.Latest_User = asset.Latest_User;
-                    viewModel.Asset_Image = asset.Asset_Image;
-                    viewModel.Departement_Code = db.Departement
-                        .Where(d => d.Departement_Code == asset.Departement && d.Is_Deleted != true)
-                        .Select(d => d.Departement_Code)
-                        .FirstOrDefault();
-                    viewModel.Departement_Name = asset.Departement;
-                    viewModel.City_Name = asset.City;
-                    var location = db.Location.FirstOrDefault(l =>
-                    l.Location_Name == asset.Location &&
-                    l.City_Name == asset.City &&
-                    l.Is_Deleted != true);
-                    viewModel.Locations = location?.Location_Code;
-                    viewModel.Location_Name = asset.Location;
-                    if (!string.IsNullOrEmpty(asset.City))
-                    {
-                        viewModel.LocationsList = db.Location
-                            .Where(l => l.City_Name == asset.City && l.Is_Deleted != true)
-                            .ToList();
-                    }
-                    viewModel.Last_Check_Date = asset.Last_Check_Date;
-                    viewModel.Condition = asset.Condition;
-                    viewModel.Status = asset.Status;
-                    viewModel.PIC = asset.PIC;
-                    viewModel.Role = asset.Role;
-                    viewModel.Company_User = asset.Company_User;
-                    viewModel.Transaction_Date = asset.Transaction_Date.HasValue ? (DateTime)asset.Transaction_Date : DateTime.Now;
-                    viewModel.AssetHistory = db.Asset_History
-                   .Where(a => a.No_asset == id && a.Is_Deleted != true)
-                   .OrderByDescending(a => a.ID)
-                   .ToList();
-
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Asset not found.";
-                    return RedirectToAction("Index");
-                }
-            }
-            else
-            {
-                viewModel.AssetHistory = new List<Asset_History>();
-            }
-
+            _dropdownService.LoadAllDropdownData(ViewBag);
             ViewBag.Mode = mode;
             return View(viewModel);
-
         }
 
 
@@ -905,8 +799,6 @@ namespace IT_Inventory.Controllers
                 .ToList();
             return Json(locations, JsonRequestBehavior.AllowGet);
         }
-
-
 
     }
 }

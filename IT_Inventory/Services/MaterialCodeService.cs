@@ -9,9 +9,9 @@ namespace IT_Inventory.Services
 
     public class MaterialCodeService
     {
-        private readonly IT_Inventory db;
+        private readonly DBIT_Inventory db;
 
-        public MaterialCodeService(IT_Inventory db)
+        public MaterialCodeService(DBIT_Inventory db)
         {
             this.db = db;
         }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using IT_Inventory.Models;
 using IT_Inventory.Services;
 using IT_Inventory.ViewModel;
 
@@ -11,14 +12,14 @@ namespace IT_Inventory.Controllers
     public class AuthController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IT_Inventory _db;
+        private readonly DBIT_Inventory _db;
         public AuthController()
         {
-            _db = new IT_Inventory();
+            _db = new DBIT_Inventory();
             _userService = new UserService(_db);
 
         }
-        public AuthController(IUserService userService, IT_Inventory db)
+        public AuthController(IUserService userService, DBIT_Inventory db)
         {
             _userService = userService;
             _db = db;

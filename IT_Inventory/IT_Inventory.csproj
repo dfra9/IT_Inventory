@@ -200,58 +200,63 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Asset.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Asset_History.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\City.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Company.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\C__EFMigrationsHistory.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DBIT_Inventory.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DBIT_Inventory.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DBIT_Inventory.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DBIT_Inventory.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DBIT_Inventory.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\Departement.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\IT_Inventory.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IT_Inventory.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\IT_Inventory.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\IT_Inventory.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IT_Inventory.edmx</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Location.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Log_Transaction.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Material_Code.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Material_Group.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UoM.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Users.cs">
-      <DependentUpon>IT_Inventory.tt</DependentUpon>
+      <DependentUpon>DBIT_Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AssetService.cs" />
+    <Compile Include="Services\DropdownService.cs" />
+    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\IAssetService.cs" />
+    <Compile Include="Services\IDropdownService.cs" />
+    <Compile Include="Services\IFileService.cs" />
     <Compile Include="Services\IUserService.cs" />
     <Compile Include="Services\MaterialCodeService.cs" />
     <Compile Include="Services\UserService.cs" />
@@ -2468,15 +2473,15 @@
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Models\IT_Inventory.Context.tt">
+    <Content Include="Models\DBIT_Inventory.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IT_Inventory.Context.cs</LastGenOutput>
-      <DependentUpon>IT_Inventory.edmx</DependentUpon>
+      <DependentUpon>DBIT_Inventory.edmx</DependentUpon>
+      <LastGenOutput>DBIT_Inventory.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\IT_Inventory.tt">
+    <Content Include="Models\DBIT_Inventory.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>IT_Inventory.edmx</DependentUpon>
-      <LastGenOutput>IT_Inventory.cs</LastGenOutput>
+      <DependentUpon>DBIT_Inventory.edmx</DependentUpon>
+      <LastGenOutput>DBIT_Inventory.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -2825,12 +2830,12 @@
     <Content Include="Content\Theme\AdminLTE\plugins\summernote\summernote.min.js.map" />
     <Content Include="Content\Theme\AdminLTE\plugins\toastr\toastr.js.map" />
     <Content Include="Content\Theme\AdminLTE\README.md" />
-    <EntityDeploy Include="Models\IT_Inventory.edmx">
+    <EntityDeploy Include="Models\DBIT_Inventory.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>IT_Inventory.Designer.cs</LastGenOutput>
+      <LastGenOutput>DBIT_Inventory.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\IT_Inventory.edmx.diagram">
-      <DependentUpon>IT_Inventory.edmx</DependentUpon>
+    <Content Include="Models\DBIT_Inventory.edmx.diagram">
+      <DependentUpon>DBIT_Inventory.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
