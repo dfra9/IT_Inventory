@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using IT_Inventory.Models;
-using IT_Inventory.ViewModel;
+using DBIT_Inventory.ViewModel;
+using IT_Inventory;
 
-namespace IT_Inventory.Services
+namespace DBIT_Inventory.Services
 {
 
     public class MaterialCodeService

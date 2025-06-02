@@ -7,12 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IT_Inventory.Models
+namespace DBIT_Inventory
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    
+    using IT_Inventory;
+
     public partial class DBIT_Inventory : DbContext
     {
         public DBIT_Inventory()

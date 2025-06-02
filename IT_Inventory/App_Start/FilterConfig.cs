@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace IT_Inventory
+namespace DBIT_Inventory
 {
     public class FilterConfig
     {

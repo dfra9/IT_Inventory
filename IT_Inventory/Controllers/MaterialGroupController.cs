@@ -3,11 +3,11 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
-using IT_Inventory.Models;
-using IT_Inventory.Services;
-using IT_Inventory.ViewModel;
+using DBIT_Inventory.Services;
+using DBIT_Inventory.ViewModel;
+using IT_Inventory;
 
-namespace IT_Inventory.Controllers
+namespace DBIT_Inventory.Controllers
 {
     public class MaterialGroupController : Controller
     {

@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace IT_Inventory
+namespace DBIT_Inventory
 {
     public class RouteConfig
     {

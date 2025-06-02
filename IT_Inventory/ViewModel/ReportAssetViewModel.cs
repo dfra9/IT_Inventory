@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace IT_Inventory.ViewModel
+namespace DBIT_Inventory.ViewModel
 {
     public class ReportAssetViewModel
     {

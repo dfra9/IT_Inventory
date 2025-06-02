@@ -1,6 +1,6 @@
 ﻿using System.Web.Optimization;
 
-namespace IT_Inventory
+namespace DBIT_Inventory
 {
     public class BundleConfig
     {

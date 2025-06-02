@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using IT_Inventory.Models;
 
-namespace IT_Inventory.Utilities
+namespace DBIT_Inventory.Utilities
 {
     public static class DropdownLoaderUtility
     {

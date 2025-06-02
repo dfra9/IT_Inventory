@@ -1,18 +1,18 @@
 ﻿using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using IT_Inventory.App_Start;
-using IT_Inventory.Services;
+using DBIT_Inventory.App_Start;
+using DBIT_Inventory.Services;
 
 
-namespace IT_Inventory
+namespace DBIT_Inventory
 {
     public class MvcApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
         {
 
-            using (var context = new IT_Inventory())
+            using (var context = new DBIT_Inventory())
             {
                 var userService = new UserService(context);
                 userService.InitializeAdmin();

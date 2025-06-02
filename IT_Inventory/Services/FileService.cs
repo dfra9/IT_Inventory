@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace IT_Inventory.Services
+namespace DBIT_Inventory.Services
 {
     public class FileService : IFileService
     {

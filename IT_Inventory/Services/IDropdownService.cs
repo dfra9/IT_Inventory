@@ -1,4 +1,4 @@
-﻿namespace IT_Inventory.Services
+﻿namespace DBIT_Inventory.Services
 {
     public interface IDropdownService
     {

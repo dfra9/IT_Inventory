@@ -263,7 +263,10 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities\DropdownLoaderUtility.cs" />
     <Compile Include="ViewModel\AssetManagementViewModel.cs" />
+    <Compile Include="ViewModel\CityViewModel.cs" />
+    <Compile Include="ViewModel\CompanyViewModel.cs" />
     <Compile Include="ViewModel\DataUserViewModel.cs" />
+    <Compile Include="ViewModel\DepartementViewModel.cs" />
     <Compile Include="ViewModel\LocationViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MaterialCodeViewModel.cs" />

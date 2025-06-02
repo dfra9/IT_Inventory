@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using IT_Inventory.Models;
-using IT_Inventory.ViewModel;
-using static IT_Inventory.ViewModel.AssetManagementViewModel;
+using DBIT_Inventory.ViewModel;
+using IT_Inventory;
+using static DBIT_Inventory.ViewModel.AssetManagementViewModel;
 
 
-namespace IT_Inventory.Controllers
+namespace DBIT_Inventory.Controllers
 {
     public class HomeController : Controller
     {

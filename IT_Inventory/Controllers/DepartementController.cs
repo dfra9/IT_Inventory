@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using IT_Inventory.Models;
+using IT_Inventory;
 
-namespace IT_Inventory.Controllers
+namespace DBIT_Inventory.Controllers
 {
     public class DepartementController : Controller
     {

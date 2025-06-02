@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web;
 
-namespace IT_Inventory.Services
+namespace DBIT_Inventory.Services
 {
     public interface IFileService
     {

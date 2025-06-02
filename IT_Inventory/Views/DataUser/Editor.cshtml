@@ -1,12 +1,12 @@
-﻿﻿@using IT_Inventory.Models
-@model global::IT_Inventory.Models.Users
+﻿
+@model IT_Inventory.ViewModel.CompanyViewModel
 
 @{
 
     var mode = ViewBag.Mode ?? "Create";
     ViewBag.Title = @mode + " - User Data";
     var userId = Request.QueryString["id"] ?? "0";
-    var db = new IT_Inventory();
+    var db = new DBIT_Inventory.DBIT_Inventory();
     var cities = db.City.ToList();
     var departements = db.Departement.ToList();
     var locations = db.Location.ToList();

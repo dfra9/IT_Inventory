@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using IT_Inventory.Models;
-using IT_Inventory.ViewModel;
-using static IT_Inventory.Services.AssetService;
-using static IT_Inventory.ViewModel.AssetManagementViewModel;
-using static IT_Inventory.ViewModel.ReportAssetViewModel;
+using DBIT_Inventory.ViewModel;
+using IT_Inventory;
+using static DBIT_Inventory.Services.AssetService;
+using static DBIT_Inventory.ViewModel.AssetManagementViewModel;
+using static DBIT_Inventory.ViewModel.ReportAssetViewModel;
 
-namespace IT_Inventory.Services
+namespace DBIT_Inventory.Services
 {
     public interface IAssetService
     {

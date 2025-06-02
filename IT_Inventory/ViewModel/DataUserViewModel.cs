@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IT_Inventory.ViewModel
+namespace DBIT_Inventory.ViewModel
 {
     public class DataUserViewModel
     {

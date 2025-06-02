@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using IT_Inventory.Models;
-using IT_Inventory.ViewModel;
-using static IT_Inventory.ViewModel.AssetManagementViewModel;
-using static IT_Inventory.ViewModel.ReportAssetViewModel;
+using DBIT_Inventory.ViewModel;
+using IT_Inventory;
 
-namespace IT_Inventory.Services
+using static DBIT_Inventory.ViewModel.AssetManagementViewModel;
+using static DBIT_Inventory.ViewModel.ReportAssetViewModel;
+
+namespace DBIT_Inventory.Services
 {
     public class AssetService : IAssetService
     {
@@ -77,15 +78,16 @@ namespace IT_Inventory.Services
                 .ToList();
 
 
-            viewModel.Companies = viewModel.Companies ?? new List<Company>();
-            viewModel.Dept = viewModel.Dept ?? new List<Departement>();
-            viewModel.LocationsList = viewModel.LocationsList ?? new List<Location>();
-            viewModel.Cities = viewModel.Cities ?? new List<City>();
-            viewModel.MaterialGroup = viewModel.MaterialGroup ?? new List<Material_Group>();
-            viewModel.Material_Code1 = viewModel.Material_Code1 ?? new List<Material_Code>();
-            viewModel.UoMList = viewModel.UoMList ?? new List<UoM>();
-            viewModel.AssetHistory = viewModel.AssetHistory ?? new List<Asset_History>();
-            viewModel.Roles = viewModel.Roles ?? new List<Departement>();
+            viewModel.Companies = viewModel.Companies != null ? viewModel.Companies : new List<Company>();
+            viewModel.Dept = viewModel.Dept != null ? viewModel.Dept : new List<Departement>();
+            viewModel.LocationsList = viewModel.LocationsList != null ? viewModel.LocationsList : new List<Location>();
+            viewModel.Cities = viewModel.Cities != null ? viewModel.Cities : new List<City>();
+            viewModel.Companies = viewModel.Companies != null ? viewModel.Companies : new List<Company>();
+            viewModel.MaterialGroup = viewModel.MaterialGroup != null ? viewModel.MaterialGroup : new List<Material_Group>();
+            viewModel.Material_Code1 = viewModel.Material_Code1 != null ? viewModel.Material_Code1 : new List<Material_Code>();
+            viewModel.UoMList = viewModel.UoMList != null ? viewModel.UoMList : new List<UoM>();
+            viewModel.AssetHistory = viewModel.AssetHistory != null ? viewModel.AssetHistory : new List<Asset_History>();
+            viewModel.Roles = viewModel.Roles != null ? viewModel.Roles : new List<Departement>();
 
             return viewModel;
         }

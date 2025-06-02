@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using IT_Inventory.Models;
 
-namespace IT_Inventory.Services
+namespace DBIT_Inventory.Services
 {
     public class DropdownService : IDropdownService
     {

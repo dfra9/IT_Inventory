@@ -1,14 +1,14 @@
-﻿using IT_Inventory.Services;
+﻿using DBIT_Inventory.Services;
 using Owin;
 
-namespace IT_Inventory
+namespace DBIT_Inventory
 {
     public class Startup
     {
 
         public void Configuration(IAppBuilder app)
         {
-            using (var context = new IT_Inventory())
+            using (var context = new DBIT_Inventory())
             {
                 var userService = new UserService(context);
                 userService.InitializeAdmin();

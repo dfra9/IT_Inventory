@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
-using IT_Inventory.Models;
+using IT_Inventory;
 
-namespace IT_Inventory.ViewModel
+namespace DBIT_Inventory.ViewModel
 {
     public class AssetManagementViewModel
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace IT_Inventory.ViewModel
+namespace DBIT_Inventory.ViewModel
 {
     public class LoginViewModel
     {
