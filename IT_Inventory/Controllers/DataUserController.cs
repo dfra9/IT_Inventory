@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Web.Mvc;
 using DBIT_Inventory.Services;
-using DBIT_Inventory.ViewModel;
 using IT_Inventory;
+using IT_Inventory.ViewModel;
 
 namespace DBIT_Inventory.Controllers
 {
@@ -40,6 +40,9 @@ namespace DBIT_Inventory.Controllers
 
         public ActionResult Editor(int? id, string mode = "Create")
         {
+            var db = new DBIT_Inventory();
+            var model = new DataUserViewModel();
+
             if (mode == "Create")
             {
                 DropdownList();

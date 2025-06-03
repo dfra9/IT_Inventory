@@ -280,7 +280,7 @@ $(document).ready(function () {
     function refreshDashboardData() {
         var cityName = $('#cityAsset').val();
         $.ajax({
-            url: '/Home/GetDashboardCountsJson',
+            url: '@Url.Action("GetDashboardCountsJson", "Home")',
             type: 'GET',
             dataType: 'json',
             data: { cityName: cityName},

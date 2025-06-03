@@ -281,12 +281,12 @@
 
                 assetTable = $('#assetDataTable').DataTable({
                     responsive: true,
-                    "pageLength": -1, 
+                    "pageLength": -1,
                     "lengthChange": true,
                     "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
                     "pageLength": 25,
                     "dom": 'lBrtip',
-                    "processing": true, 
+                    "processing": true,
                     "serverSide": false,
                     autoWidth: true,
                     scrollX: true,
@@ -307,7 +307,7 @@
             } else {
                 assetTable = $('#assetDataTable').DataTable({
                     responsive: true,
-                    "pageLength": -1, 
+                    "pageLength": -1,
                     "lengthChange": true,
                     "lengthMenu": [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
                     "pageLength": 25,
@@ -465,7 +465,7 @@
 
                 function refreshDashboardData() {
                     $.ajax({
-                        url: '/AssetManagement/GetDashboardCountsJson',
+                        url: '@Url.Action("GetDashboardCountsJson", "AssetManagement")',
                         type: 'GET',
                         dataType: 'json',
                         cache: false,
@@ -475,8 +475,6 @@
                         },
                         error: function (xhr, status, error) {
                             console.error('Error refreshing dashboard data:', error);
-                            console.error('Status:', status);
-                            console.error('Response:', xhr.responseText);
                         }
                     });
                 }

@@ -8,6 +8,7 @@ using DBIT_Inventory.Services;
 using DBIT_Inventory.Utilities;
 using DBIT_Inventory.ViewModel;
 using IT_Inventory;
+using static DBIT_Inventory.ViewModel.AssetManagementViewModel;
 
 namespace DBIT_Inventory.Controllers
 {
@@ -534,6 +535,30 @@ namespace DBIT_Inventory.Controllers
                     errorDetails = ex.Message,
                 });
             }
+        }
+
+        [HttpGet]
+        public ActionResult GetDashboardCountsJson(string cityName = "")
+        {
+            var assetQuery = db.Asset.Where(a => a.Is_Deleted != true);
+            if (!string.IsNullOrEmpty(cityName))
+            {
+                assetQuery = assetQuery.Where(a => a.City == cityName);
+            }
+
+            var latestAsset = assetQuery
+                .GroupBy(a => a.No_asset)
+                .Select(g => g.OrderByDescending(a => a.Transaction_Date).FirstOrDefault())
+                .ToList();
+
+            var dashboardCounts = new DashboardCountsModel
+            {
+                TotalAssets = latestAsset.Count(a => a.Status != "Write Off"),
+                AvailableAssets = latestAsset.Count(a => a.Status == "Ready" || a.Status == "Return"),
+                AssetsInUse = latestAsset.Count(a => a.Status == "Borrowing" || a.Status == "Assign"),
+                AssetsInMaintenance = latestAsset.Count(a => a.Status == "Service")
+            };
+            return Json(dashboardCounts, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult DeleteAsset(string No_asset)

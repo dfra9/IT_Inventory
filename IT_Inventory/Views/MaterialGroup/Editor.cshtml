@@ -1,4 +1,4 @@
-﻿@model DBIT_Inventory.Models.Material_Group
+﻿@model DBIT_Inventory.ViewModel.MaterialGroupViewModel
 
 @{
 
@@ -26,11 +26,11 @@
                                         <div class="col-sm-3">
                                             @if (mode == "Edit" || mode == "View" || mode == "Delete")
                                             {
-                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ?? "")" readonly>
+                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.MaterialGroup ?? "")" readonly>
                                             }
                                             else
                                             {
-                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.Material_Group1 ?? "")" required>
+                                                <input type="text" id="Material_Group1" name="Material_Group1" class="form-control" value="@(Model?.MaterialGroup ?? "")" required>
                                             }
                                         </div>
                                     </div>
@@ -39,11 +39,11 @@
                                         <div class="col-sm-5">
                                             @if (mode == "View" || mode == "Delete")
                                             {
-                                                <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" readonly>
+                                                <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.MaterialDescription ?? "")" readonly>
                                             }
                                             else
                                             {
-                                                <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.Material_Description ?? "")" required>
+                                                <input type="text" id="Material_Description" name="Material_Description" class="form-control" value="@(Model?.MaterialDescription ?? "")" required>
                                             }
                                         </div>
                                     </div>
@@ -54,9 +54,9 @@
                                                 string yearValue = string.Empty;
                                                 string monthValue = string.Empty;
 
-                                                if (!string.IsNullOrEmpty(Model?.Age_Accounting_Asset))
+                                                if (!string.IsNullOrEmpty(Model?.AgeAccountingAsset))
                                                 {
-                                                    string ageAsset = Model.Age_Accounting_Asset;
+                                                    string ageAsset = Model.AgeAccountingAsset;
 
                                                     if (ageAsset.Contains("Years") && ageAsset.Contains("Month"))
                                                     {
@@ -118,11 +118,11 @@
                                         <div class="col-sm-2">
                                             @if (mode == "View" || mode == "Delete")
                                             {
-                                                <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control " value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
+                                                <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control "value="@(string.IsNullOrEmpty(Model?.LastCheckDate) ? "" : DateTime.Parse(Model.LastCheckDate).ToString("yyyy-MM-dd"))" readonly>
                                             }
                                             else
                                             {
-                                                <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(Model?.Last_Check_Date.HasValue == true ? Model.Last_Check_Date.Value.ToString("yyyy-MM-dd"): "")">
+                                                <input type="date" id="Last_Check_Date" name="Last_Check_Date" class="form-control" value="@(string.IsNullOrEmpty(Model?.LastCheckDate) ? "" : DateTime.Parse(Model.LastCheckDate).ToString("yyyy-MM-dd"))">
                                             }
                                         </div>
                                     </div>
@@ -131,11 +131,11 @@
                                         <div class="col-sm-2">
                                             @if (mode == "View" || mode == "Delete")
                                             {
-                                                <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")" readonly>
+                                                <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(string.IsNullOrEmpty(Model?.MaxWarrantyDate)? "" : DateTime.Parse(Model.MaxWarrantyDate).ToString("yyyy-MM-dd"))" readonly>
                                             }
                                             else
                                             {
-                                                <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(Model?.Max_Warranty_Date.HasValue == true ? Model.Max_Warranty_Date.Value.ToString("yyyy-MM-dd"): "")">
+                                                <input type="date" id="Max_Warranty_Date" name="Max_Warranty_Date" class="form-control" value="@(string.IsNullOrEmpty(Model?.MaxWarrantyDate)? "" : DateTime.Parse(Model.MaxWarrantyDate).ToString("yyyy-MM-dd"))">
                                             }
                                         </div>
                                     </div>

@@ -66,6 +66,8 @@ namespace DBIT_Inventory.Controllers
             };
             return Json(dashboardCounts, JsonRequestBehavior.AllowGet);
         }
+
+
         [HttpPost]
         public ActionResult GetDashboardData(DataTablesParameters param)
         {

@@ -1,5 +1,5 @@
 ﻿
-@model DBIT_Inventory.ViewModel.DataUserViewModel
+@model IT_Inventory.ViewModel.DataUserViewModel
 
 @{
 
@@ -7,10 +7,7 @@
     ViewBag.Title = @mode + " - User Data";
     var userId = Request.QueryString["id"] ?? "0";
     var db = new DBIT_Inventory.DBIT_Inventory();
-    var cities = db.City.ToList();
-    var departements = db.Departement.ToList();
-    var locations = db.Location.ToList();
-
+ 
 }
 
 
@@ -82,7 +79,7 @@
                                             <label for="IsAdmin" class="col-sm-3 col-form-label form-control-label">User Is Admin?</label>
                                             <div class="col-sm-5">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="Is_Admin" name="Is_Admin" value="True" @(Model.Is_Admin == true ? "checked" : "") />
+                                                    <input class="form-check-input" type="checkbox" id="Is_Admin" name="Is_Admin" value="True" @(Model.IsAdmin == true ? "checked" : "") />
                                                 </div>
                                             </div>
                                         </div>
@@ -243,7 +240,7 @@
             $("#Password").removeAttr("required");
         }
 
-        if (@Html.Raw(Model.Is_Admin == true ? "true" : "false")) {
+        if (@Html.Raw(Model.IsAdmin == true ? "true" : "false")) {
             $("#Is_Admin").prop("checked", true);
         } else {
             $("#Is_Admin").prop("checked", false);
