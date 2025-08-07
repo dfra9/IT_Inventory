@@ -109,7 +109,8 @@ namespace DBIT_Inventory.ViewModel
                 new SelectListItem { Value = "Service", Text = "Service" },
                 new SelectListItem { Value = "Ready", Text = "Ready" },
                 new SelectListItem { Value = "Assign", Text = "Assign" },
-                new SelectListItem { Value = "Write Off", Text = "Write Off" }
+                new SelectListItem { Value = "Write Off", Text = "Write Off" },
+                new SelectListItem { Value = "Damage", Text = "Damage" }
             };
 
         }

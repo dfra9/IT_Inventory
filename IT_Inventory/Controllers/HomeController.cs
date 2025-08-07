@@ -28,7 +28,7 @@ namespace DBIT_Inventory.Controllers
                 TotalAssets = latestAssets.Count,
                 AvailableAssets = latestAssets.Count(a => a.Status == "Ready" || a.Status == "Return"),
                 AssetsInUse = latestAssets.Count(a => a.Status == "Borrowing" || a.Status == "Assign"),
-                AssetsInMaintenance = latestAssets.Count(a => a.Status == "Service")
+                AssetsInMaintenance = latestAssets.Count(a => a.Status == "Service" || a.Status == "Damage")
             };
 
 
@@ -62,7 +62,7 @@ namespace DBIT_Inventory.Controllers
                 TotalAssets = latestAsset.Count(a => a.Status != "Write Off"),
                 AvailableAssets = latestAsset.Count(a => a.Status == "Ready" || a.Status == "Return"),
                 AssetsInUse = latestAsset.Count(a => a.Status == "Borrowing" || a.Status == "Assign"),
-                AssetsInMaintenance = latestAsset.Count(a => a.Status == "Service")
+                AssetsInMaintenance = latestAsset.Count(a => a.Status == "Service" || a.Status == "Damage")
             };
             return Json(dashboardCounts, JsonRequestBehavior.AllowGet);
         }

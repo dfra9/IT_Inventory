@@ -12,6 +12,7 @@
                 case "Ready": return "status-ready";
                 case "Assign": return "status-assign";
                 case "Write Off": return "status-write-off";
+                case "Damage": return "status-damage";
                 default: return "";
             }
         }
@@ -75,6 +76,11 @@
 
         .status-write-off {
             color: #dc3545;
+        }
+
+        .status-damage {
+            color: #ffc107;
+            font-weight: bold;
         }
 
         .select2-container--default .select2-selection--single {
@@ -552,6 +558,8 @@
                         case "Ready": return "status-ready";
                         case "Assign": return "status-assign";
                         case "Write Off": return "status-write-off";
+                        case "Damage": return "status-damage";
+
                         default: return "";
                     }
                 }

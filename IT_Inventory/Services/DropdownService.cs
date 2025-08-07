@@ -46,7 +46,8 @@ namespace DBIT_Inventory.Services
                 "Borrowing",
                 "Service",
                 "Return",
-                "Write Off"
+                "Write Off",
+                "Damage"
             };
 
             viewBag.AssetConditions = new[]

@@ -25,7 +25,8 @@ namespace DBIT_Inventory.Utilities
                 new SelectListItem { Text = "Service", Value = "Service" },
                 new SelectListItem { Text = "Ready", Value = "Ready" },
                 new SelectListItem { Text = "Assign", Value = "Assign" },
-                new SelectListItem { Text = "Write Off", Value = "Write Off" }
+                new SelectListItem { Text = "Write Off", Value = "Write Off" },
+                new SelectListItem { Text = "Damage", Value = "Damage" }
             };
         }
 
@@ -40,7 +41,8 @@ namespace DBIT_Inventory.Utilities
                 new SelectListItem { Text = "Service", Value = "Service" },
                 new SelectListItem { Text = "Ready", Value = "Ready" },
                 new SelectListItem { Text = "Assign", Value = "Assign" },
-                new SelectListItem { Text = "Write Off", Value = "Write Off" }
+                new SelectListItem { Text = "Write Off", Value = "Write Off" },
+                new SelectListItem { Text = "Damage", Value = "Damage" }
             };
 
             if (!string.IsNullOrEmpty(selectedValue))

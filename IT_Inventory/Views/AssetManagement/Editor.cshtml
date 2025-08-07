@@ -71,6 +71,11 @@
         font-weight: bold;
     }
 
+    .status-damage {
+        color: #ffc107;
+        font-weight: bold;
+    }
+
     .status-ready {
         color: #17a2b8;
     }
@@ -618,6 +623,7 @@
                         new {Value = "Ready", Text = "Ready"},
                         new {Value = "Assign", Text = "Assign"},
                         new {Value = "Write Off", Text = "Write Off"},
+                        new {Value = "Damage", Text = "Damage"},
                     }, "Value", "Text"), Model.Status, new { @class = "form-control select2", id = "statusDropdown" })
                     }
                     @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
@@ -787,6 +793,32 @@
                         <div class="form-group">
                             <label>Write Off Date</label>
                             <input type="date" class="form-control" id="writeOffDate" />
+                        </div>
+                    </div>
+                    <div id="damageForm" class="status-form" style="display: none">
+                        <div class="form-group">
+                            <label>PIC / Vendor</label>
+                            <input type="text" class="form-control" placeholder="PIC / Vendor" id="damagePIC" />
+                        </div>
+                        <div class="form-group" id="damageRoleFormGroup" style="display: none;">
+                            <label>Role</label>
+                            @if (mode == "View" || mode == "Delete")
+                            {
+                                @Html.TextBoxFor(m => m.Role, new { @class = "form-control", @readonly = "readonly", id = "roleDropdown" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Role, Model.GetRoleListItem(), "Select Role", new { @class = "form-control select2", id = "damageRole" })
+                            }
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Company User</label>
+                            <input type="text" class="form-control" placeholder="Company User" id="damageComp" />
+                        </div>
+                        <div class="form-group">
+                            <label>Service Date</label>
+                            <input type="date" class="form-control" id="damageDate" />
                         </div>
                     </div>
                 }
@@ -1432,7 +1464,8 @@
                 'Service': '#serviceForm',
                 'Ready': '#readyForm',
                 'Assign': '#assignForm',
-                'Write Off': '#writeOffForm'
+                'Write Off': '#writeOffForm',
+                'Damage': '#damageForm'
             };
 
             const formSelector = statusFormMap[status];
@@ -1532,6 +1565,12 @@
                     dateValue = $("#writeOffDate").val();
                     roleValue = $("#writeOffRole").val();
                     companyValue = $("#writeOffComp").val();
+                    break;
+                case 'Damage':
+                    picValue = $("#damagePIC").val();
+                    dateValue = $("#damageDate").val();
+                    roleValue = $("#damageRole").val();
+                    companyValue = $("#damageComp").val();
                     break;
             }
 
@@ -1652,6 +1691,7 @@
                             else if (status === "ready") statusClass = "status-ready";
                             else if (status === "assign") statusClass = "status-assign";
                             else if (status === "write-off") statusClass = "status-write-off";
+                            else if (status === "damage") statusClass = "status-damage";
                     }
 
                         var row = $("<tr>").append(
@@ -1826,6 +1866,15 @@
                         picFieldId = "writeOffPIC";
                         roleFieldId = "writeOffRole";
                         dateFieldId = "writeOffDate";
+                        break;
+                    case 'Damage':
+                        picValue = $("#damagePIC").val();
+                        dateValue = $("#damageDate").val();
+                        roleValue = $("#damageRole").val();
+                        compValue = $("#damageComp").val();
+                        picFieldId = "damagePIC";
+                        roleFieldId = "damageRole";
+                        dateFieldId = "damageDate";
                         break;
                 }
 

@@ -48,7 +48,7 @@ namespace DBIT_Inventory.Services
                     .Count(),
 
                 AssetsInMaintenance = latestAssets
-                    .Where(a => a.Status == "Service")
+                    .Where(a => a.Status == "Service" || a.Status == "Damage")
                     .Count()
             };
         }
