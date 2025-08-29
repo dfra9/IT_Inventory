@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
-using IT_Inventory;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.Services
 {
     public class UserService : IUserService
     {
-        private readonly DBIT_Inventory _dbContext;
+        private readonly DBInventory _dbContext;
         private readonly Users db;
 
-        public UserService(DBIT_Inventory dbContext)
+        public UserService(DBInventory dbContext)
         {
             _dbContext = dbContext;
         }

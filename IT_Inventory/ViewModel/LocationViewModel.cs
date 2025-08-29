@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using IT_Inventory;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.ViewModel
 {

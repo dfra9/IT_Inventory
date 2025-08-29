@@ -3,6 +3,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using DBIT_Inventory.App_Start;
 using DBIT_Inventory.Services;
+using IT_Inventory.Models;
 
 
 namespace DBIT_Inventory
@@ -12,7 +13,7 @@ namespace DBIT_Inventory
         protected void Application_Start()
         {
 
-            using (var context = new DBIT_Inventory())
+            using (var context = new DBInventory())
             {
                 var userService = new UserService(context);
                 userService.InitializeAdmin();

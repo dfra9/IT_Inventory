@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Integration.Mvc;
 using DBIT_Inventory.Services;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.App_Start
 {
@@ -11,9 +12,9 @@ namespace DBIT_Inventory.App_Start
         {
             var builder = new ContainerBuilder();
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
-            builder.RegisterType<DBIT_Inventory>().AsSelf().InstancePerRequest();
+            builder.RegisterType<DBInventory>().AsSelf().InstancePerRequest();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerRequest();
-            builder.RegisterType<DBIT_Inventory>().AsSelf().InstancePerRequest();
+            builder.RegisterType<DBInventory>().AsSelf().InstancePerRequest();
             builder.RegisterType<AssetService>().As<IAssetService>().InstancePerRequest();
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.RegisterType<FileService>().As<IFileService>().InstancePerRequest();

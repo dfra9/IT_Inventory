@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.Utilities
 {
     public static class DropdownLoaderUtility
     {
-        public static void LoadAllDropdownData(DBIT_Inventory db, dynamic viewBag)
+        public static void LoadAllDropdownData(DBInventory db, dynamic viewBag)
         {
             viewBag.Company = db.Company.Where(c => c.Is_Deleted != true).ToList();
             viewBag.Departement = db.Departement.Where(c => c.Is_Deleted != true).ToList();

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="IT_InventoryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="DBInventory_Entities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="__EFMigrationsHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -224,7 +224,7 @@
           <Property Name="Is_Deleted" Type="bit" />
           <Property Name="Is_Admin" Type="bit" />
         </EntityType>
-        <EntityContainer Name="IT_InventoryModelStoreContainer">
+        <EntityContainer Name="DBInventory_EntitiesStoreContainer">
           <EntitySet Name="__EFMigrationsHistory" EntityType="Self.__EFMigrationsHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Asset" EntityType="Self.Asset" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Asset_History" EntityType="Self.Asset_History" Schema="dbo" store:Type="Tables" />
@@ -238,10 +238,11 @@
           <EntitySet Name="UoM" EntityType="Self.UoM" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="IT_InventoryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="DBInventory_Entities" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="C__EFMigrationsHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
@@ -461,7 +462,7 @@
           <Property Name="Is_Deleted" Type="Boolean" />
           <Property Name="Is_Admin" Type="Boolean" />
         </EntityType>
-        <EntityContainer Name="DBIT_Inventory" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="DBInventory" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="C__EFMigrationsHistory" EntityType="Self.C__EFMigrationsHistory" />
           <EntitySet Name="Asset" EntityType="Self.Asset" />
           <EntitySet Name="Asset_History" EntityType="Self.Asset_History" />
@@ -480,9 +481,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="IT_InventoryModelStoreContainer" CdmEntityContainer="DBIT_Inventory">
+        <EntityContainerMapping StorageEntityContainer="DBInventory_EntitiesStoreContainer" CdmEntityContainer="DBInventory">
           <EntitySetMapping Name="C__EFMigrationsHistory">
-            <EntityTypeMapping TypeName="IT_InventoryModel.C__EFMigrationsHistory">
+            <EntityTypeMapping TypeName="DBInventory_Entities.C__EFMigrationsHistory">
               <MappingFragment StoreEntitySet="__EFMigrationsHistory">
                 <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
                 <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
@@ -490,7 +491,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Asset">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Asset">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Asset">
               <MappingFragment StoreEntitySet="Asset">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="NO" ColumnName="NO" />
@@ -534,7 +535,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Asset_History">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Asset_History">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Asset_History">
               <MappingFragment StoreEntitySet="Asset_History">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="NO" ColumnName="NO" />
@@ -556,7 +557,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="City">
-            <EntityTypeMapping TypeName="IT_InventoryModel.City">
+            <EntityTypeMapping TypeName="DBInventory_Entities.City">
               <MappingFragment StoreEntitySet="City">
                 <ScalarProperty Name="City_Name" ColumnName="City_Name" />
                 <ScalarProperty Name="City_Description" ColumnName="City_Description" />
@@ -572,7 +573,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Company">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Company">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Company">
               <MappingFragment StoreEntitySet="Company">
                 <ScalarProperty Name="Company_Code" ColumnName="Company_Code" />
                 <ScalarProperty Name="Company_Name" ColumnName="Company_Name" />
@@ -587,7 +588,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Departement">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Departement">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Departement">
               <MappingFragment StoreEntitySet="Departement">
                 <ScalarProperty Name="Departement_Code" ColumnName="Departement_Code" />
                 <ScalarProperty Name="Departement_Name" ColumnName="Departement_Name" />
@@ -603,7 +604,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Location">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Location">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Location">
               <MappingFragment StoreEntitySet="Location">
                 <ScalarProperty Name="Location_Code" ColumnName="Location_Code" />
                 <ScalarProperty Name="Location_Name" ColumnName="Location_Name" />
@@ -620,7 +621,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Log_Transaction">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Log_Transaction">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Log_Transaction">
               <MappingFragment StoreEntitySet="Log_Transaction">
                 <ScalarProperty Name="UniqID" ColumnName="UniqID" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
@@ -635,7 +636,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Material_Code">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Material_Code">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Material_Code">
               <MappingFragment StoreEntitySet="Material_Code">
                 <ScalarProperty Name="Material_CodeId" ColumnName="Material_CodeId" />
                 <ScalarProperty Name="Material_Code1" ColumnName="Material_Code" />
@@ -655,7 +656,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Material_Group">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Material_Group">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Material_Group">
               <MappingFragment StoreEntitySet="Material_Group">
                 <ScalarProperty Name="Material_Group_Id" ColumnName="Material_Group_Id" />
                 <ScalarProperty Name="Material_Group1" ColumnName="Material_Group" />
@@ -675,7 +676,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UoM">
-            <EntityTypeMapping TypeName="IT_InventoryModel.UoM">
+            <EntityTypeMapping TypeName="DBInventory_Entities.UoM">
               <MappingFragment StoreEntitySet="UoM">
                 <ScalarProperty Name="UoM_Id" ColumnName="UoM_Id" />
                 <ScalarProperty Name="UoM_Code" ColumnName="UoM_Code" />
@@ -691,7 +692,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="IT_InventoryModel.Users">
+            <EntityTypeMapping TypeName="DBInventory_Entities.Users">
               <MappingFragment StoreEntitySet="Users">
                 <ScalarProperty Name="User_Id" ColumnName="User_Id" />
                 <ScalarProperty Name="Username" ColumnName="Username" />

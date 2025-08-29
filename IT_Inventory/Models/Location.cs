@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IT_Inventory
+namespace IT_Inventory.Models
 {
     using System;
     using System.Collections.Generic;

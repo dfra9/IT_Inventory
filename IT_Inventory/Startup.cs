@@ -1,4 +1,5 @@
 ﻿using DBIT_Inventory.Services;
+using IT_Inventory.Models;
 using Owin;
 
 namespace DBIT_Inventory
@@ -8,7 +9,7 @@ namespace DBIT_Inventory
 
         public void Configuration(IAppBuilder app)
         {
-            using (var context = new DBIT_Inventory())
+            using (var context = new DBInventory())
             {
                 var userService = new UserService(context);
                 userService.InitializeAdmin();

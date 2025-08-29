@@ -1,12 +1,13 @@
 ﻿using System.Linq;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.Services
 {
     public class DropdownService : IDropdownService
     {
-        private readonly DBIT_Inventory _db;
+        private readonly DBInventory _db;
 
-        public DropdownService(DBIT_Inventory db)
+        public DropdownService(DBInventory db)
         {
             _db = db;
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DBIT_Inventory.ViewModel;
 using IT_Inventory;
-
+using IT_Inventory.Models;
 using static DBIT_Inventory.ViewModel.AssetManagementViewModel;
 using static DBIT_Inventory.ViewModel.ReportAssetViewModel;
 
@@ -11,9 +11,9 @@ namespace DBIT_Inventory.Services
 {
     public class AssetService : IAssetService
     {
-        private readonly DBIT_Inventory _db;
+        private readonly DBInventory _db;
 
-        public AssetService(DBIT_Inventory db)
+        public AssetService(DBInventory db)
         {
             _db = db;
         }

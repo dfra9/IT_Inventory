@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DBIT_Inventory.ViewModel;
-using IT_Inventory;
+using IT_Inventory.Models;
 using static DBIT_Inventory.Services.AssetService;
 using static DBIT_Inventory.ViewModel.AssetManagementViewModel;
 using static DBIT_Inventory.ViewModel.ReportAssetViewModel;

@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using DBIT_Inventory.ViewModel;
-using IT_Inventory;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.Services
 {
 
     public class MaterialCodeService
     {
-        private readonly DBIT_Inventory db;
+        private readonly DBInventory db;
 
-        public MaterialCodeService(DBIT_Inventory db)
+        public MaterialCodeService(DBInventory db)
         {
             this.db = db;
         }

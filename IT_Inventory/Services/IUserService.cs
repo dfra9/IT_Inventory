@@ -1,5 +1,4 @@
-﻿
-using IT_Inventory;
+﻿using IT_Inventory.Models;
 
 namespace DBIT_Inventory.Services
 {
