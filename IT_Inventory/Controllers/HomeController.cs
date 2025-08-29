@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using DBIT_Inventory.ViewModel;
-using IT_Inventory;
+using IT_Inventory.Models;
 using static DBIT_Inventory.ViewModel.AssetManagementViewModel;
 
 
@@ -11,7 +11,7 @@ namespace DBIT_Inventory.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly DBIT_Inventory db = new DBIT_Inventory();
+        private readonly DBInventory db = new DBInventory();
 
         [Authorize]
         public ActionResult Index()

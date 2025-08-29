@@ -5,20 +5,21 @@ using System.Web.Mvc;
 using System.Web.Security;
 using DBIT_Inventory.Services;
 using DBIT_Inventory.ViewModel;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.Controllers
 {
     public class AuthController : Controller
     {
         private readonly IUserService _userService;
-        private readonly DBIT_Inventory _db;
+        private readonly DBInventory _db;
         public AuthController()
         {
-            _db = new DBIT_Inventory();
+            _db = new DBInventory();
             _userService = new UserService(_db);
 
         }
-        public AuthController(IUserService userService, DBIT_Inventory db)
+        public AuthController(IUserService userService, DBInventory db)
         {
             _userService = userService;
             _db = db;

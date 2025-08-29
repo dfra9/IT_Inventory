@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using DBIT_Inventory.Services;
 using DBIT_Inventory.Utilities;
 using DBIT_Inventory.ViewModel;
-using IT_Inventory;
+using IT_Inventory.Models;
 using static DBIT_Inventory.ViewModel.AssetManagementViewModel;
 
 namespace DBIT_Inventory.Controllers
@@ -17,7 +17,7 @@ namespace DBIT_Inventory.Controllers
         private readonly IAssetService _assetService;
         private readonly IFileService _fileService;
         private readonly IDropdownService _dropdownService;
-        private readonly DBIT_Inventory db = new DBIT_Inventory();
+        private readonly DBInventory db = new DBInventory();
 
         public AssetManagementController(
              IAssetService assetService,

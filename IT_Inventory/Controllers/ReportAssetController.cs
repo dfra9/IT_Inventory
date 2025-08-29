@@ -7,17 +7,18 @@ using ClosedXML.Excel;
 using DBIT_Inventory.Services;
 using DBIT_Inventory.Utilities;
 using DBIT_Inventory.ViewModel;
+using IT_Inventory.Models;
 
 
 namespace DBIT_Inventory.Controllers
 {
     public class ReportAssetController : Controller
     {
-        private readonly DBIT_Inventory _db;
+        private readonly DBInventory _db;
         private readonly AssetService _assetService;
-        public ReportAssetController(DBIT_Inventory db, IAssetService assetService)
+        public ReportAssetController(DBInventory db, IAssetService assetService)
         {
-            _db = new DBIT_Inventory();
+            _db = new DBInventory();
             _assetService = new AssetService(_db);
         }
 

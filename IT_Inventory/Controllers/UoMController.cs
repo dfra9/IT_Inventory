@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Web.Mvc;
 using DBIT_Inventory.ViewModel;
-using IT_Inventory;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.Controllers
 {
     public class UoMController : Controller
     {
-        private readonly DBIT_Inventory db = new DBIT_Inventory();
+        private readonly DBInventory db = new DBInventory();
 
 
         public ActionResult Index()
