@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using IT_Inventory;
+using IT_Inventory.Models;
+using IT_Inventory.ViewModel;
 
 namespace DBIT_Inventory.Controllers
 {
     public class DepartementController : Controller
     {
-        private readonly DBIT_Inventory db = new DBIT_Inventory();
+        private readonly DBInventory db = new DBInventory();
 
         public ActionResult Index()
         {
@@ -28,12 +29,25 @@ namespace DBIT_Inventory.Controllers
                 TempData["Error"] = "Departement not found.";
                 return RedirectToAction("Index");
             }
-            return View(departement);
+
+            var departementViewModel = new DepartementViewModel
+            {
+                Departement_Code = departement.Departement_Code,
+                Role = departement.Role,
+                Is_Deleted = departement.Is_Deleted,
+                Create_By = departement.Create_By,
+                Create_Date = departement.Create_Date,
+                Edit_By = departement.Edit_By,
+                Edit_Date = departement.Edit_Date,
+                Delete_By = departement.Delete_By,
+                Delete_Date = departement.Delete_Date
+            };
+            return View(departementViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Editor(Departement departement, string mode)
+        public ActionResult Editor(DepartementViewModel departementViewModel, string mode)
         {
             try
             {
@@ -41,13 +55,13 @@ namespace DBIT_Inventory.Controllers
                 {
                     if (mode == "Create")
                     {
-                        var existDepartement = db.Departement.FirstOrDefault(d => d.Departement_Code == departement.Departement_Code);
+                        var existDepartement = db.Departement.FirstOrDefault(d => d.Departement_Code == departementViewModel.Departement_Code);
 
                         if (existDepartement != null && existDepartement.Is_Deleted == true)
                         {
-                            existDepartement.Role = departement.Role;
+                            existDepartement.Role = departementViewModel.Role;
                             existDepartement.Is_Deleted = false;
-                            existDepartement.Create_By = departement.Create_By;
+                            existDepartement.Create_By = departementViewModel.Create_By;
                             existDepartement.Create_Date = DateTime.Now;
                             existDepartement.Edit_By = null;
                             existDepartement.Edit_Date = null;
@@ -58,28 +72,34 @@ namespace DBIT_Inventory.Controllers
                         {
                             TempData["ErrorMessage"] = "Departement Code already exists.";
                             ViewBag.Mode = mode;
-                            return View(departement);
+                            return View(departementViewModel);
                         }
                         else
                         {
-                            departement.Create_By = User.Identity.Name;
-                            departement.Create_Date = DateTime.Now;
-                            db.Departement.Add(departement);
+                            var newDepartement = new Departement
+                            {
+                                Departement_Code = departementViewModel.Departement_Code,
+                                Role = departementViewModel.Role,
+                                Is_Deleted = false,
+                                Create_By = User.Identity.Name,
+                                Create_Date = DateTime.Now
+                            };
+                            db.Departement.Add(newDepartement);
                         }
                     }
                     else if (mode == "Edit")
                     {
-                        var existDepartement = db.Departement.Find(departement.Departement_Code);
+                        var existDepartement = db.Departement.Find(departementViewModel.Departement_Code);
                         if (existDepartement != null)
                         {
-                            existDepartement.Role = departement.Role;
+                            existDepartement.Role = departementViewModel.Role;
                             existDepartement.Edit_By = User.Identity.Name;
                             existDepartement.Edit_Date = DateTime.Now;
                         }
                     }
                     else if (mode == "Delete")
                     {
-                        var existDepartement = db.Departement.Find(departement.Departement_Code);
+                        var existDepartement = db.Departement.Find(departementViewModel.Departement_Code);
                         if (existDepartement != null)
                         {
                             existDepartement.Is_Deleted = true;
@@ -97,7 +117,7 @@ namespace DBIT_Inventory.Controllers
                 TempData["Error"] = "An error occurred while saving the departement: " + ex.Message;
             }
             ViewBag.Mode = mode;
-            return View(departement);
+            return View(departementViewModel);
         }
     }
 }

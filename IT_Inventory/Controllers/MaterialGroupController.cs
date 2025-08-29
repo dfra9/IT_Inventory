@@ -5,16 +5,16 @@ using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using DBIT_Inventory.Services;
 using DBIT_Inventory.ViewModel;
-using IT_Inventory;
+using IT_Inventory.Models;
 
 namespace DBIT_Inventory.Controllers
 {
     public class MaterialGroupController : Controller
     {
-        private readonly DBIT_Inventory db;
+        private readonly DBInventory db;
 
 
-        public MaterialGroupController(DBIT_Inventory db, IUserService userService)
+        public MaterialGroupController(DBInventory db, IUserService userService)
         {
             this.db = db ?? throw new ArgumentNullException(nameof(db));
 
@@ -78,7 +78,7 @@ namespace DBIT_Inventory.Controllers
 
             if (mode == "Create")
             {
-                return View(new Material_Group());
+                return View(new MaterialGroupViewModel());
             }
             if (string.IsNullOrEmpty(id))
             {
@@ -93,8 +93,18 @@ namespace DBIT_Inventory.Controllers
                 return RedirectToAction("Index");
             }
 
+            var viewModel = new MaterialGroupViewModel
+            {
+                MaterialGroup = materialGroup.Material_Group1,
+                MaterialDescription = materialGroup.Material_Description,
+                AgeAccountingAsset = FormatAgeAccountingAsset(materialGroup.Age_Accounting_Asset),
+                Quantity = materialGroup.Quantity ?? 0,
+                LastCheckDate = materialGroup.Last_Check_Date.HasValue ? materialGroup.Last_Check_Date.Value.Date.ToString("yyyy-MM-dd") : null,
+                MaxWarrantyDate = materialGroup.Max_Warranty_Date.HasValue ? materialGroup.Max_Warranty_Date.Value.Date.ToString("yyyy-MM-dd") : null
+            };
+
             ViewBag.EncodedId = id;
-            return View(materialGroup);
+            return View(viewModel);
 
         }
 
@@ -118,7 +128,21 @@ namespace DBIT_Inventory.Controllers
                 {
                     TempData["ErrorMessage"] = "Material Group ID is required";
                     ViewBag.Mode = mode;
-                    return View(material_Group);
+                    ViewBag.MaterialGroup = db.Material_Group
+             .Where(mg => mg.Is_Deleted != true)
+             .Select(mg => mg.Material_Group1)
+             .ToList();
+
+                    var errorViewModel = new MaterialGroupViewModel
+                    {
+                        MaterialGroup = material_Group.Material_Group1,
+                        MaterialDescription = material_Group.Material_Description,
+                        AgeAccountingAsset = FormatAgeAccountingAsset(material_Group.Age_Accounting_Asset),
+                        Quantity = material_Group.Quantity ?? 0,
+                        LastCheckDate = material_Group.Last_Check_Date?.ToString("yyyy-MM-dd"),
+                        MaxWarrantyDate = material_Group.Max_Warranty_Date?.ToString("yyyy-MM-dd")
+                    };
+                    return View(errorViewModel);
                 }
 
                 if (!string.IsNullOrEmpty(Year_Value))
@@ -146,7 +170,21 @@ namespace DBIT_Inventory.Controllers
                     {
                         TempData["ErrorMessage"] = "Material Group with the same description already exists in database";
                         ViewBag.Mode = mode;
-                        return View(material_Group);
+                        ViewBag.MaterialGroup = db.Material_Group
+                   .Where(mg => mg.Is_Deleted != true)
+                   .Select(mg => mg.Material_Group1)
+                   .ToList();
+
+                        var duplicateViewModel = new MaterialGroupViewModel
+                        {
+                            MaterialGroup = material_Group.Material_Group1,
+                            MaterialDescription = material_Group.Material_Description,
+                            AgeAccountingAsset = FormatAgeAccountingAsset(material_Group.Age_Accounting_Asset),
+                            Quantity = material_Group.Quantity ?? 0,
+                            LastCheckDate = material_Group.Last_Check_Date?.ToString("yyyy-MM-dd"),
+                            MaxWarrantyDate = material_Group.Max_Warranty_Date?.ToString("yyyy-MM-dd")
+                        };
+                        return View(duplicateViewModel);
                     }
 
                     material_Group.Create_By = username;
@@ -207,7 +245,21 @@ namespace DBIT_Inventory.Controllers
                 }
                 TempData["ErrorMessage"] = "Validation error occurred";
                 ViewBag.Mode = mode;
-                return View(material_Group);
+                ViewBag.MaterialGroup = db.Material_Group
+            .Where(mg => mg.Is_Deleted != true)
+            .Select(mg => mg.Material_Group1)
+            .ToList();
+
+                var validationErrorViewModel = new MaterialGroupViewModel
+                {
+                    MaterialGroup = material_Group.Material_Group1,
+                    MaterialDescription = material_Group.Material_Description,
+                    AgeAccountingAsset = FormatAgeAccountingAsset(material_Group.Age_Accounting_Asset),
+                    Quantity = material_Group.Quantity ?? 0,
+                    LastCheckDate = material_Group.Last_Check_Date?.ToString("yyyy-MM-dd"),
+                    MaxWarrantyDate = material_Group.Max_Warranty_Date?.ToString("yyyy-MM-dd")
+                };
+                return View(validationErrorViewModel);
             }
             catch (Exception ex)
             {

@@ -1,20 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using DBIT_Inventory.Services;
-using IT_Inventory;
+using IT_Inventory.Models;
 using IT_Inventory.ViewModel;
 
 namespace DBIT_Inventory.Controllers
 {
     public class DataUserController : Controller
     {
-        private readonly DBIT_Inventory db;
+        private readonly DBInventory db;
         private readonly IUserService userService;
 
-        public DataUserController(DBIT_Inventory db, IUserService userService)
+        public DataUserController(DBInventory db, IUserService userService)
         {
-            this.db = new DBIT_Inventory();
+            this.db = new DBInventory();
             this.userService = userService;
         }
 
@@ -40,85 +41,106 @@ namespace DBIT_Inventory.Controllers
 
         public ActionResult Editor(int? id, string mode = "Create")
         {
-            var db = new DBIT_Inventory();
-            var model = new DataUserViewModel();
-
+            //var model = new DataUserViewModel();
             if (mode == "Create")
             {
                 DropdownList();
-                return View(new Users());
+                return View(new DataUserViewModel());
             }
 
             Users user = new Users();
-            user = db.Users.Find(id);
+            user = db.Users.Find(id.Value);
             if (user == null || user.Is_Deleted == true)
             {
                 TempData["Message"] = "User not found";
                 return RedirectToAction("Index");
             }
 
+            var viewModel = new DataUserViewModel
+            {
+                User_Id = user.User_Id,
+                Username = user.Username,
+                Long_Name = user.Long_Name,
+                Departement = user.Departement,
+                City = user.City,
+                Location = user.Location,
+                LastLogin = user.Last_Login,
+                IsAdmin = user.Is_Admin ?? false,
+                IsDeleted = user.Is_Deleted ?? false,
+                Password = string.Empty
+            };
+
             ViewBag.Mode = mode;
             DropdownList();
-            return View(user);
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Editor(Users user, string mode)
+        public ActionResult Editor(DataUserViewModel userViewModel, string mode)
         {
             try
             {
                 switch (mode)
                 {
                     case "Create":
-                        if (db.Users.Any(u => u.Username == user.Username))
+                        if (db.Users.Any(u => u.Username == userViewModel.Username))
                         {
                             TempData["Message"] = "Username already exist";
                             DropdownList();
-                            return View(user);
+                            return View(userViewModel);
                         }
-                        user.Long_Name = user.Long_Name;
-                        user.Password = userService.HashPassword(user.Password);
-                        user.Is_Admin = Request.Form["Is_Admin_Hidden"] == "True" || Request.Form["Is_Admin"] == "true" || Request.Form["Is_Admin"] == "true";
-                        user.Create_Date = DateTime.Now;
-                        user.Create_By = Session["Username"]?.ToString() ?? "Admin";
-                        user.Is_Deleted = false;
-                        db.Users.Add(user);
+
+
+                        var newUser = new Users
+                        {
+                            Username = userViewModel.Username,
+                            Long_Name = userViewModel.Long_Name,
+                            Password = userService.HashPassword(userViewModel.Password),
+                            Departement = userViewModel.Departement,
+                            City = userViewModel.City,
+                            Location = userViewModel.Location,
+                            Is_Admin = userViewModel.IsAdmin,
+                            Create_Date = DateTime.Now,
+                            Create_By = Session["Username"]?.ToString() ?? "Admin",
+                            Is_Deleted = false
+                        };
+                        db.Users.Add(newUser);
                         db.SaveChanges();
                         TempData["Message"] = "User Created Succesfully";
                         break;
                     case "Edit":
-                        var userEdit = db.Users.Find(user.User_Id);
+                        var userEdit = db.Users.Find(userViewModel.User_Id);
                         if (userEdit == null || userEdit.Is_Deleted == true)
                         {
                             TempData["Message"] = "User not found";
                             return RedirectToAction("Index");
                         }
 
-                        userEdit.Is_Admin = Request.Form["Is_Admin_Hidden"] == "True" || Request.Form["Is_Admin"] == "true" || Request.Form["Is_Admin"] == "true";
-                        if (!string.IsNullOrEmpty(user.Password))
+                        userEdit.Is_Admin = userViewModel.IsAdmin;
+                        if (!string.IsNullOrEmpty(userViewModel.Password))
                         {
-                            userEdit.Password = userService.HashPassword(user.Password);
+                            userEdit.Password = userService.HashPassword(userViewModel.Password);
                         }
-                        userEdit.Long_Name = user.Long_Name;
-                        userEdit.Departement = user.Departement;
-                        userEdit.City = user.City;
-                        userEdit.Location = user.Location;
-                        userEdit.Edit_By = "Admin";
+                        userEdit.Long_Name = userViewModel.Long_Name;
+                        userEdit.Departement = userViewModel.Departement;
+                        userEdit.City = userViewModel.City;
+                        userEdit.Location = userViewModel.Location;
+                        userEdit.Edit_By = Session["Username"]?.ToString() ?? "Admin";
                         userEdit.Edit_Date = DateTime.Now;
 
                         db.SaveChanges();
                         TempData["Message"] = "User Edited Succesfully";
                         break;
                     case "Delete":
-                        var userDelete = db.Users.Find(user.User_Id);
+                        var userDelete = db.Users.Find(userViewModel.User_Id);
                         if (userDelete == null || userDelete.Is_Deleted == true)
                         {
                             TempData["Message"] = "User not found";
                             return RedirectToAction("Index");
                         }
                         userDelete.Delete_Date = DateTime.Now;
-                        userDelete.Delete_By = "Admin";
+                        userDelete.Delete_By = Session["Username"]?.ToString() ?? "Admin";
                         userDelete.Is_Deleted = true;
                         db.SaveChanges();
                         TempData["Message"] = "User Deleted Succesfully";
@@ -131,7 +153,7 @@ namespace DBIT_Inventory.Controllers
             {
                 TempData["Message"] = ex.Message;
                 DropdownList();
-                return RedirectToAction("Editor", new { id = user.User_Id, mode = mode });
+                return View(userViewModel);
             }
         }
 
@@ -215,12 +237,18 @@ namespace DBIT_Inventory.Controllers
 
         private void DropdownList()
         {
-            ViewBag.Departement = db.Departement.Where(c => c.Is_Deleted != true).ToList();
-            ViewBag.Location = db.Location.Where(c => c.Is_Deleted != true).ToList();
-            ViewBag.City = db.City.Where(c => c.Is_Deleted != true).ToList();
-
-
+            try
+            {
+                ViewBag.Departement = db.Departement.Where(c => c.Is_Deleted != true).ToList();
+                ViewBag.Location = db.Location.Where(c => c.Is_Deleted != true).ToList();
+                ViewBag.City = db.City.Where(c => c.Is_Deleted != true).ToList();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Departement = new List<object>();
+                ViewBag.Location = new List<object>();
+                ViewBag.City = new List<object>();
+            }
         }
-
     }
 }
